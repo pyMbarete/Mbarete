@@ -4,7 +4,7 @@ import os
 #obtenemos los sub-programas python de la carpeta principal de este programa
 admin=mbarete(
     pwd='',
-    raiz='diseñoLibre',
+    baseName='diseñoLibre',
     nombre='Diseño Libre',
     cargarScript='mbarete.py',
     ficheroCRUD='',
@@ -14,7 +14,9 @@ admin=mbarete(
     renombrarArchivos=1,
     ignorar=[],
     reset=1,
-    campoAutoincrement='id'
+    campoAutoincrement='id',
+    gitBranch='master',
+    gitignore=['bibliografia','__pycache__']
     )
 admin.preload()
 from diseñoLibre.preload import proyectos,command
@@ -46,6 +48,5 @@ for proyecto in proyectos:
     for widget in widgets[proyecto]:
         G.SetWidget(atributos=widgets[proyecto][widget])
 
-admin.transicion(G,admin.manager)
+admin.start(G)
 print("plano Libre")
-G.loop()

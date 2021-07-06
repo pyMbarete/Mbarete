@@ -382,10 +382,10 @@ class mbarete(object):
         Esta clase sera para combinar las demas clases en este modulo, 
         funciones para poder tener una estructura escalable, y facil de desarrollar para proyectos mas complejos
     """
-    def __init__(self, pwd='',raiz='',ficheroCRUD='',nombre="Proyecto Mbarete",reset=0,defaultCommand=[],campoAutoincrement='id',cargarScript='mbarete.py',archivosInternos=['__pycache__','__init__.py','media','bibliografia','preload.py'],formato=[''],fullDir=1,renombrarArchivos=0,ignorar=[]):
+    def __init__(self, pwd='',baseName='',ficheroCRUD='',nombre="Proyecto Mbarete",reset=0,gitignore=[],gitBranch='master',defaultCommand=[],campoAutoincrement='id',cargarScript='mbarete.py',archivosInternos=['__pycache__','__init__.py','media','bibliografia','preload.py'],formato=[''],fullDir=1,renombrarArchivos=0,ignorar=[]):
         super(mbarete, self).__init__()
         self.reset=reset
-        self.ubi=directorio(pwd=pwd,raiz=raiz,formato=formato,fullDir=fullDir,renombrarArchivos=renombrarArchivos,ignorar=ignorar)
+        self.ubi=directorio(pwd=pwd,baseName=baseName,formato=formato,fullDir=fullDir,renombrarArchivos=renombrarArchivos,ignorar=ignorar)
         self.archivosInternos=archivosInternos
         self.nombre=nombre
         if ficheroCRUD:
@@ -401,6 +401,19 @@ class mbarete(object):
         self.manager=''
         self.subtransicionInicio='Inicio'
         self.defaultCommand=defaultCommand
+        self.gitBranch=gitBranch
+        self.gitignore=gitignore
+    def start(self,G):
+        ignore=['mbarete'+'/'+ig for ig in self.gitignore]+[self.ubi.baseName+'/'+ig for ig in self.gitignore]
+        for sub in self.info:
+            for ig in self.gitignore:
+                ignore+=[self.ubi.baseName+'/'+sub+'/'+ig]
+        gitignore=open('.gitignore','w')
+        for ig in ignore:
+            gitignore.write(ig+'\n')
+        gitignore.close()
+        self.transicion(G,self.manager)
+        G.loop()
     def getInicio(self):
         #esta funcion genera el menu de inicio del proyecto
         ret={}
@@ -584,18 +597,18 @@ class ecuacion(object):
         print('rehacer')
 class directorio(object):
     #pwd= es la ruta completa donde se ejecutara la clase,'C:\rutacompleta\carpetadelprograma'
-    #raiz= solo el nombre de la carpeta donde se ejecutara la clase,'carpetadelprograma'
-    #formato= retornara solo estos formatos en la lista de archivos dentro de la carpeta 'raiz' y las sub-carpetas, ['video','audio','imagen,'script','documento']
+    #baseName= solo el nombre de la carpeta donde se ejecutara la clase,'carpetadelprograma'
+    #formato= retornara solo estos formatos en la lista de archivos dentro de la carpeta 'baseName' y las sub-carpetas, ['video','audio','imagen,'script','documento']
     #fullDir=guardara la ruta absoluta de cada uno de los ficheros, dentro de la lista de ficheros y sub-carpetas
     #renombrarArchivos= En los nombres de los archivos, cambiara los caracteres que no pertenecen a UTF-8. Esto evitara muchos errores de lectura y escritura
-    def __init__(self,pwd='',raiz='',formato=[''],fullDir=1,renombrarArchivos=0,ignorar=[]):
+    def __init__(self,pwd='',baseName='',formato=[''],fullDir=1,renombrarArchivos=0,ignorar=[]):
         super(directorio, self).__init__()
         self.s=os.path.sep
-        if raiz:
-            self.raiz=raiz
-            self.pwd= pwd if pwd else (os.getcwd()+self.s+self.raiz)
+        if baseName:
+            self.baseName=baseName
+            self.pwd= pwd if pwd else (os.getcwd()+self.s+self.baseName)
         else:
-            self.raiz=os.getcwd().split(self.s)[-1]
+            self.baseName=os.getcwd().split(self.s)[-1]
             self.pwd=os.getcwd()
 
         self.prefijos=['N','U']
@@ -605,18 +618,18 @@ class directorio(object):
         self.renombrarArchivos=renombrarArchivos
         self.ignorar=ignorar
         self.formatos=self.formato(formato)
-        #print(self.pwd,self.raiz,self.ignorar)
+        #print(self.pwd,self.baseName,self.ignorar)
         #print('Formatos:',self.formatos)
-        self.directorio=self.carpetas(self.pwd,self.raiz)
+        self.directorio=self.carpetas(self.pwd,self.baseName)
         self.tabla(self.directorio,0,self.pwd)
         if self.renombrarArchivos:
             self.habilitar()
     def tabla(self,d,nivel,pwd):
         tab="    "
-        print(tab*nivel+self.s+d['raiz'])
+        print(tab*nivel+self.s+d['baseName'])
         for carpeta in d['SubCarpetas']:
             if not carpeta in self.ignorar:
-                self.tabla(d['SubCarpetas'][carpeta], nivel+1, pwd+self.s+d['SubCarpetas'][carpeta]['raiz'])
+                self.tabla(d['SubCarpetas'][carpeta], nivel+1, pwd+self.s+d['SubCarpetas'][carpeta]['baseName'])
 
         for f in d['ficheros']:
             if not d['ficheros'][f]['name'] in self.ignorar:
@@ -688,7 +701,7 @@ class directorio(object):
         for change in filtro:
             clave=clave.replace(change[0],change[1])
         return clave
-    def carpetas(self,pwd,raiz):
+    def carpetas(self,pwd,baseName):
         dirs = self.listaDeCarpetas(pwd,validar=1)
         ret = [archivo for archivo in os.listdir(pwd)  if ((os.path.isfile(pwd+self.s+archivo)) and (not archivo in self.ignorar))]
         fichero = {}
@@ -711,7 +724,7 @@ class directorio(object):
         if dirs:
             for file in dirs:
                 sub[self.strToClave(file)]=self.carpetas(pwd+self.s+file,file)
-        return {'raiz':raiz,'SubCarpetas':sub,'ficheros':fichero}
+        return {'baseName':baseName,'SubCarpetas':sub,'ficheros':fichero}
     def listaDeCarpetas(self,pwd,ignorar=[],validar=0):
         if not pwd:
             pwd=self.pwd
