@@ -1,9 +1,8 @@
 Nombre de la tabla:;manager_formulario
-Numero de Registros:;4
+Numero de Registros:;3
  ;;id;nombres;apellidos;direccion
- ;;1;Lucas Mathias;Villalab;San Dubai
- ;;2;Mandarina Dulce;Citrico;San Pandemia
- ;;3;Mandarina Dulce;Citrico;San Panemia
+ ;;1;Lucas Mathias;Villalaba Diaz;San Lorenzo
+ ;;2;Lucas Mathias;Villaba Mantor;luque
 
 
 

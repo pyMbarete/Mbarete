@@ -404,13 +404,12 @@ class mbarete(object):
         self.gitBranch=gitBranch
         self.gitignore=gitignore
     def start(self,G):
-        ignore=['mbarete'+'/'+ig for ig in self.gitignore]+[self.ubi.baseName+'/'+ig for ig in self.gitignore]
-        for sub in self.info:
-            for ig in self.gitignore:
-                ignore+=[self.ubi.baseName+'/'+sub+'/'+ig]
+        for subProyecto in self.info:
+            self.info[subProyecto]
+        
         gitignore=open('.gitignore','w')
-        for ig in ignore:
-            gitignore.write(ig+'\n')
+        for ig in self.gitignore:
+            gitignore.write('*'+ig+'*'+'\n')
         gitignore.close()
         self.transicion(G,self.manager)
         G.loop()
@@ -470,13 +469,14 @@ class mbarete(object):
         for widget in w:
             metadata['widget'][w[widget]['name']]=subProyecto+'_'+w[widget]['name']
             metadata['etiquetas'][w[widget]['name']] = w[widget]['etiquetas']
+            w[widget]['subProyecto']=subProyecto
             w[widget]['name']=subProyecto+'_'+w[widget]['name']
             w[widget]['visible']=0
             if 'crearTabla' in w[widget]:
                 if w[widget]['crearTabla']:
                     for i in self.defaultCommand: 
                         w[widget]['inputs'][i]=self.defaultCommand[i]
-
+                
             for i in w[widget]['inputs']:
                 if (w[widget]['inputs'][i]['inputType'] in ['Button','Checkbutton']) and ('command' in w[widget]['inputs'][i]):
                     if w[widget]['inputs'][i]['command'] in self.defaultCommand:
@@ -486,6 +486,19 @@ class mbarete(object):
                         w[widget]['inputs'][i]['command']=subProyecto+'_'+w[widget]['inputs'][i]['command']
         self.info[subProyecto]=metadata
         return w
+class git(object):
+    """docstring for git"""
+    def __init__(self, branch='',userName=''):
+        super(git, self).__init__()
+        self.branch=''
+        self.userName=''
+        self.userEmail=''
+        self.commit=''
+        self.userGithub=''
+        self.repoGithub=''
+        self.branchGithub=''
+        self.gitignore=''
+        self.commitGithub=''
 
 class microservicio(object):
     """ 
@@ -517,8 +530,87 @@ class microservicio(object):
 class ecuacion(object):
     """
         En el plano, las coordenadas cartesianas se denominan abscisa y ordenada. 
-        La abscisa es la coordenada horizontal y se representa habitualmente por la letra x, 
-        mientras que la ordenada es la coordenada vertical y se representa por la y
+        La abscisa es la coordenada horizontal y se representa habitualmente por la letra X, 
+        mientras que la ordenada es la coordenada vertical y se representa por la Y.
+        a continuacion informacion de algunas librerias importantes
+        LIBRERIA MATH
+            import math
+            Traducido de https://www.w3schools.com/python/module_math.asp
+            Python tiene un módulo incorporado que puede usar para tareas matemáticas.
+            El módulo de matemáticas tiene un conjunto de métodos y constantes.
+            Constantes matemáticas
+                math.e Devuelve el número de Euler (2.7182 ...)
+                math.inf Devuelve un infinito positivo en coma flotante
+                math.nan Devuelve un valor NaN (no un número) de coma flotante
+                math.pi Devuelve PI (3.1415 ...)
+                math.tau Devuelve tau (6.2831 ...)
+            Descripción del método
+                math.acos () Devuelve el arco coseno de un número
+                math.acosh () Devuelve el coseno hiperbólico inverso de un número
+                math.asin () Devuelve el arco seno de un número
+                math.asinh () Devuelve el seno hiperbólico inverso de un número
+                math.atan () Devuelve el arco tangente de un número en radianes
+                math.atan2 () Devuelve el arco tangente de y / x en radianes
+                math.atanh () Devuelve la tangente hiperbólica inversa de un número
+                math.ceil () Redondea un número al entero más cercano
+                math.comb () Devuelve el número de formas de elegir k elementos de n elementos sin repetición ni orden
+                math.copysign () Devuelve un flotante que consta del valor del primer parámetro y el signo del segundo parámetro
+                math.cos () Devuelve el coseno de un número
+                math.cosh () Devuelve el coseno hiperbólico de un número
+                math.degrees () Convierte un ángulo de radianes a grados
+                math.dist () Devuelve la distancia euclidiana entre dos puntos (pyq), donde pyq son las coordenadas de ese punto
+                math.erf () Devuelve la función de error de un número
+                math.erfc () Devuelve la función de error complementaria de un número
+                math.exp () Devuelve E elevado a la potencia de x
+                math.expm1 () Devuelve Ex - 1
+                math.fabs () Devuelve el valor absoluto de un número
+                math.factorial () Devuelve el factorial de un número
+                math.floor () Redondea un número hacia abajo al entero más cercano
+                math.fmod () Devuelve el resto de x / y
+                math.frexp () Devuelve la mantisa y el exponente de un número especificado
+                math.fsum () Devuelve la suma de todos los elementos en cualquier iterable (tuplas, matrices, listas, etc.)
+                math.gamma () Devuelve la función gamma en x
+                math.gcd () Devuelve el máximo común divisor de dos enteros
+                math.hypot () Devuelve la norma euclidiana
+                math.isclose () Comprueba si dos valores están cerca uno del otro, o no
+                math.isfinite () Comprueba si un número es finito o no
+                math.isinf () Comprueba si un número es infinito o no
+                math.isnan () Comprueba si un valor es NaN (no un número) o no
+                math.isqrt () Redondea un número de raíz cuadrada hacia abajo al entero más cercano
+                math.ldexp () Devuelve el inverso de math.frexp () que es x * (2 ** i) de los números dados x e i
+                math.lgamma () Devuelve el valor log gamma de x
+                math.log () Devuelve el logaritmo natural de un número o el logaritmo de un número en base
+                math.log10 () Devuelve el logaritmo en base 10 de x
+                math.log1p () Devuelve el logaritmo natural de 1 + x
+                math.log2 () Devuelve el logaritmo en base 2 de x
+                math.perm () Devuelve el número de formas de elegir k elementos de n elementos con orden y sin repetición
+                math.pow () Devuelve el valor de x elevado a y
+                math.prod () Devuelve el producto de todos los elementos en un iterable
+                math.radians () Convierte un valor de grado en radianes
+                math.remainder () Devuelve el valor más cercano que puede hacer que el numerador sea completamente divisible por el denominador
+                math.sin () Devuelve el seno de un número
+                math.sinh () Devuelve el seno hiperbólico de un número
+                math.sqrt () Devuelve la raíz cuadrada de un número
+                math.tan () Devuelve la tangente de un número
+                math.tanh () Devuelve la tangente hiperbólica de un número
+                math.trunc () Devuelve las partes enteras truncadas de un número
+        LIBRERIA STATISTICS
+            import statistics
+            TRADUCIDI DE https://www.w3schools.com/python/module_statistics.asp
+            Python tiene un módulo incorporado que puede usar para calcular estadísticas matemáticas de datos numéricos.
+            El módulo de estadísticas era nuevo en Python 3.4.
+            Descripción del método
+                statistics.harmonic_mean () Calcula la media armónica (ubicación central) de los datos dados
+                statistics.mean () Calcula la media (promedio) de los datos dados
+                statistics.median () Calcula la mediana (valor medio) de los datos dados
+                statistics.median_grouped () Calcula la mediana de datos continuos agrupados
+                statistics.median_high () Calcula la mediana alta de los datos dados
+                statistics.median_low () Calcula la mediana baja de los datos dados
+                statistics.mode () Calcula el modo (tendencia central) de los datos numéricos o nominales dados
+                statistics.pstdev () Calcula la desviación estándar de una población completa
+                statistics.stdev () Calcula la desviación estándar de una muestra de datos
+                statistics.pvariance () Calcula la varianza de una población completa
+                statistics.variance () Calcula la varianza a partir de una muestra de datos
     """
     def __init__(self, f,extras={'name':'Sin Nombre'}):
         super(ecuacion, self).__init__()
@@ -550,7 +642,8 @@ class ecuacion(object):
                 menor=(mayor+menor)/2.0
             abscisa=(mayor+menor)/2.0   
         return abscisa
-    
+    def strToMath(self,string):
+        pass
     def escalar(self, o=None,factor=None):
         if not o:
             o=self.escalarOrigen
@@ -861,16 +954,16 @@ class CRUD(object):
                 'nombreTabla':{'campoID':['campoID','campo1','campo2','campo3','campo4','campo5']}
             }
     """
-    def __init__(self, tabla, campoAutoincrement='', dirCRUD="myMbareteCRUD.sql", reset=0):
+    def __init__(self, tabla, campoAutoincrement='id', dirCRUD="myMbareteCRUD.sql", reset=0):
         """
         bb='Mbarete.sql' nombre de la base de datos y del archivo que sera el contenedor del gestor de base de datos Sqlite3
         reset=1 borrara el archivo con el nombre 'miBaseDeDatos.sql' que le pases como parametro en dirCRUD='miBaseDeDatos.sql', 'Mbarete.sql' es el archivo que se crea por defecto si no se asigna un nombre diferente a 'dirCRUD'
         reset=0 no eliminara el archivo 'Mbarete.sql' y ejecutara los comandos SQL  en el archivo, si hacemos cambios en la estructura de una tabla en la base de datos debemois resetar el archivo para poder
         """
-        self.campoAutoincrement=campoAutoincrement if (' ' in campoAutoincrement) else campoAutoincrement+' integer primary key autoincrement'
+        self.campoAutoincrement=campoAutoincrement if (' ' in campoAutoincrement) else campoAutoincrement+' integer not null primary key autoincrement'
         self.reset=reset
         self.dirCRUD=dirCRUD
-        if '.' in self.dirCRUD.split(os.path.sep)[-1]:
+        if not '.' in self.dirCRUD.split(os.path.sep)[-1]:
             self.extencionCRUD='.sql'
         else:
             self.extencionCRUD='.'+(self.dirCRUD.split(os.path.sep)[-1]).split('.')[-1]
@@ -881,7 +974,9 @@ class CRUD(object):
                 os.remove(self.dirCRUD)
             for tabl in self.tablas:
                 self.CrearTabla(tabl,self.tablas[tabl])
-    def CrearTabla(self,nombreTabla,columnas,autoincrement=0):
+    def CrearTabla(self,nombreTabla,columnas,autoincrement=0,dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         # nombre_tabla="miTabla"
         # columnas=["primer_campo TEXT","segundo_campo TEXT","tercer_campo TEXT","cuarto_campo TEXT"]
         # Comprueba si la tabla "nombre_tabla" existe, en caso de no existir la creara
@@ -898,15 +993,17 @@ class CRUD(object):
             self.colum += str(columnas[col])+", "
         self.colum += str(columnas[-1])+")"
         self.comandoSQL += self.colum
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute(self.comandoSQL)
         self.con.commit()
         self.cursor.close()
-    def SelectAll(self,nombreTabla,typeSalida="dict",campoClave="id"):
+    def SelectAll(self,nombreTabla,typeSalida="dict",campoClave="id",dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         campos=[key.split(' ')[0] for key in self.tablas[nombreTabla]]
         noModificar=[self.tablas[nombreTabla].index(self.campoAutoincrement)] if (self.campoAutoincrement in self.tablas[nombreTabla]) else []
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute("SELECT * FROM '%s'"%(nombreTabla))
         self.con.commit()
@@ -923,7 +1020,9 @@ class CRUD(object):
             ret=[campos]+[[strToVar(unicodeToStr(fila[n]))  if (not n in noModificar) else fila[n] for n in range(0,len(fila),1)] for fila in self.cursor.fetchall()]
         self.cursor.close()
         return ret
-    def Cargar(self,nombreTabla,columnas,valores):
+    def Cargar(self,nombreTabla,columnas,valores,dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         """insert into '%s' ('%s','%s') values ('%s','%s')"%(tablas[tabla][0],tablas[tabla][1],tablas[tabla][2],infoHashtag[0], infoHashtag[1])"""
         self.comandoSQL="insert into "+str(nombreTabla)+" "
         self.colum="("
@@ -934,12 +1033,14 @@ class CRUD(object):
         self.colum=self.colum+str(columnas[-1].split(' ')[0])+")"
         self.val=self.val+"'"+strToUnicode(valores[-1])+"')"
         self.comandoSQL=self.comandoSQL+self.colum+" values "+self.val
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute(self.comandoSQL)
         self.con.commit()
         self.cursor.close() 
-    def Modificar(self,nombreTabla,columnas,valores):
+    def Modificar(self,nombreTabla,columnas,valores,dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         """ sin terminar """
         self.comandoSQL="insert into "+str(nombreTabla)+" "
         self.colum="("
@@ -950,24 +1051,28 @@ class CRUD(object):
         self.colum=self.colum+str(columnas[-1].split(' ')[0])+")"
         self.val=self.val+"'"+strToUnicode(valores[-1])+"')"
         self.comandoSQL=self.comandoSQL+self.colum+" values "+self.val
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute("DELETE FROM %s WHERE %s='%s'"%(nombreTabla,columnas[0].split(' ')[0],strToUnicode(valores[0])))
         self.con.commit()
         self.cursor.execute(self.comandoSQL)
         self.con.commit()
         self.cursor.close()
-    def Elimina(self,nombreTabla,columnas,valores):
+    def Elimina(self,nombreTabla,columnas,valores,dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         """ """
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute("DELETE FROM %s WHERE %s='%s'"%(nombreTabla,columnas[0].split(' ')[0],strToUnicode(valores[0])))
         self.con.commit()
         self.cursor.close()
-    def exportarTablas(self,tabla=[],formato="shell",campoClave="",file=""):
+    def exportarTablas(self,tabla=[],formato="shell",campoClave="",file="",dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
         """ guardara las tablas que estan guardadas en la base de datos en formato ["shell","csv","py","js"] """
         ret={}
-        self.con = sqlite3.connect(self.dirCRUD)
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         if tabla:
             for clave in tabla:
@@ -1029,8 +1134,10 @@ class CRUD(object):
                     file.write('}\n'+'\n')
             file.close()
         print("Fue exportado Exitosamente ,",f)
-    def command(self,comandoSQL,ret=0):
-        self.con = sqlite3.connect(self.dirCRUD)
+    def command(self,comandoSQL,ret=0,dirCRUD=''):
+        if not dirCRUD:
+            dirCRUD=self.dirCRUD
+        self.con = sqlite3.connect(dirCRUD)
         self.cursor = self.con.cursor()
         self.cursor.execute(comandoSQL)
         self.con.commit()
@@ -1072,10 +1179,10 @@ class GUI(object):
         if bbdd:
             self.Sql=bbdd
             self.dirCRUD=self.Sql.dirCRUD
-            
         else:
             self.Sql=CRUD(self.tablas, campoAutoincrement='id', dirCRUD=self.dirCRUD, reset=reset)
         self.variablesEnSql=[]
+        self.gitignore=[]
         self.menus={}
         self.Vars={}
         if reset:
@@ -1438,13 +1545,13 @@ class GUI(object):
         return self.atrb['fontSizeToAlto'][w['fontType']][w['fontSize']]
     def comandoGuardar(self):
             if self.widgets[self.atrb['frameActivo']]['crearTabla']:
-                print(self.atrb['frameActivo'],self.tablas[self.atrb['frameActivo']][1:],[self.widgets[self.atrb['frameActivo']]['value'][v] for v in self.tablas[self.atrb['frameActivo']][1:]] )
-                self.Sql.Cargar(self.atrb['frameActivo'],self.tablas[self.atrb['frameActivo']][1:],[self.widgets[self.atrb['frameActivo']]['value'][v] for v in self.tablas[self.atrb['frameActivo']][1:]] )
+                print(self.atrb['frameActivo'],self.tablas[self.atrb['frameActivo']][1:],[self.widgets[self.atrb['frameActivo']]['value'][v.split(' ')[0]] for v in self.tablas[self.atrb['frameActivo']][1:]] )
+                self.Sql.Cargar(self.atrb['frameActivo'],self.tablas[self.atrb['frameActivo']][1:],[self.widgets[self.atrb['frameActivo']]['value'][v.split(' ')[0]] for v in self.tablas[self.atrb['frameActivo']][1:]] ,dirCRUD=self.pwd+os.path.sep+self.atrb['transicion']+os.path.sep+self.atrb['transicion']+self.Sql.extencionCRUD)
                 self.setVar(self.atrb['frameActivo'])
     def comandoLeer(self,campoClave='id'):
                 if self.widgets[self.atrb['frameActivo']]['crearTabla']:
                     if [1 for ok in self.atrb['subtransicion']['aceptar'] if (ok in self.widgets[self.atrb['frameActivo']]['etiquetas'])]:
-                        print(self.Sql.SelectAll(self.atrb['frameActivo'],typeSalida='dict',campoClave=campoClave))
+                        print(self.Sql.SelectAll(self.atrb['frameActivo'],typeSalida='dict',campoClave=campoClave,dirCRUD=self.pwd+os.path.sep+self.atrb['transicion']+os.path.sep+self.atrb['transicion']+self.Sql.extencionCRUD))
                         #self.setVar(w)
     def comandoExportar(self,campoClave='id',file='',formato='',tabla=[]):
         if self.widgets[self.atrb['frameActivo']]['crearTabla']:
@@ -1452,7 +1559,8 @@ class GUI(object):
                 tabla=[self.atrb['frameActivo']],
                 formato=formato,
                 campoClave=campoClave,
-                file=self.pwd+os.path.sep+self.atrb['transicion']+os.path.sep+self.atrb['titulo']
+                file=self.pwd+os.path.sep+self.atrb['transicion']+os.path.sep+self.atrb['titulo'],
+                dirCRUD=self.pwd+os.path.sep+self.atrb['transicion']+os.path.sep+self.atrb['transicion']+self.Sql.extencionCRUD
                 )
             #self.setVar(w)
     def SetWidget(self,atributos={}):
@@ -1728,9 +1836,10 @@ class GUI(object):
         #print(myWidget['name'],self.widgets[myWidget['name']]['name'])
         if 'crearTabla' in myWidget:
             if (myWidget['crearTabla']) and (not myWidget['name'] in self.tablas):
-                self.tablas[myWidget['name']]=['id integer primary key autoincrement']+[i for i in myWidget['inputs'] if (myWidget['inputs'][i]['inputType'] in self.widgetConectadoaVars) ]
+                campos = [i for i in myWidget['inputs'] if (myWidget['inputs'][i]['inputType'] in self.widgetConectadoaVars) ]
+                self.tablas[myWidget['name']]=[self.Sql.campoAutoincrement]+[campos[0]+' text not null UNIQUE']+campos[1:]
                 print(myWidget['name'],self.tablas[myWidget['name']])
-                self.Sql.CrearTabla(myWidget['name'],self.tablas[myWidget['name']])
+                self.Sql.CrearTabla(myWidget['name'],self.tablas[myWidget['name']],dirCRUD=self.pwd+os.path.sep+myWidget['subProyecto']+os.path.sep+myWidget['subProyecto']+self.Sql.extencionCRUD)
 
         del myWidget
 class geometria(object):

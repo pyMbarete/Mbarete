@@ -5,9 +5,21 @@
 	EN ESTE SCRIPT SOLO HAY DECLARACIONES DE VARIABLES
 	PARA LUEGO SER IMPORTADOS Y USADOS EN EL SRCIPT 'mbarete.py' 
 """
-idiomas={
+lenguaje={
     'es':{
-        'Aceptar':'Aceptar'
+        'Aceptar':'Aceptar',
+        'Borrar':'Borrar',
+        'Guardar':'Guardar',
+        'Cancelar':'Cancelar',
+        'Ignorar':'Ignorar',
+        'Exportar':'Exportar',
+        'Inicio':'Inicio',
+        'Anterior':'Anterior',
+        'Siguiente':'Siguiente',
+        'Buscar':'Buscar',
+        'Cerrar':'Cerrar',
+        'Actualizar':'Actualizar',
+        'Saltar':'Saltar'
     }
 }
 atributos={
@@ -210,6 +222,8 @@ inputsDefault={
         "min":None,#OPCIONAL
         "step":None,#OPCIONAL
         "crearTabla":0,#OPCIONAL
+        "gitAdd":0,#OPCIONAL
+        "subProyecto":0,#OPCIONAL
         "ancho":500,#OPCIONAL
         "alto":500,#OPCIONAL
         "width":13,#OPCIONAL
