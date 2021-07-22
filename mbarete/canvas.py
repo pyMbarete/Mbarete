@@ -774,11 +774,10 @@ def unicodeP(string='',variable='',desde=0,hasta=125):
         print(p[-1])
     print(p)
 def strToMath(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,composicion=0):
-    
     if not v:
         print('validando',string,composicion)
         v=1
-    composicion +=1 
+    composicion += 1
     nivel=0
     esSuma=0
     signoSuma=[0]

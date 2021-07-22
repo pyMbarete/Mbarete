@@ -145,7 +145,6 @@ input_type={
 	'colorChoser':{'padre':"Widget Principal"},#falta definir como asignar
 	'comboBox':{'padre':"Widget Principal"},#falta definir como asignar
 	"panel":"input para menu general del programa",
-    "etiqueta":"buscador,generador,editor,seleccionador de etiquetas o Hashtags",
     "botontk":"boton creado con tkinter",
     "botoncanvas":"boton creado con canvas",
     "boolean":"boton tipo on/off",
