@@ -11,7 +11,7 @@ import time
 import threading
 import os
 os.chdir('..')
-from mbarete import geometria
+from mbarete import geometria,calculadora
 global raiz,cu, largo,fondo,fondor,fondot,valor,labelcrono,textos,alto,ancho
 global baseRadio,altura,revolucion,rotorRadio,fondo,angulos
 
@@ -1315,7 +1315,10 @@ def strToMath(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,
 def g(x):
     return (x*math.e**x)/(math.e**x+math.e**(-x))
 
-f=strToMath(string='(x*e**x)/(e**x+e**(-x))')
+f=calculadora()
+f.setEcuacion('senhP',string='sen(360/x)+x',variable='x',constantes={'alto':80.0})
+f.setEcuacion('coshP',string='senhP(x+bajo)/cos(x)',variable='x',constantes={'bajo':10.0})
 
-print(f(3,p=1,dy=1),'=',f(3,p=0,dy=1))
+print(f.ec['senhP'](3,p=1,dy=1),'=',f.ec['senhP'](3,p=0,dy=1))
+print(f.ec['coshP'](3,p=1,dy=1),'=',f.ec['coshP'](3,p=0,dy=1))
 #print('(x*e**x)/(e**x+e**(-x))','=',g(3))

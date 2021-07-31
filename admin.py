@@ -1,4 +1,4 @@
-from mbarete.mbarete import mbarete,ecuacion,geometria,GUI
+from mbarete.mbarete import mbarete,calculadora,geometria,GUI
 import os
 
 #obtenemos los sub-programas python de la carpeta principal de este programa
@@ -36,10 +36,10 @@ widgets[admin.manager]=admin.getWidget(admin.manager, widget_manager, manager.in
 #G.command[admin.info['inicio']['command']['buscar']]=lambda : print(G.widgets['menu']['value'])
 #Comandos Generales Para 'G'
 command(admin,G,admin.manager)
-manager.command(admin, G, admin.info[admin.manager], ecuacion, geometria)
+manager.command(admin, G, admin.info[admin.manager], calculadora, geometria)
 #Le Pasamos a 'G' los comandos de los Sub-proyectos
 for subProyecto in proyectos:
-    proyectos[subProyecto].command(admin, G, admin.info[subProyecto], ecuacion, geometria)
+    proyectos[subProyecto].command(admin, G, admin.info[subProyecto], calculadora, geometria)
     
 for widget in widgets[admin.manager]:
     G.SetWidget(atributos=widgets[admin.manager][widget])

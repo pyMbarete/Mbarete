@@ -309,7 +309,7 @@ def escalarHex(h="#ffffff",factor=1.0):
     GG= int(GG*factor if GG*factor <=255.0 else GG ) #escalamos el verde
     BB= int(BB*factor if BB*factor <=255.0 else BB ) #escalamos el azul
     #generamas el string que seria el nuevo codigo de color #RRGGBB
-    ret='#' #todos los codigos de color deben comenzar con el signo numeral '#'.
+    ret='#' #todos los codigos de color deben comenzar con el signo numeral '#'
     ret+=("" if RR>15 else "0")+str(hex(RR))[2:]
     ret+=("" if GG>15 else "0")+str(hex(GG))[2:]
     ret+=("" if BB>15 else "0")+str(hex(BB))[2:]
@@ -532,7 +532,7 @@ class microservicio(object):
     def get_wan_ip(self, wan_url):
         wan_ip = urllib.request.urlopen(wan_url).read().decode('utf8')
         return wan_ip
-class ecuacion(object):
+class calculadora(object):
     """
         En el plano, las coordenadas cartesianas se denominan abscisa y ordenada. 
         La abscisa es la coordenada horizontal y se representa habitualmente por la letra X, 
@@ -617,11 +617,8 @@ class ecuacion(object):
                 statistics.pvariance () Calcula la varianza de una población completa
                 statistics.variance () Calcula la varianza a partir de una muestra de datos
     """
-    def __init__(self, f,extras={'name':'Sin Nombre'}):
-        super(ecuacion, self).__init__()
-        self.f = f
-        self.original = f
-        self.extras=extras
+    def __init__(self, ec={},constantes={},extras={},config={'angulos':'radianes'}):
+        super(calculadora, self).__init__()
         self.error=0.0000001
         self.masInf=999999999999.9
         self.menosInf=-999999999999.9
@@ -631,10 +628,22 @@ class ecuacion(object):
         self.escalarOrigen=[0.0,0.0]
         self.rotarOrigen=[0.0,0.0]
         self.historial={}
-        self.funciones={}
-        self.constantes={'e':math.e,'pi':3.1416,'g':9.8182}
-        self.operadores=['w','sen','cos','tg','log','ln','lambert','dy','sec','cosec','cotag','arcsen','arccos','arctg','round','floor','ceil','signo','abs']
+        self.ec={}
+        self.ecuaciones=[]
+        self.constantes={'e':math.e,'pi':math.pi,'g':9.8182}
+        self.extras=extras
+        self.operadores=['w(','sen(','cos(','tg(','log(','ln(','lambert(','dy(','sec(','cosec(','cotag(','arcsen(','arccos(','arctg(','round(','floor(','ceil(','signo(','abs(']
         self.simbolos=['*','(',')','/','+','-','.','%']
+    def update(self, ec={},constantes={},extras={}):
+        if constantes:
+            for C in constantes:
+                self.constantes[C]=constantes[C]
+    def setEcuacion(self, nombre, string='', variable='x',constantes={},extras={}):
+        if constantes:
+            self.update(constantes=constantes)
+        self.ec[nombre]=self.strToMath(string=string, variable=variable)
+        self.ecuaciones=[ecu for ecu in self.ec]
+        print("Se agrego Exitosamente: '",nombre,"':",self.ec[nombre](variable,p=1))
     def inversa(self,ordenada,f=None,error=None):
         ordenada=float(ordenada)
         mayor=0.0
@@ -652,6 +661,7 @@ class ecuacion(object):
             abscisa=(mayor+menor)/2.0   
         return abscisa
     def strToMath(self,string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,composicion=0):
+        
         if not v:
             print('validando',string,composicion)
             v=1
@@ -757,9 +767,8 @@ class ecuacion(object):
 
         if operador:
             x=0
-            coincide=[op for op in self.operadores if op in (string if len(op)<len(string) else '')]
+            coincide=[op for op in self.operadores+self.ecuaciones if op in (string if len(op)<len(string) else '')]
             if coincide:
-                print(coincide)
                 comas=[0]
                 for x in range(0,len(string),1):
                     if string[x]=='(':
@@ -768,11 +777,11 @@ class ecuacion(object):
                         nivel -= 1
                     if string[x] in ',' and nivel==0:
                         comas += [x]
-                if string[:len('w')] in 'w' and nivel==0:
+                if string[:len('w(')] in 'w(' and nivel==0:
                     pass
-                if string[:len('dy')] in 'dy' and nivel==0:
+                if string[:len('dy(')] in 'dy(' and nivel==0:
                     pass
-                if string[:len('log')] in 'log' and nivel==0:
+                if string[:len('log(')] in 'log(' and nivel==0:
                     #math.log(x,base)
                     print('log',string)
                     parteReal=self.strToMath(string=string[len('log'):comas[1]],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -798,7 +807,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.log(parteReal(x),base(x))
                     return logaritmoNatural
-                if string[:len('ln')] in 'ln' and nivel==0:
+                if string[:len('ln(')] in 'ln(' and nivel==0:
                     #math.log(x,base)
                     print('ln',string)
                     parteReal=self.strToMath(string=string[len('ln'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -818,7 +827,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.log(parteReal(x))
                     return logaritmoNatural
-                if string[:len('abs')] in 'abs' and nivel==0:
+                if string[:len('abs(')] in 'abs(' and nivel==0:
                     #math.fabs(-66.43)
                     print('abs',string)
                     valor=self.strToMath(string=string[len(''):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -838,7 +847,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.fabs(valor(x))
                     return valorAbsoluto
-                if string[:len('tg')] in 'tg' and nivel==0:
+                if string[:len('tg(')] in 'tg(' and nivel==0:
                     #math.tan()
                     print('tg',string)
                     radian=self.strToMath(string=string[len('tg'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -858,7 +867,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.tan(radian(x))
                     return tangente
-                if string[:len('sen')] in 'sen' and nivel==0:
+                if string[:len('sen(')] in 'sen(' and nivel==0:
                     #math.sin()
                     print('sen',string)
                     radian=self.strToMath(string=string[len('sen'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -869,7 +878,7 @@ class ecuacion(object):
                             s=''
                         if dy:
                             if p:
-                                return s+'(cos('+radian(x,dy=0,p=p,decimales=decimales,mostrarSigno=1)+')*('+radian(x,dy=dy,p=p,decimales=decimales,mostrarSigno=1)+'))'
+                                return s+'cos('+radian(x,dy=0,p=p,decimales=decimales,mostrarSigno=1)+')*('+radian(x,dy=dy,p=p,decimales=decimales,mostrarSigno=1)+')'
                             else:
                                 return signo*math.cos(radian(x))*radian(x,dy=dy)
                         else:
@@ -878,7 +887,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.sin(radian(x))
                     return seno
-                if string[:len('cos')] in 'cos' and nivel==0:
+                if string[:len('cos(')] in 'cos(' and nivel==0:
                     #math.cos()
                     print('cos',string)
                     radian=self.strToMath(string=string[len('cos'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -890,7 +899,7 @@ class ecuacion(object):
                         if dy:
                             if p:
                                 s=('-' if signo>0.0 else '+') if mostrarSigno else ''
-                                return +s+'(sen('+radian(x,dy=0,p=p,decimales=decimales,mostrarSigno=1)+')*('+radian(x,dy=dy,p=p,decimales=decimales,mostrarSigno=1)+'))'
+                                return s+'sen('+radian(x,dy=0,p=p,decimales=decimales,mostrarSigno=1)+')*('+radian(x,dy=dy,p=p,decimales=decimales,mostrarSigno=1)+')'
                             else:
                                 return -1*signo*math.sin(radian(x))*radian(x,dy=dy,p=p,decimales=decimales,mostrarSigno=1)
                         else:
@@ -899,22 +908,22 @@ class ecuacion(object):
                             else:
                                 return signo*math.cos(radian(x))
                     return coseno
-                if string[:len('arcsen')] in 'arcsen' and nivel==0:
+                if string[:len('arcsen(')] in 'arcsen(' and nivel==0:
                     #math.asin()
                     pass
-                if string[:len('arccos')] in 'arccos' and nivel==0:
+                if string[:len('arccos(')] in 'arccos(' and nivel==0:
                     #math.acos()
                     pass
-                if string[:len('arctg')] in 'arctg' and nivel==0:
+                if string[:len('arctg(')] in 'arctg(' and nivel==0:
                     #math.atan()
                     pass
-                if string[:len('signo')] in 'signo' and nivel==0:
+                if string[:len('signo(')] in 'signo(' and nivel==0:
                     pass
-                if string[:len('entero')] in 'entero' and nivel==0:
+                if string[:len('entero(')] in 'entero(' and nivel==0:
                     pass
-                if string[:len('decimal')] in 'decimal' and nivel==0:
+                if string[:len('decimal(')] in 'decimal(' and nivel==0:
                     pass
-                if string[:len('round')] in 'round' and nivel==0:
+                if string[:len('round(')] in 'round(' and nivel==0:
                     print('round',string)
                     redondeo=self.strToMath(string=string[len('round'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
                     def redondear(x,dy=dy,p=p,decimales=decimales,signo=sig,mostrarSigno=0,redondeo=redondeo):
@@ -933,7 +942,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.round(defecto(x))
                     return redondear
-                if string[:len('floor')] in 'floor' and nivel==0:
+                if string[:len('floor(')] in 'floor(' and nivel==0:
                     print('floor',string)
                     defecto=self.strToMath(string=string[len('floor'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
                     def redondearHaciaAbajo(x,dy=dy,p=p,decimales=decimales,signo=sig,mostrarSigno=0,defecto=defecto):
@@ -952,7 +961,7 @@ class ecuacion(object):
                             else:
                                 return signo*math.floor(defecto(x))
                     return redondearHaciaAbajo
-                if string[:len('ceil')] in 'ceil' and nivel==0:
+                if string[:len('ceil(')] in 'ceil(' and nivel==0:
                     print('ceil',string)
                     exceso=self.strToMath(string=string[len('ceil'):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
                     def redondearHaciaArriba(x,dy=dy,p=p,decimales=decimales,signo=sig,mostrarSigno=0,exceso=exceso):
@@ -971,6 +980,32 @@ class ecuacion(object):
                             else:
                                 return signo*math.ceil(exceso(x))
                     return redondearHaciaArriba
+                if [op for op in self.ecuaciones if op in (string if len(op)<len(string) else '')] and nivel==0:
+                    miEcuacion=''
+                    for op in self.ecuaciones:
+                        if op in (string[:len(op)] if len(op)<len(string) else ''):
+                            miEcuacion=op
+                    print(miEcuacion,string)
+                    myF=self.ec[miEcuacion]
+                    ecuacionInterna=self.strToMath(string=string[len(miEcuacion):],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
+                    def f(x,dy=dy,p=p,decimales=decimales,signo=sig,mostrarSigno=0,miEcuacion=miEcuacion,myF=myF,ecuacionInterna=ecuacionInterna):
+                        #f(x,dy=dy,p=p,decimales=decimales,mostrarSigno=0)
+                        if mostrarSigno:
+                            s='+' if signo>0.0 else '-'
+                        else:
+                            s=''
+                        if dy:
+                            if p:
+                                return s+'('+myF(ecuacionInterna(x,p=p,dy=0,decimales=decimales,mostrarSigno=1),p=p,dy=1,decimales=decimales,mostrarSigno=0)+')*('+ecuacionInterna(x,p=p,dy=0,decimales=decimales,mostrarSigno=1)+')'
+                            else:
+                                ret = myF(ecuacionInterna(x,p=p,dy=0,decimales=decimales,mostrarSigno=1),p=p,dy=1,decimales=decimales,mostrarSigno=0)*ecuacionInterna(x,p=p,dy=0,decimales=decimales,mostrarSigno=1)
+                                return signo*ret
+                        else:
+                            if p:
+                                return s+myF('('+ecuacionInterna(x,p=p,decimales=decimales,mostrarSigno=0)+')',p=p,decimales=decimales)
+                            else:
+                                return signo*myF(ecuacionInterna(x))
+                    return f
                 else:
                     esConstante=1
                 """
@@ -1011,12 +1046,14 @@ class ecuacion(object):
                             s=''
                         if dy:
                             if p:
-                                return '0.'+'0'*decimales
+                                return '0.0'
                             else:
                                 return 0
                         else:
                             if p:
-                                return s+str(c)[:decimales]
+                                c=str(c)
+                                #[:decimales if len(c)>decimales else None]
+                                return s+c
                             else:
                                 return c*signo
                     return constante
@@ -1057,18 +1094,18 @@ class ecuacion(object):
                         s=''
                     if dy:
                         if p:
-                            ret = s+'('
+                            ret = s
                             for sumando in sumandos:
-                                ret += ' '+sumando(x,p=p,dy=dy,decimales=decimales,mostrarSigno=1)
-                            return ret+')'
+                                ret += sumando(x,p=p,dy=dy,decimales=decimales,mostrarSigno=1)
+                            return ret
                         else:
                             return signo*sum([sumando(x,dy=dy) for sumando in sumandos])
                     else:
                         if p:
-                            ret = s+'('
+                            ret = ''
                             for sumando in sumandos:
-                                ret += ' '+sumando(x,p=p,decimales=decimales,mostrarSigno=1)
-                            return ret+')'
+                                ret += sumando(x,p=p,decimales=decimales,mostrarSigno=1)
+                            return ret
                         else:
                             ret = 0.0
                             for sumando in sumandos:
@@ -1092,7 +1129,7 @@ class ecuacion(object):
                             return signo*((numerador(x,p=p,dy=1,decimales=decimales)*denominador(x,p=p,dy=0,decimales=decimales))-(numerador(x,p=p,dy=0,decimales=decimales)*denominador(x,p=p,dy=1,decimales=decimales)))/(denominador(x,p=p,dy=0,decimales=decimales)**2)
                     else:
                         if p:
-                            return s+'('+numerador(x,p=p,dy=0,decimales=decimales)+'/'+denominador(x,p=p,dy=0,decimales=decimales)+')'
+                            return s+'('+numerador(x,p=p,dy=0,decimales=decimales)+')/('+denominador(x,p=p,dy=0,decimales=decimales)+')'
                         else:
                             return signo*numerador(x,dy=0,decimales=decimales)/denominador(x,dy=0,decimales=decimales)
                 return division
