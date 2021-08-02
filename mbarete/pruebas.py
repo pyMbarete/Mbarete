@@ -10,11 +10,11 @@ from tkinter import*
 from PIL import Image, ImageTk
 from reportlab.lib.units import mm, inch
 from reportlab.pdfgen import canvas as pdf
-from mbarete.mbarete import geometria
+#from mbarete.mbarete import geometria
 global d,canvas_width,canvas_height
 d={
-    'img':os.getcwd()+'\\'+"imagenes"+'\\',
-    'audio':os.getcwd()+'\\'+"sonidos"+'\\'
+    'img':os.getcwd()+'\\'+"media"+'\\',
+    'audio':os.getcwd()+'\\'+"media"+'\\'
     }
 canvas_width = 1100
 canvas_height =1000
@@ -707,15 +707,184 @@ def planos():
         miniatura=int(input("ImprmirMiniatura 1/0 : "))
         #=float(input(": "))
         poligonoToPDF(calibrar=0,miniatura=miniatura,REALsize=[RealANCHO,RealANCHO],margenes=[margenX,margenY],REALmm=[REALmmX,REALmmY],poligonos=[puntos],lineas=lineas,datos=datos)
-
 def red():
     from mbarete import internet
     ip=internet()
     print('ip.lan_ip:',ip.lan_ip,'ip.wan_ip:',ip.wan_ip)
+def servidor_HTTP_python():
+    import socket   
+    import threading
+    host = '127.0.0.1'
+    port = 8080
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((host, port))
+    server.listen()
+    print(f"\nServidor HTTP corriendo en la direccion {host}:{port}")
+    clients = []
+    usernames = []
+    def receive_connections():
+        while True:
+            client, address = server.accept()
+            request = client.recv(1024).decode('utf-8')
+            if ''!= request:
+                print(request)
+                string_list= request.split(' ')
+                if 'cerrar' in string_list:
+                    client.close()
+                    print('Servidor Apagado')
+                    break
+                method=string_list[0]
+                request_file=string_list[1]
+                #print('Client request',request_file)
+                myfile=request_file.split('?')[0]
+                myfile=myfile.lstrip('/')
+                if (myfile==''):
+                    myfile='media/index.html'
+                try:
+                    file=open(myfile,'rb')
+                    response=file.read()
+                    file.close()
+                    header='HTTP/1.1 200 OK\n'
+                    if myfile.endswith('.jpg'): 
+                        mimetype='image/jpg'
+                    elif myfile.endswith('.css'): 
+                        mimetype='text/css'
+                    if myfile.endswith('.pdf'): 
+                        mimetype='application/pdf'
+                    else: 
+                        mimetype='text/html'
+                    header += 'Content-Type: '+str(mimetype)+'\n\n'
+                except Exception as e:
+                    header='HTTP:/1.1 404 Not Found \n\n'
+                    response=f'<html><body>Error 404: File NOt Found<br> {e} </body></html>'.encode('utf-8')
+                html_response=header.encode('utf-8')
+                html_response+=response
+                client.send(html_response)
+            client.close()
+            
+            #thread = threading.Thread(target=handle_messages, args=(client,))
+            #thread.start()
 
-if __name__=='main':
+    receive_connections()
+
+def administrador_servidor_HTTP_python():
+    import socket   
+    import threading
+    host = '127.0.0.1'
+    port = 8080
+    def iniciar():
+        thread = threading.Thread(target=servidor_HTTP_python)
+        thread.start()
+        servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        servidor.connect((host, port))
+        return servidor
+    def cerrar(servidor):
+        servidor.send('cerrar'.encode("utf-8"))
+        return servidor
+    def recargar(servidor):
+        servidor.send('reiniciar'.encode("utf-8"))
+        return servidor
+    def info(servidor):
+        servidor.send('info'.encode("utf-8"))
+        return servidor
+    comandos={'cerrar':cerrar,'recargar':recargar,'info':info}
+    servidor=iniciar()
+    while True:
+        command=input('Ingrese un comando:'+str([c for c in comandos]))
+        if command in comandos:
+            servidor=comandos[command](servidor)
+        if command=='':
+            cerrar(servidor)
+            break
+
+def servidor_socket_python():
+    import socket   
+    import threading
+    host = '127.0.0.1'
+    port = 8080
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((host, port))
+    server.listen()
+    print(f"Servidor corriendo en la direccion {host}:{port}")
+    clients = []
+    usernames = []
+    def broadcast(message, _client):
+        for client in clients:
+            if client != _client:
+                client.send(message)
+    def handle_messages(client):
+        while True:
+            try:
+                message = client.recv(1024)
+                broadcast(message, client)
+            except:
+                index = clients.index(client)
+                username = usernames[index]
+                broadcast(f"ChatBot: {username} se desconecto".encode('utf-8'), client)
+                clients.remove(client)
+                usernames.remove(username)
+                client.close()
+                break
+
+    def receive_connections():
+        while True:
+            client, address = server.accept()
+            print(client)
+            client.send("@username".encode("utf-8"))
+            username = client.recv(1024).decode('utf-8')
+
+            clients.append(client)
+            usernames.append(username)
+
+            print(f"{username} esta conectado desde {str(address)}")
+
+            message = f"ChatBot: {username} se unio al chat!".encode("utf-8")
+            broadcast(message, client)
+            client.send("Conectado al servidor".encode("utf-8"))
+
+            thread = threading.Thread(target=handle_messages, args=(client,))
+            thread.start()
+
+    receive_connections()
+def cliente_socket_python():
+    import socket   
+    import threading
+    username = input("Ingresa tu nombre de usuario: ")
+    host = '127.0.0.1'
+    port = 55555
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((host, port))
+    def receive_messages():
+        while True:
+            try:
+                message = client.recv(1024).decode('utf-8')
+                if message == "@username":
+                    client.send(username.encode("utf-8"))
+                else:
+                    print(message)
+            except:
+                print("Houston! Tenemos Problemas")
+                client.close()
+                break
+    def write_messages():
+        while True:
+            tu=input('<<< Tu:')
+            if tu=='salir':
+                client.close()
+                break
+            else:
+                message = f"{username}: {tu}"
+                client.send(message.encode('utf-8'))
+    receive_thread = threading.Thread(target=receive_messages)
+    receive_thread.start()
+    write_thread = threading.Thread(target=write_messages)
+    write_thread.start()
+
+print(__name__)
+if 'main' in __name__:
     import threading
     pruebas={           
+        0:{'titulo':":",'f':print("")},
         1:{'titulo':"Lista de las variables del sistema",'f':VariablesDeEntorno},
         2:{'titulo':"os.path, Manipulaciones comunes de nombre de ruta:",'f':powerPath},
         3:{'titulo':"Prueba para calcular espacios en bits de numeros enteros y flotantes:",'f':pasarEnterosaBytes},
@@ -729,13 +898,17 @@ if __name__=='main':
         11:{'titulo':"generamos un plano en un PDF con los dos ejemplos 9 y 10",'f':planos},
         12:{'titulo':"time ,pruebas con la libreria time:",'f':timeConOsPath},
         13:{'titulo':"obtener ip publica y pribada:",'f':red},
-        15:{'titulo':"Decoradores y funciones y parametros",'f':funciones},
-        14:{'titulo':":",'f':print("")},
-        16:{'titulo':"salir",'f':exit}
+        14:{'titulo':"Decoradores y funciones y parametros",'f':funciones},
+        15:{'titulo':"Servidor Socket Python",'f':servidor_socket_python},
+        16:{'titulo':"Cliente Socket Python",'f':cliente_socket_python},
+        17:{'titulo':"Administrador Servidor HTTP Python",'f':administrador_servidor_HTTP_python},
+        18:{'titulo':"Servidor HTTP Python",'f':servidor_HTTP_python},
+        19:{'titulo':"salir",'f':exit}
         }
-    def f(n):
-        print('\n'+'\n'+'\n')
-        print("PRUEBA Inicianda..."+'\n')
+    def f(num):
+        print('######################################################################')
+        print("PRUEBA Inicianda: "+pruebas[num]['titulo'])
+        print('######################################################################'+'\n')
         hilo=threading.Thread(target=pruebas[num]['f'])
 
         #llamamos a la funcion
