@@ -711,81 +711,251 @@ def red():
     from mbarete import internet
     ip=internet()
     print('ip.lan_ip:',ip.lan_ip,'ip.wan_ip:',ip.wan_ip)
-def servidor_HTTP_python():
+def servidor_HTTP_python(LAN=1):
     import socket   
     import threading
-    host = '127.0.0.1'
+    if LAN:
+        s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('10.255.255.255',1))
+        ip=s.getsockname()
+        s.close()
+        host = ip[0]
+    else:
+        host = '127.0.0.1'
     port = 8080
+    format_encode='utf-8'
+    numerosMagicos={
+        'png':{'inicio':b'\x89PNG\r\n'},
+        'gif1':{'inicio':b'GIF89a'},
+        'gif2':{'inicio':b'GIF87a'},
+        'jpg1':{'inicio':b'\xff\xd8\xff\xdb'},
+        'jpg2':{'inicio':b'\xff\xd8\xff\xe0'},
+        'jpg':{'inicio':b'\xff\xd8\xff\xee'},
+        'webp':{'inicio':b'RIFF\xb0y\x00\x00WEBPVP8'},
+        'exe':{'inicio':b'MZ'},
+        'pdf':{'inicio':b'%PDF-'},
+        'OggS':{'inicio':b'OggS'},
+        'matroska':{'inicio':b'\x1a\x45\xdf\xa3'},
+        'script':{'inicio':b'#!'},
+        'sql':{'inicio':b'SQLite format 3'},
+        'faxx':{'inicio':b'FORM????FAXX'},
+        'zip1':{'inicio':b'\x50\x4b\x03\x04'},
+        'zip2':{'inicio':b'\x50\x4b\x05\x06'},
+        #'zip3':{'inicio':b'PK␅␆'},
+        #'rar':{'inicio':b'Rar!␚␇␀'},
+        #'windowMedia':{'inicio':b'0&²uŽfÏ␑¦Ù␀ª␀bÎl'},
+        #'Photoshop':{'inicio':b'8BPS'},
+        'wav':{'inicio':b'RIFF????WAVE'},
+        #'avi':{'inicio':b'RIFF????AVI␠'},
+        #'1mp3':{'inicio':b'ÿû'},
+        #'2mp3':{'inicio':b'ÿó'},
+        #'3mp3':{'inicio':b'ÿò'},
+        'mp3':{'inicio':b'ID3'},
+        'CD_DVD':{'inicio':b'CD001'},
+        'midi':{'inicio':b'MThd'},
+        #'MicrosoftOffice':{'inicio':b'ÐÏ␑à¡±␚á'},
+        #'debutante':{'inicio':b'!␊'},
+        'webpGoogle':{'inicio':b'RIFF????WEBP'},
+        'mp4':{'inicio':b'ftypisom'},
+        'blender':{'inicio':b'BLENDER'}
+        }
+        #'':{'inicio':b''},
+        #'':{'inicio':b''}
+    global status
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
     server.listen()
-    print(f"\nServidor HTTP corriendo en la direccion {host}:{port}")
+    print(f"\nServidor HTTP corriendo en la direccion 'http://{host}:{port}/'")
+    status=True
     clients = []
     usernames = []
-    def receive_connections():
-        while True:
-            client, address = server.accept()
-            request = client.recv(1024).decode('utf-8')
-            if ''!= request:
-                print(request)
-                string_list= request.split(' ')
-                if 'cerrar' in string_list:
-                    client.close()
-                    print('Servidor Apagado')
-                    break
-                method=string_list[0]
-                request_file=string_list[1]
-                #print('Client request',request_file)
-                myfile=request_file.split('?')[0]
-                myfile=myfile.lstrip('/')
-                if (myfile==''):
-                    myfile='media/index.html'
-                try:
-                    file=open(myfile,'rb')
-                    response=file.read()
-                    file.close()
-                    header='HTTP/1.1 200 OK\n'
-                    if myfile.endswith('.jpg'): 
-                        mimetype='image/jpg'
-                    elif myfile.endswith('.css'): 
-                        mimetype='text/css'
-                    if myfile.endswith('.pdf'): 
-                        mimetype='application/pdf'
-                    else: 
-                        mimetype='text/html'
-                    header += 'Content-Type: '+str(mimetype)+'\n\n'
-                except Exception as e:
-                    header='HTTP:/1.1 404 Not Found \n\n'
-                    response=f'<html><body>Error 404: File NOt Found<br> {e} </body></html>'.encode('utf-8')
-                html_response=header.encode('utf-8')
-                html_response+=response
-                client.send(html_response)
-            client.close()
+    def requestToDictionary(request,add={}):
+        """
+            b'POST /subir HTTP/1.1'
+            b'Host: 127.0.0.1:8080'
+            b'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+            b'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+            b'Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3'
+            b'Accept-Encoding: gzip, deflate'
+            b'Content-Type: multipart/form-data; boundary=---------------------------1262949829386019333586660223'
+            b'Content-Length: 225'
+            b'Origin: http://127.0.0.1:8080'
+            b'Connection: keep-alive'
+            b'Referer: http://127.0.0.1:8080/'
+            b'Upgrade-Insecure-Requests: 1'
+            b'Sec-Fetch-Dest: document'
+            b'Sec-Fetch-Mode: navigate'
+            b'Sec-Fetch-Site: same-origin'
+            b'Sec-Fetch-User: ?1'
+            b''
+            b'-----------------------------1262949829386019333586660223'
+            b'Content-Disposition: form-data; name="archivo"; filename=""'
+            b'Content-Type: application/octet-stream'
+            b''
+            b''
+            b'-----------------------------1262949829386019333586660223--'
+
+        """
+        if b'\r\n\r\n' in request:
+            post=[ request.split(b'\r\n\r\n')[-1]]
+        requ=[r.decode(format_encode) for r in request.split(b'\r\n')]
+        ret={}
+        for i in requ:
+            if ('POST' in i) or ('GET' in i):
+                ret['method']=i.split(' ')[0]
+                ret['sub_dominio']=i.split(' ')[1]
+                ret['http']=i.split(' ')[2]
+            if 'User-Agent:' in i:
+                ret['User_Agent']=i[len('User_Agent: '):-1]
+            if 'Content-Disposition:' in i:
+                ret['form_data']={
+                    'name':i.split('form-data; ')[-1].split(';')[0][len('name='):-1],
+                    'filename':i.split('form-data; ')[-1].split(';')[1][len(' filename="'):-1]
+                }
+            if 'Content-Type: multipart/form-data;' in i:
+                ret['boundary']=i.split('boundary=')[-1]
             
-            #thread = threading.Thread(target=handle_messages, args=(client,))
-            #thread.start()
+        if add:
+            for a in add:
+                ret[a]=add[a]
+        return ret
+    def respond(client, address):
+        responder=False
+        request=b''
+        ok=True
+        cabezera=True
+        porcion=1024*5
+        binario=None
+        info={}
+        while ok:
+            datos_Bytes=client.recv(porcion)
+            if (b'Android' in datos_Bytes) and (b'boundary' in datos_Bytes):
+                info=requestToDictionary(datos_Bytes)
+                datos_Bytes=client.recv(porcion)
+            if (porcion > len(datos_Bytes)) and (b'\r\n' in datos_Bytes):
+                ok = False
+            if cabezera:
+                if (b'\r\n\r\n' in datos_Bytes) or info:
+                    cabezera=False
+                    for b in numerosMagicos:
+                        if numerosMagicos[b]['inicio'] in datos_Bytes:
+                            binario=b
+                    if binario:
+                        request=datos_Bytes.split(numerosMagicos[binario]['inicio'])[0]
+                        info=requestToDictionary(request,add=info)
+                        subiendo = open(info['form_data']['filename'],"wb")
+                        subiendo.write(numerosMagicos[binario]['inicio']+datos_Bytes.split(numerosMagicos[binario]['inicio'])[-1])
+                        while binario:
+                            datos_Bytes=client.recv(porcion)
+                            if info['boundary'].encode(format_encode) in datos_Bytes:
+                                subiendo.write(datos_Bytes.split(info['boundary'].encode(format_encode))[0])
+                                request=info['boundary'].encode(format_encode)+datos_Bytes.split(info['boundary'].encode(format_encode))[-1]
+                                binario=False
+                            else:
+                                subiendo.write(datos_Bytes)
+                        subiendo.close()
+                        print("Subido:",info['form_data']['filename'])
+                    else:
+                        request+=datos_Bytes
+                else:
+                    request+=datos_Bytes
+            else:
+                request+=datos_Bytes
+        print('request:',request)
+        info = requestToDictionary(request,add=info)
+        if ''!= request:
+            print(info)
+            if '/cerrar' in  info['sub_dominio']:
+                print('Servidor Apagado')
+                client.close()
+                server.close()
+                status=False
+            elif ('GET' in info['method']):
+                if '/' ==  info['sub_dominio']:
+                    myfile = 'index.html'
+                elif 'pruebaGet' in info['sub_dominio']:
+                    myfile='index.html' 
+                elif 'video' in info['sub_dominio']:
+                    myfile='bibliografia/ONE_PUNCH_PARTE_9.mp4'
+                else:
+                    myfile='media/GET.html'
+                    file=open(myfile,'wb')
+                    file.write(request)
+                    file.close()
+            elif ('POST' in info['method']):
+                if 'pruebaPost' in info['sub_dominio']:
+                    myfile='media/pruebaPost.html'
+                    file=open(myfile,'wb')
+                    file.write(request)
+                    file.close()
+                else:
+                    myfile='media/POST.html'
+                    file=open(myfile,'wb')
+                    file.write(request)
+                    file.close()
 
+            try:
+                print('myfile',myfile)
+                header='HTTP/1.1 200 OK\n'
+                if myfile.endswith('.jpg'): 
+                    mimetype='image/jpg'
+                elif myfile.endswith('.css'): 
+                    mimetype='text/css'
+                elif myfile.endswith('.pdf'): 
+                    mimetype='application/pdf'
+                elif myfile.endswith('.mp4'): 
+                    mimetype='video/mp4'
+                else: 
+                    mimetype='text/html'
+                header += 'Content-Type: '+str(mimetype)+'\n\n'
+            except Exception as e:
+                header='HTTP:/1.1 404 Not Found \n\n'
+                response=f'<html><body>Error 404: File NOt Found<br> {e} </body></html>'.encode(format_encode)
+            header=header.encode(format_encode)
+            client.send(header)
+            file=open(myfile,'rb')
+            client.send(file.read())
+            file.close()
+        client.close()
+        print("fin de coneccion")
+            
+        
+    def receive_connections():
+        while status:
+            client, address = server.accept()
+            thread = threading.Thread(target=respond, args=(client, address))
+            thread.start()
+        print("fin de servicio")
     receive_connections()
-
-def administrador_servidor_HTTP_python():
+    server.close()
+def administrador_servidor_HTTP_python(LAN=1):
     import socket   
     import threading
-    host = '127.0.0.1'
+    if LAN:
+        s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('10.255.255.255',1))
+        ip=s.getsockname()
+        s.close()
+        host = ip[0]
+    else:
+        host = '127.0.0.1'
     port = 8080
+    format_encode='utf-8'
     def iniciar():
         thread = threading.Thread(target=servidor_HTTP_python)
         thread.start()
         servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(host, port)
         servidor.connect((host, port))
         return servidor
     def cerrar(servidor):
-        servidor.send('cerrar'.encode("utf-8"))
+        servidor.send('cerrar'.encode(format_encode))
         return servidor
     def recargar(servidor):
-        servidor.send('reiniciar'.encode("utf-8"))
+        servidor.send('reiniciar'.encode(format_encode))
         return servidor
     def info(servidor):
-        servidor.send('info'.encode("utf-8"))
+        servidor.send('info'.encode(format_encode))
         return servidor
     comandos={'cerrar':cerrar,'recargar':recargar,'info':info}
     servidor=iniciar()
@@ -797,10 +967,10 @@ def administrador_servidor_HTTP_python():
             cerrar(servidor)
             break
 
-def servidor_socket_python():
+def servidor_CHAT_socket_python():
     import socket   
     import threading
-    host = '127.0.0.1'
+    host = '192.168.43.134'
     port = 8080
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
@@ -829,7 +999,6 @@ def servidor_socket_python():
     def receive_connections():
         while True:
             client, address = server.accept()
-            print(client)
             client.send("@username".encode("utf-8"))
             username = client.recv(1024).decode('utf-8')
 
@@ -840,18 +1009,18 @@ def servidor_socket_python():
 
             message = f"ChatBot: {username} se unio al chat!".encode("utf-8")
             broadcast(message, client)
-            client.send("Conectado al servidor".encode("utf-8"))
-
+            
             thread = threading.Thread(target=handle_messages, args=(client,))
             thread.start()
 
     receive_connections()
-def cliente_socket_python():
+def cliente_CHAT_socket_python():
     import socket   
     import threading
-    username = input("Ingresa tu nombre de usuario: ")
-    host = '127.0.0.1'
-    port = 55555
+    #username = input("Ingresa tu nombre de usuario: ")
+    username = "Ingresa"
+    host = '192.168.43.134'
+    port = 8080
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host, port))
     def receive_messages():
@@ -861,7 +1030,7 @@ def cliente_socket_python():
                 if message == "@username":
                     client.send(username.encode("utf-8"))
                 else:
-                    print(message)
+                    print('\n'+message+'\n<<< Tu:',end='')
             except:
                 print("Houston! Tenemos Problemas")
                 client.close()
@@ -922,6 +1091,35 @@ def ahorcado(pwd=d['img']+"palabras.txt"):
             print("Te quedaste sin vidas JAJAJA. \nLa palabra Secreta es: "+secreto)
             break
 
+def manipularArchivos(pwd=d['img'],f='',ret=0):
+    bi=b''
+    if not f:
+        file=f
+    else:
+        file='subiendo'
+    binario=open(file,'rb')
+    for b in binario:
+        bi+=b
+    binario.close()
+    print(bi[:1024])
+    print(bi[-1024:])
+def capturarNumerosMagicos(pwd=d['img'],f='',ret=0):
+    bi={}
+    miDir=os.listdir(pwd)
+    muestra=100
+    contador=0
+    for file in miDir:
+        bi[contador]={'name':file,'inicio':b''}
+        binario=open(pwd+'\\'+file,'rb')
+        for inicio in binario:
+            bi[contador]['inicio']+=inicio
+        binario.close()
+        bi[contador]['fin']=bi[contador]['inicio'][-muestra:]
+        bi[contador]['inicio']=bi[contador]['inicio'][:muestra]
+        print('name',bi[contador]['name'])
+        print('inicio',bi[contador]['inicio'])
+        print('fin',bi[contador]['fin'])
+        contador+=1
 
 print(__name__)
 if 'main' in __name__:
@@ -942,12 +1140,14 @@ if 'main' in __name__:
         12:{'titulo':"time ,pruebas con la libreria time:",'f':timeConOsPath},
         13:{'titulo':"obtener ip publica y pribada:",'f':red},
         14:{'titulo':"Decoradores y funciones y parametros",'f':funciones},
-        15:{'titulo':"Servidor Socket Python",'f':servidor_socket_python},
-        16:{'titulo':"Cliente Socket Python",'f':cliente_socket_python},
+        15:{'titulo':"Servidor Socket Python",'f':servidor_CHAT_socket_python},
+        16:{'titulo':"Cliente Socket Python",'f':cliente_CHAT_socket_python},
         17:{'titulo':"Administrador Servidor HTTP Python",'f':administrador_servidor_HTTP_python},
         18:{'titulo':"Servidor HTTP Python",'f':servidor_HTTP_python},
         19:{'titulo':"Ahorcado",'f':ahorcado},
-        20:{'titulo':"salir",'f':exit}
+        20:{'titulo':"leerBinario",'f':manipularArchivos},
+        21:{'titulo':"Capturar numeros magicos:",'f':capturarNumerosMagicos},
+        22:{'titulo':"salir",'f':exit}
         }
     def f(num):
         print('######################################################################')
