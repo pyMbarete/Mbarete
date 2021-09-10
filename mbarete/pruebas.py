@@ -20,9 +20,7 @@ canvas_width = 1100
 canvas_height =1000
 print(datetime.datetime.now())
 def timeConOsPath():
-    import os
-    import sys
-    import time
+    import os, sys,time
     #time ,pruebas con la libreria time:
     print('time.gmtime(0):',time.gmtime(0)) #
     print('time.ctime(0):',time.ctime(0))
@@ -33,10 +31,12 @@ def timeConOsPath():
     print('time.ctime(os.path.getatime(sys.argv[0])):',time.ctime(os.path.getatime(sys.argv[0])),'Hora del ultimo acceso de path')
     print(r'strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime(os.path.getatime(sys.argv[0]))):',time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(os.path.getatime(sys.argv[0]))))
 def VariablesDeEntorno():
+    import os
     variables_de_entorno={env:os.environ[env] for env in os.environ}
     for variable in variables_de_entorno: 
         print("%s: %s" % (variable, variables_de_entorno[variable]))
 def powerPath(pwd=os.getcwd()):
+    import os
     """
         El módulo   os.path   siempre es el módulo adecuado para el sistema operativo en el cual Python está operando, 
         y por lo tanto es utilizable para rutas locales. Sin embargo, también puedes importar y utilizar los módulos 
@@ -105,7 +105,7 @@ def powerPath(pwd=os.getcwd()):
         for atributo in power:
             print('.'+atributo+': ',power[atributo])
 def pasarEnterosaBytes(desde=0,hasta=100,paso=1,numeroDeBytes=1):
-    #inicia codigo de la prueba
+    import sys
     for x in range(desde,hasta,paso):
         orden=sys.byteorder #Para indicar que queremos usar el ordenamiento propio de la plataforma
         orden='big'         #el byte mas significativo ocupa la primera posición en el vector
@@ -114,6 +114,9 @@ def pasarEnterosaBytes(desde=0,hasta=100,paso=1,numeroDeBytes=1):
         entero=int.from_bytes(bi, byteorder=orden) #convertimos el byte a entero 
         print(x,bin(x),x.bit_length(),bi,entero)
 def powerPDF():
+    import os,datetime
+    from reportlab.lib.units import mm, inch
+    from reportlab.pdfgen import canvas as pdf
     #inicia codigo de la prueba
     #Copyright ReportLab Europe Ltd. 2000-2017
     #see license.txt for license details
@@ -185,7 +188,14 @@ def powerPDF():
     if os.path.isfile(os.getcwd()+'\\'+txt['Nombre']+".pdf"):
         print("Abriendo el archivo "+'"'+txt['Nombre']+'.pdf"')
         os.system('"'+txt['Nombre']+'.pdf"')
-def showAlbum(pwd=d['img'],canvas_height=canvas_height,canvas_width=canvas_width,alto=200,ancho=500):
+def showAlbum():
+    from tkinter import Tk,Scrollbar,Canvas,Frame,Label
+    from PIL import Image, ImageTk
+    import os
+    global d,canvas_width,canvas_height
+    pwd=d['img']
+    alto=200
+    ancho=500
     print('Ubicacion:',pwd)
     #inicia codigo de la prueba
     lista=[img for img in os.listdir(pwd) if (((".jpg" in img[-5:]) and (not ".png" in img)) or ((".png" in img[-5:]) and (not ".jpg" in img)) or ((".jpeg" in img[-5:]) and (not ".png" in img)) )]
@@ -230,7 +240,12 @@ def showAlbum(pwd=d['img'],canvas_height=canvas_height,canvas_width=canvas_width
     c.config(scrollregion=c.bbox("all"))
     raiz.geometry(str(canvas_width)+"x"+str(canvas_height)+"+10+10")
     raiz.mainloop()    
-def editImagen(pwd=d['img'],file=[str(img) for img in os.listdir(d['img']) if (('.png' in img[-4:]) or ('.jpg' in img[-4:]))][0]):
+def editImagen():
+    from PIL import Image
+    import os
+    global d
+    pwd=d['img']
+    file=[str(img) for img in os.listdir(d['img']) if (('.png' in img[-4:]) or ('.jpg' in img[-4:]))][0]
     print('Ubicacion:',pwd) #la direccion dela carpeta de donde sacara la imagen
     print('Imagen: ',file) #la primera imagen que se encuentre en la ubicacion de pwd
     #inicia codigo de la prueba
@@ -241,8 +256,13 @@ def editImagen(pwd=d['img'],file=[str(img) for img in os.listdir(d['img']) if ((
     # o sea que despues de im.show() el programa sigue con la siguente linea del codigo
     im.close()
     time.sleep(10)#esperamos 10 segundos
-def ButtonConImagen(pwd=d['img'],file=[str(img) for img in os.listdir(d['img']) if (('.png' in img[-4:]) or ('.jpg' in img[-4:]))][0],canvas_width=canvas_width,canvas_height=canvas_height):
-    #inicia codigo de la prueba
+def ButtonConImagen():
+    from tkinter import Tk,PhotoImage,Button
+    from PIL import Image
+    import os
+    global canvas_width,canvas_height,d
+    pwd=d['img']
+    file=[str(img) for img in os.listdir(d['img']) if (('.png' in img[-4:]) or ('.jpg' in img[-4:]))][0]
     raiz = Tk() 
     raiz.geometry(str(canvas_width)+"x"+str(canvas_height))
     try:
@@ -253,14 +273,14 @@ def ButtonConImagen(pwd=d['img'],file=[str(img) for img in os.listdir(d['img']) 
     except IOError:
         print("No se puede convertir la imagen")
     #el archivo de origen puede ser JPG o PNG, lo importante es guardas la imagen en PNG
-    #redimensionamos la imagen con Image.resize((200,200)), los parametros son en pixeles
-    #luego al cargar la imagen y mostrala en pantalla con Tkinter ocupara las demenciones que le allamos dado
+    #redimensionamos la imagen con Image.resize((200,200)), los parametros alto y ancho en una tupla ejem:(alto,ancho), alto y ancho en pixeles
+    #luego, al cargar la imagen y mostrala en pantalla con Tkinter ocupara las dimensiones que le dimos con 'Image.resize'. GUardo la IMagen en un
     #archivo nuevo en formato PNG generado con Image.save("myNuevaImagen.png","png")
     imgOriginal = Image.open(pwd+file.replace('.jpg','.png')).resize((200,200)).save(pwd+'myNuevaImagen.png','png')
-    #cargamos el nuevo archivo "myNuevaImagen.png" creado en la linea anterior en una nuava variable
+    #cargamos el nuevo archivo "myNuevaImagen.png" creado en la linea anterior
     imgNueva =  PhotoImage(file=pwd+"myNuevaImagen.png")
     #creamos un widget Button y le pasamos la variable que contiene la nueva imagen con image=imgNueva 
-    #el parametro text="Botonio", quedara debajo de la imagen y alineada con la imagen, el boton ocupara el lugar de la imagen y tambien del Texto
+    #el parametro text="Botonio", quedara debajo de la imagen y alineada con la imagen, el boton ocupara el lugar de la imagen mas el Texto
     #si no le damos texto ,ejemplo: Button(raiz, image=imgNueva, bd=0, etc etc ...) el boton tomara las medidas de la imagen
     boton = Button(raiz, image=imgNueva,text=pwd+"myNuevaImagen.png", bd=0, compound="top",command=lambda:print("Click XD"))
     boton.place(x=0, y=50)
@@ -967,6 +987,20 @@ def administrador_servidor_HTTP_python(LAN=1):
             cerrar(servidor)
             break
 
+def DNS_server():
+    import socket   
+    import threading
+    host = '127.0.0.1'
+    port = 53
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((host, port))
+    while True:
+        data, address = server.recvfrom(512)
+        print(data)
+        if b'/cerrar' in data:
+            break
+
+
 def servidor_CHAT_socket_python():
     import socket   
     import threading
@@ -1147,7 +1181,8 @@ if 'main' in __name__:
         19:{'titulo':"Ahorcado",'f':ahorcado},
         20:{'titulo':"leerBinario",'f':manipularArchivos},
         21:{'titulo':"Capturar numeros magicos:",'f':capturarNumerosMagicos},
-        22:{'titulo':"salir",'f':exit}
+        22:{'titulo':"DNS SERVER",'f':DNS_server},
+        23:{'titulo':"salir",'f':exit}
         }
     def f(num):
         print('######################################################################')
