@@ -7,10 +7,6 @@
   </head>
   <body>
     <h1>Electro Zone</h1>
-    <h2> <a href="download/Black-PS2byVideogamesSCZ.pkg" download>Black - PS2 by Videogames SCZ.pkg</a></h2>
-    <h2> <a href="download/BIND9.16.20.x64.zip" download>BIND9</a></h2>
-    <h2> <a href="download/nmap-7.92-setup.exe" download>NMAP</a></h2>
-    <h2> <a href="download/Wireshark-win64-3.4.8.exe" download>WIRESHARK</a></h2>
     <h2> <a href="download/HAN_Toolbox_v0.6_Full.pkg" download>HAN_Toolbox_v0.6_Full.pkg</a></h2>
     <h2> <a href="/descargame.html" download >descargar</a></h2>
     <a href="/cerrar">Cerrar</a>
@@ -24,5 +20,20 @@
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   
+  <script>
+    const socket = io()
+
+
+    socket.emit('message', 'hello')
+
+    socket.on('message', function(msg) {
+      $('#messages').append('<li>' + msg + '</li>')
+    })
+
+    $('#send').on('click', function() {
+      socket.send($('#myMessage').val());
+      $('#myMessage').val('');
+    })
+  </script>
 </body>
 </html>

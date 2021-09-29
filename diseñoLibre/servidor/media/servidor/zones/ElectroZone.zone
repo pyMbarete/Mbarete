@@ -1,0 +1,24 @@
+{
+  "$origin":"ElectroZone.",
+  "$ttl":3600,
+  "soa":{
+      "mname":"ns1.ElectroZone.",
+      "rname":"admin.ElectroZone.",
+      "serial":"{time}",
+      "refresh":3600,
+      "retry":600,
+      "expire":604800,
+      "minimun":86400
+  },
+  "ns":[
+      {"host":"ns1.ElectroZone."},
+      {"host":"ns2.ElectroZone."}
+  ],
+  "a":[
+      {"name":"@","ttl":400,"value":"0.0.0.0"},
+      {"name":"@","ttl":400,"value":"255.255.255.255"},
+      {"name":"@","ttl":400,"value":"127.0.0.1"},
+      {"name":"@","ttl":400,"value":"192.168.100.21"},
+      {"name":"@","ttl":400,"value":"192.168.100.21"}
+  ]
+}
