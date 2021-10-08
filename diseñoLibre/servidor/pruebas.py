@@ -59,6 +59,21 @@ def arboldearchivos(pwd=''):
 canal={}
 def servidor_eventos(puerto=5050,host='0.0.0.0'):
     pass
+
+def reglas_para_el_sevidor(pwd,dnsPort=53,sshPort=22,httpPort=80,nombreServicio='Mbarete_Server',reset=0):
+    file="reglas.cmd"
+    reglaDNS=f'netsh advfirewall firewall add rule name=”Open Port {dnsPort} para DNS de {nombreServicio}” dir=in action=allow protocol=TCP localport={dnsPort}\n'
+    reglaSSH=f'netsh advfirewall firewall add rule name=”Open Port {sshPort} para SSH de {nombreServicio}” dir=in action=allow protocol=TCP localport={sshPort}\n'
+    reglaHTTP=f'netsh advfirewall firewall add rule name=”Open Port {httpPort} para HTTP de {nombreServicio}” dir=in action=allow protocol=TCP localport={httpPort}\n'
+    
+    if (not (file in os.listdir(pwd))) or reset:
+        regla=open(pwd+os.path.sep+file,"w")
+        regla.write(reglaDNS)
+        regla.write(reglaSSH)
+        regla.write(reglaHTTP)
+        regla.close()
+
+fileZillaPort=14148
 def DNS_server(pwd,archivo_zone='mbaretePro.zone',dominio_zone="web.mbarete.",ipv4_zone='127.0.0.1',port_zone=80):
     """
     if LAN:
@@ -235,64 +250,56 @@ def DNS_server(pwd,archivo_zone='mbaretePro.zone',dominio_zone="web.mbarete.",ip
       
 #DNS_server("media"+os.path.sep+"servidor"+os.path.sep+'zones',archivo_zone='mbaretePro.zone',dominio_zone="ElectroZone",ipv4_zone='192.168.100.21',port_zone='80')
 
-def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"servidor",dns=1):
-    servidor_archivos=arboldearchivos(pwd)
-    print(servidor_archivos)
+def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"servidor",dns=1):
+    global status,recieve,servidor_archivos
     host = '0.0.0.0'
     port = 80
+    format_encode='utf-8'
+    status=True
+    clients = []
+    usernames = []
+    pwd_js=pwd+'\\js\\'
+    pwd_upload=pwd+'\\download\\'
+    pwd_download=pwd+'\\'
     s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('10.255.255.255',1))
     ip=s.getsockname()
     s.close()
     host_DNS = ip[0]
-    format_encode='utf-8'
+    reglas_para_el_sevidor(pwd,dnsPort=53,sshPort=22,httpPort=80,nombreServicio='Mbarete_Server',reset=0)
     #servidor_DNS = threading.Thread(target=DNS_server, args=(pwd+os.path.sep+'zones',), kwargs={'archivo_zone':'ElectroZone.zone','dominio_zone':dominio,'ipv4_zone':host_DNS,'port_zone':port})
     #servidor_DNS.start()
-    numerosMagicos={
-        'png':{'inicio':b'\x89PNG\r\n'},
-        'gif1':{'inicio':b'GIF89a'},
-        'gif2':{'inicio':b'GIF87a'},
-        'jpg1':{'inicio':b'\xff\xd8\xff\xdb'},
-        'jpg2':{'inicio':b'\xff\xd8\xff\xe0'},
-        'jpg':{'inicio':b'\xff\xd8\xff\xee'},
-        'webp':{'inicio':b'RIFF\xb0y\x00\x00WEBPVP8'},
-        'exe':{'inicio':b'MZ'},
-        'pdf':{'inicio':b'%PDF-'},
-        'OggS':{'inicio':b'OggS'},
-        'matroska':{'inicio':b'\x1a\x45\xdf\xa3'},
-        'script':{'inicio':b'#!'},
-        'sql':{'inicio':b'SQLite format 3'},
-        'faxx':{'inicio':b'FORM????FAXX'},
-        'zip1':{'inicio':b'\x50\x4b\x03\x04'},
-        'zip2':{'inicio':b'\x50\x4b\x05\x06'},
-        #'zip3':{'inicio':b'PK␅␆'},
-        #'rar':{'inicio':b'Rar!␚␇␀'},
-        #'windowMedia':{'inicio':b'0&²uŽfÏ␑¦Ù␀ª␀bÎl'},
-        #'Photoshop':{'inicio':b'8BPS'},
-        'wav':{'inicio':b'RIFF????WAVE'},
-        #'avi':{'inicio':b'RIFF????AVI␠'},
-        #'1mp3':{'inicio':b'ÿû'},
-        #'2mp3':{'inicio':b'ÿó'},
-        #'3mp3':{'inicio':b'ÿò'},
-        'mp3':{'inicio':b'ID3'},
-        'CD_DVD':{'inicio':b'CD001'},
-        'midi':{'inicio':b'MThd'},
-        #'MicrosoftOffice':{'inicio':b'ÐÏ␑à¡±␚á'},
-        #'debutante':{'inicio':b'!␊'},
-        'webpGoogle':{'inicio':b'RIFF????WEBP'},
-        'mp4':{'inicio':b'ftypisom'},
-        'blender':{'inicio':b'BLENDER'}
-        }
-        #'':{'inicio':b''},
-        #'':{'inicio':b''}
-    global status,recieve
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
     server.listen()
     print(f"\nServidor HTTP corriendo en la direccion 'http://{host_DNS}:{port}/'")
-    status=True
-    clients = []
-    usernames = []
+    def download():
+        index=[{'name':file,'size':os.path.getsize(pwd_upload+file),'fecha':os.path.getmtime(pwd_upload+file),'pwd':str(pwd_upload+file).replace(' ','%20').replace(os.path.sep,'/')} for file in os.listdir(pwd_upload)]
+        #creando un .js que contiene un objeto array con todos los elementos del directorio
+        javascript=open(pwd_js+'files.download.js',"w")
+        javascript.write('var files = new Array();'+'\n')
+        javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
+        javascript.write('  this.name = name;'+'\n')
+        javascript.write('  this.pwd = pwd;'+'\n')
+        javascript.write('  this.size = size;'+'\n')
+        javascript.write('  this.fecha = fecha;'+'\n')
+        javascript.write('  this.id = id;'+'\n')
+        javascript.write('  return this;'+'\n')
+        javascript.write('  }'+'\n')
+        errorWrite={}
+        mayor=0
+        for f in range(len(index)):
+            try:
+                javascript.write('files['+str(f)+'] = new registrar("'+str(index[f]['name'])+'","'+str(index[f]['pwd'].replace(' ','%20').replace(os.path.sep,'/'))+'",'+str(index[f]['size'])+','+str(index[f]['fecha'])+','+str(f)+'); \n')
+            except Exception as e:
+                errorWrite[f]={'pwd':index[f]['pwd']}
+                raise e
+        javascript.close()
+        return arboldearchivos(pwd)
+
+    servidor_archivos=download()
+
+    print(servidor_archivos)
     def requestToDictionary(request,add={}):
         """
             b'POST /subir HTTP/1.1'
@@ -344,6 +351,7 @@ def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"se
                 ret[a]=add[a]
         return ret
     def respond(client, address):
+        global servidor_archivos
         responder=False
         request=b''
         ok=True
@@ -358,33 +366,54 @@ def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"se
                 datos_Bytes=client.recv(porcion)
             if (porcion > len(datos_Bytes)) and (b'\r\n' in datos_Bytes):
                 ok = False
+            if (not datos_Bytes):
+                ok = False
             if cabezera:
                 if (b'\r\n\r\n' in datos_Bytes) or info:
                     cabezera=False
-                    for b in numerosMagicos:
-                        if numerosMagicos[b]['inicio'] in datos_Bytes:
-                            binario=b
+                    if 'boundary' in info:
+                        if info['boundary'].encode(format_encode) in datos_Bytes.split(b'\r\n'):
+                            binario=datos_Bytes.split(info['boundary'].encode(format_encode)+b'\r\n')[-1].split(b'\r\n')[-1]
+                    elif (b'boundary=----' in datos_Bytes) and (b'\r\n\r\n' in datos_Bytes):
+                        print('############## 2 BIUNDARY',datos_Bytes)
+                        print(datos_Bytes.split(b'\r\n\r\n')[0])
+                        info=requestToDictionary(datos_Bytes.split(b'\r\n\r\n')[0])
+                        print(info['boundary'])
+                        print(datos_Bytes.split(b'--'+info['boundary'].encode(format_encode)+b'\r\n')[-1].split(b'\r\n\r\n'))
+                        boundary=b'--'+info['boundary'].encode(format_encode)+b'\r\n'
+                        info=requestToDictionary(datos_Bytes.split(boundary)[-1].split(b'\r\n\r\n')[0],add=info)
+                        binario=datos_Bytes.split(datos_Bytes.split(boundary)[-1].split(b'\r\n\r\n')[0]+b'\r\n\r\n')[-1]
                     if binario:
-                        request=datos_Bytes.split(numerosMagicos[binario]['inicio'])[0]
-                        info=requestToDictionary(request,add=info)
-                        subiendo = open(info['form_data']['filename'],"wb")
-                        subiendo.write(numerosMagicos[binario]['inicio']+datos_Bytes.split(numerosMagicos[binario]['inicio'])[-1])
-                        while binario:
-                            datos_Bytes=client.recv(porcion)
-                            if info['boundary'].encode(format_encode) in datos_Bytes:
-                                subiendo.write(datos_Bytes.split(info['boundary'].encode(format_encode))[0])
-                                request=info['boundary'].encode(format_encode)+datos_Bytes.split(info['boundary'].encode(format_encode))[-1]
-                                binario=False
-                            else:
-                                subiendo.write(datos_Bytes)
+                        boundary=b'\r\n--'+info['boundary'].encode(format_encode)+b'--\r\n'
+                        print(binario)
+                        #request=datos_Bytes.split(binario)[0]
+                        #info=requestToDictionary(request,add=info)
+                        if boundary in datos_Bytes:
+                            subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
+                            subiendo.write(binario.split(boundary)[0])
+                            request+=boundary+binario.split(boundary)[-1]
+                        else:
+                            subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
+                            subiendo.write(binario)
+                            #request+=boundary+binario.split(boundary)[-1]
+                            while binario:
+                                datos_Bytes=client.recv(porcion)
+                                if info['boundary'].encode(format_encode) in datos_Bytes:
+                                    subiendo.write(datos_Bytes.split(b'\r\n'+info['boundary'].encode(format_encode)+b'--\r\n')[0])
+                                    request=info['boundary'].encode(format_encode)+datos_Bytes.split(info['boundary'].encode(format_encode))[-1]
+                                    binario=False
+                                else:
+                                    subiendo.write(datos_Bytes)
                         subiendo.close()
                         print("Subido:",info['form_data']['filename'])
+                        servidor_archivos=download()
                     else:
                         request+=datos_Bytes
                 else:
                     request+=datos_Bytes
             else:
                 request+=datos_Bytes
+            print(ok)
         print('request:',request)
         info = requestToDictionary(request,add=info)
         if ''!= request:
@@ -401,7 +430,7 @@ def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"se
                     myfile = pwd+os.path.sep+'index.html'
                 elif pwd+info['sub_dominio'].replace('/',os.path.sep) in servidor_archivos:
                     myfile=pwd+info['sub_dominio'].replace('/',os.path.sep)
-                    print('method GET:',myfile)
+                    print('method GET full:',myfile)
                 elif '/socket.io/?' in info['sub_dominio']:
                     io={}
                     for k in info['sub_dominio'].replace('/socket.io/?','').split('&'):
@@ -468,6 +497,8 @@ def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"se
                     mimetype='Content-Type: image/jpg'
                 elif myfile.endswith('.css'): 
                     mimetype='Content-Type: text/css'
+                elif myfile.endswith('.js'): 
+                    mimetype='Content-Type: text/javascript'
                 elif myfile.endswith('.pdf'): 
                     mimetype='Content-Type: application/pdf'
                 elif myfile.endswith('.mp4'): 
@@ -534,6 +565,7 @@ def servidor_HTTP_python(dominio="ElectroZone.local",pwd="media"+os.path.sep+"se
             thread = threading.Thread(target=respond, args=(client, address))
             thread.start()
         print("fin de servicio")
+    
     receive_connections()
     server.close()
 

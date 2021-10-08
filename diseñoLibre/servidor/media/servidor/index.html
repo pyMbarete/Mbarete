@@ -6,23 +6,33 @@
     <link rel="stylesheet" href="css/main.css"></link>
   </head>
   <body>
-    <h1>Electro Zone</h1>
-    <h2> <a href="download/Black-PS2byVideogamesSCZ.pkg" download>Black - PS2 by Videogames SCZ.pkg</a></h2>
-    <h2> <a href="download/BIND9.16.20.x64.zip" download>BIND9</a></h2>
-    <h2> <a href="download/nmap-7.92-setup.exe" download>NMAP</a></h2>
-    <h2> <a href="download/Wireshark-win64-3.4.8.exe" download>WIRESHARK</a></h2>
-    <h2> <a href="download/HAN_Toolbox_v0.6_Full.pkg" download>HAN_Toolbox_v0.6_Full.pkg</a></h2>
-    <h2> <a href="/descargame.html" download >descargar</a></h2>
     <a href="/cerrar">Cerrar</a>
+    <h1>Electro Zone</h1>
+    <script type="text/javascript" src="js/files.download.js"></script>
+    <link rel="stylesheet" type="text/css" href="">
+    <SCRIPT LANGUAGE="JavaScript">
+      var ret = -1;
+      var fleng = files.length;
+      var text = '<ul>';
+      for (i=0; i< fleng; i++){
+        text += '<h2> <a href="'+files[i].pwd+'" download>'+files[i].name+'</a></h2>'
+        text += "<br>"  
+        }
+      text += '</ul>';
+      document.write(text);
+    </SCRIPT>
+    <form method="post" action="subir" enctype="multipart/form-data">
+    <input type="file" name="archivo">
+    <h1><button>Subir</button></h1>
+    </form><br>
     <ul id="messages"></ul>
     <input id="myMessage" type="text">
     <button id="send">Send</button>
-
     <script
       src="http://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   
 </body>
 </html>
