@@ -258,6 +258,9 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
     status=True
     clients = []
     usernames = []
+    action_download='/download/'
+    action_upload='/subir/'
+    action_borrar='/borrar/'
     pwd_js=pwd+'\\js\\'
     pwd_upload=pwd+'\\download\\'
     pwd_download=pwd+'\\'
@@ -360,60 +363,65 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
         binario=None
         info={}
         while ok:
-            datos_Bytes=client.recv(porcion)
+            try:
+                datos_Bytes=client.recv(porcion)
+                print(datos_Bytes)
+            except:
+                ok=False
             if (b'Android' in datos_Bytes) and (b'boundary' in datos_Bytes):
+                request+=datos_Bytes
                 info=requestToDictionary(datos_Bytes)
                 datos_Bytes=client.recv(porcion)
             if (porcion > len(datos_Bytes)) and (b'\r\n' in datos_Bytes):
                 ok = False
-            if (not datos_Bytes):
+            if b'' == datos_Bytes:
                 ok = False
             if cabezera:
-                if (b'\r\n\r\n' in datos_Bytes) or info:
+                if ((b'\r\n\r\n' in datos_Bytes) or info):
                     cabezera=False
                     if 'boundary' in info:
-                        if info['boundary'].encode(format_encode) in datos_Bytes.split(b'\r\n'):
-                            binario=datos_Bytes.split(info['boundary'].encode(format_encode)+b'\r\n')[-1].split(b'\r\n')[-1]
+                        boundary=b'--'+info['boundary'].encode(format_encode)
+                        if boundary in datos_Bytes.split(b'\r\n'):
+                            binario=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n')[2]
                     elif (b'boundary=----' in datos_Bytes) and (b'\r\n\r\n' in datos_Bytes):
                         print('############## 2 BIUNDARY',datos_Bytes)
-                        print(datos_Bytes.split(b'\r\n\r\n')[0])
+                        request+=datos_Bytes.split(b'\r\n\r\n')[0]+b'\r\n\r\n'
                         info=requestToDictionary(datos_Bytes.split(b'\r\n\r\n')[0])
-                        print(info['boundary'])
-                        print(datos_Bytes.split(b'--'+info['boundary'].encode(format_encode)+b'\r\n')[-1].split(b'\r\n\r\n'))
-                        boundary=b'--'+info['boundary'].encode(format_encode)+b'\r\n'
-                        info=requestToDictionary(datos_Bytes.split(boundary)[-1].split(b'\r\n\r\n')[0],add=info)
-                        binario=datos_Bytes.split(datos_Bytes.split(boundary)[-1].split(b'\r\n\r\n')[0]+b'\r\n\r\n')[-1]
+                        boundary=b'--'+info['boundary'].encode(format_encode)
+                        form_data=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n\r\n')[0]
+                        print(form_data)
+                        request+= boundary+b'\r\n'+form_data
+                        info=requestToDictionary(form_data,add=info)
+                        binario=datos_Bytes.split(form_data+b'\r\n\r\n')[-1]
                     if binario:
-                        boundary=b'\r\n--'+info['boundary'].encode(format_encode)+b'--\r\n'
-                        print(binario)
+                        boundary+=b'--\r\n'
                         #request=datos_Bytes.split(binario)[0]
                         #info=requestToDictionary(request,add=info)
+                        subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
                         if boundary in datos_Bytes:
-                            subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
                             subiendo.write(binario.split(boundary)[0])
                             request+=boundary+binario.split(boundary)[-1]
                         else:
-                            subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
                             subiendo.write(binario)
-                            #request+=boundary+binario.split(boundary)[-1]
                             while binario:
                                 datos_Bytes=client.recv(porcion)
-                                if info['boundary'].encode(format_encode) in datos_Bytes:
-                                    subiendo.write(datos_Bytes.split(b'\r\n'+info['boundary'].encode(format_encode)+b'--\r\n')[0])
-                                    request=info['boundary'].encode(format_encode)+datos_Bytes.split(info['boundary'].encode(format_encode))[-1]
-                                    binario=False
+                                if boundary in datos_Bytes:
+                                    subiendo.write(datos_Bytes.split(boundary)[0])
+                                    request+=boundary+datos_Bytes.split(boundary)[-1]
+                                    binario=None
                                 else:
                                     subiendo.write(datos_Bytes)
                         subiendo.close()
                         print("Subido:",info['form_data']['filename'])
                         servidor_archivos=download()
+                        ok=False
                     else:
                         request+=datos_Bytes
                 else:
                     request+=datos_Bytes
             else:
                 request+=datos_Bytes
-            print(ok)
+            print('ok:',ok)
         print('request:',request)
         info = requestToDictionary(request,add=info)
         if ''!= request:
@@ -428,8 +436,8 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
             elif ('GET' in info['method']):
                 if '/' ==  info['sub_dominio']:
                     myfile = pwd+os.path.sep+'index.html'
-                elif pwd+info['sub_dominio'].replace('/',os.path.sep) in servidor_archivos:
-                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep)
+                elif pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ') in servidor_archivos:
+                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ')
                     print('method GET full:',myfile)
                 elif '/socket.io/?' in info['sub_dominio']:
                     io={}
@@ -472,10 +480,10 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
                     file.write(request)
                     file.close()
             elif ('POST' in info['method']):
-                if 'pruebaPost' in info['sub_dominio']:
-                    myfile=pwd+os.path.sep+'pruebaPost.html'
+                if '/subir' in info['sub_dominio']:
+                    myfile=pwd+os.path.sep+'subido.html'
                     file=open(myfile,'wb')
-                    file.write(b'<h1>Prueba Post </h1>')
+                    file.write(b'<h1>Archivo Subido con Exito </h1>')
                     file.write(request)
                     file.close()
                 elif '/socket.io/?' in info['sub_dominio']:
@@ -504,6 +512,7 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
                 elif myfile.endswith('.mp4'): 
                     mimetype='Content-Type: video/mp4'
                 elif '/download/' in info['sub_dominio'][:len('/download/')]:
+                    myfile=info['sub_dominio'][len('/download/'):].replace('/',os.path.sep).replace('%20',' ')
                     print(myfile,os.path.getsize(myfile),datetime.datetime.now()) 
                     """
                     Server: MBARETE_PYTHON
@@ -523,7 +532,7 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
                     mimetype='Accept-Ranges: bytes\n'
                     mimetype+='Content-transfer-encoding: binary\n'
                     mimetype+='Content-Length: '+str(os.path.getsize(myfile))+'\n'#3942042048
-                    #mimetype+='Cache-Control: no-store\n'
+                    mimetype+='Cache-Control: no-store\n'
                     #mimetype+='X-Robots-Tag:noindex, nofollow\n'
                     mimetype+='Content-Disposition: attachment; filename="'+info['sub_dominio'].split('/')[-1]+'"\n'
                     mimetype+='Content-Type: application/octet-stream\n'

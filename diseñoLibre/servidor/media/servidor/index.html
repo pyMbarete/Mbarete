@@ -15,7 +15,7 @@
       var fleng = files.length;
       var text = '<ul>';
       for (i=0; i< fleng; i++){
-        text += '<h2> <a href="'+files[i].pwd+'" download>'+files[i].name+'</a></h2>'
+        text += '<h2> <a href="/download/'+files[i].pwd+'" download>'+files[i].name+'</a></h2>'
         text += "<br>"  
         }
       text += '</ul>';
@@ -33,6 +33,5 @@
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-  
 </body>
 </html>

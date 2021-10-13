@@ -2,11 +2,106 @@ import os
 import math
 global d,canvas_width,canvas_height
 d={
-    'img':os.getcwd()+'\\'+'media'+'\\'+"img"+'\\',
+    'img':os.getcwd()+'\\'+'media'+'\\'+"img_recursos"+'\\',
+    'i':os.getcwd()+'\\'+'media'+'\\'+"img_trabajo"+'\\',
     'audio':os.getcwd()+'\\'+"audio"+'\\'
     }
 canvas_width = 1100
 canvas_height =int((canvas_width/5)*3)
+def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
+    if muestreo:
+        global muestra
+        muestra={x:0 for x in range(256)}
+    from PIL import Image
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import time
+    inicio_t=time.time()
+    n=1
+    factor_de_aclaracion=1.0
+    i = 1
+    j = 1
+    valor_permitido=90
+    im = Image.open(pwd_img)#Lea las fotos internas del sistema
+    print (im.size)# Tamaño de imagen impresa
+    img = im.convert ("L")
+    width = img.size[0]#Longitud
+    height = img.size[1]# Ancho
+    total=width*height
+    #aclarado = img.point(lambda x: pixel(x)*factor_de_aclaracion)  #'aclarado' contiene la imagen aligerada
+    #print(muestra)
+    linea_0=[img.getpixel((0,j))for j in range(0,height)]
+    linea_1=[img.getpixel((1,j))for j in range(0,height)]
+    linea_2=[img.getpixel((2,j))for j in range(0,height)]
+    linea_3=[img.getpixel((3,j))for j in range(0,height)]
+    linea_4=[img.getpixel((4,j))for j in range(0,height)]
+    for i in range(2,width-2):# Iterar a través de puntos de todas las longitudes
+        for j in range(2,height-2):# Iterar a través de puntos de todos los anchos
+            #p=img.getpixel((i,j))
+            #print(((i*width)+j)/total)
+            #data = (img.getpixel((i,j)))# Imprima todos los puntos de la imagen
+            #print (data)# Imprima el valor del color RGBA de cada píxel (r, g, b, alfa)
+            #print (data[0])# Imprimir valor de RGBA
+            #matriz
+            m=[
+                [linea_0[j-1],linea_0[j],linea_0[j+1]],
+                [linea_1[j-2],linea_1[j-1],linea_1[j],linea_1[j+1],linea_1[j+2]],
+                [linea_2[j-2],linea_2[j-1],linea_2[j],linea_2[j+1],linea_2[j+2]],
+                [linea_3[j-2],linea_3[j-1],linea_3[j],linea_3[j+1],linea_3[j+2]],
+                [linea_4[j-1],linea_4[j],linea_4[j+1]]
+            ]
+            #promedio
+            p=sum([sum(l) for l in m])/21.0
+            #varianza
+            v=sum([sum([abs(abs(x)-p) for x in l]) for l in m])/21.0
+            #Color mas CLARO
+            #mayor=max([max(l) for l in m])
+            #Color mas OSCURO
+            menor=min([min(l) for l in m])
+            #valorIdeal
+            Ideal=p-v*2
+            if (menor<=valor_permitido):
+                if muestreo:
+                    muestra[j]+=1
+            elif valor_permitido>=Ideal:
+                #print(Ideal)
+                if muestreo:
+                    muestra[j]+=1
+            else:
+                im.putpixel((i,j),(255,255,255,255))# El color de estos píxeles se cambia a blanco
+        print(i/width)
+        if i<height:
+            linea_0=linea_1
+            linea_1=linea_2
+            linea_2=linea_3
+            linea_3=linea_4
+            linea_4=[img.getpixel((i+2,j)) for j in range(0,height)]
+
+    # img = img.convert("RGB")# Forzar la imagen a RGB
+    archivo_salida=pwd_img.split('\\')[-1].replace(".jpg",'').replace(".png",'')+'_aclarado_avanzado_'+str(valor_permitido)+'_.png'
+    print("Guardando:",archivo_salida)
+    im.save(archivo_salida,'png')#Guarde la imagen después de modificar los píxeles
+
+    print(time.time()-inicio_t)
+    if muestreo:
+        print(muestra)
+        #Definimos una lista con paises como string
+        color = [k for k in muestra]
+        #Definimos una lista con ventas como entero
+        porciento = [(muestra[k]/total)*100.0 for k in muestra]
+        fig, ax = plt.subplots()
+        #Colocamos una etiqueta en el eje Y
+        ax.set_ylabel('Porciento')
+        #Colocamos una etiqueta en el eje X
+        ax.set_xlabel('Porcentaje de Pexiles por cada Color')
+        ax.set_title(pwd_img)
+        #Creamos la grafica de barras utilizando 'paises' como eje X y 'ventas' como eje y.
+        plt.bar(color, porciento)
+        plt.savefig(pwd_img.split('\\')[-1].replace(".jpg",'').replace(".png",'')+'muestreo_barras_simple.png')
+        #Finalmente mostramos la grafica con el metodo show()
+        plt.show()
+aclarado_inteligente()
 def actualizarCodigo(pwd,file):
     import os
     ignorar=['temporal.png','fondo.png']
@@ -88,7 +183,7 @@ def showAlbum():
         raiz.update()
         c.config(scrollregion=c.bbox("all"))
         raiz.geometry(str(canvas_width)+"x"+str(canvas_height)+"+10+10")
-    pwd=d['img']
+    pwd=d['img_recursos']
     alto=200
     ancho=200
     rotar=10
@@ -133,6 +228,46 @@ def showAlbum():
     print("Mostrando las imagenes con tkinter y PIL...")
     raiz.focus_force()
     raiz.mainloop()    
-showAlbum()
-
+#showAlbum()
+#100-240 1.4a, 50-60hz
+#19.5 2.31 45w
 #prepararPNG(d['img'],"convertRGBA_FULL_53.53_sexy.png")
+def aclarar():
+    """ Como aclarar una imagen en Python
+        #https://www.ubiquitour.com/5ZdEnDbW/
+    
+        October 27, 2020
+
+        El lenguaje de programación Python puede manipular una gran variedad de tipos de datos, incluyendo texto e imágenes. 
+        La biblioteca de imágenes de Python, o PIL, contiene una serie de métodos para la apertura y realizar operaciones en archivos de imagen. 
+        Con el PIL y sus métodos de apoyo, particularmente el método de "punto", puede aclarar u oscurecer imágenes y así aclarar o desvanecer colores de cualquier imagen.
+
+        Instrucciones
+        1 Descargar e instalar la última versión de biblioteca de imágenes de Python (PIL) de la página web Pythonware.com.
+        2 Abrir un archivo de imagen y guardar en un objeto de imagen mediante código como el siguiente:
+            #Reemplazar "/ home/pic.jpg" con la ruta y el nombre de la imagen que desea aclarar.
+            form PIL import Image
+            im = Image.open('/home/pic.jpg')
+
+        3 Aclarar la imagen llamando al metodo del "point", que se pueden realizar una operacion sobre todos los pixeles de la imagen. 
+            El metodo de "point" toma una funcion como argumento, en que este ejemplo, usaras una funcion lambda que cada valor de pixel se multiplica por 1.9. 
+            Multiplicar el pixel por un numero mayor que 1 para aumentar la intensidad o menos de 1 para oscurecerlo:
+                cambiado = im.point (lambda x: x * 1.9) / / 'cambiado' contiene la imagen aligerada
+    """
+    def pixel(x,factor_de_aclaracion):
+        print(x)
+        return x * factor_de_aclaracion
+    from PIL import Image, ImageTk
+    pwd=d['i']
+    factor_de_aclaracion=1.5
+    lista=[img for img in os.listdir(pwd) if (((".jpg" in img[-5:]) and (not ".png" in img)) or ((".png" in img[-5:]) and (not ".jpg" in img)) or ((".jpeg" in img[-5:]) and (not ".png" in img)) )]    
+    for i in lista:
+        im = Image.open(pwd+i)
+        ByN = im.convert ("L")
+        aclarado = ByN.point(lambda x: pixel(x,factor_de_aclaracion))  #'aclarado' contiene la imagen aligerada
+        aclarado.save(pwd+'aclarado_'+str(factor_de_aclaracion)+'_'+i.replace('.jpg','.png').replace('.jpeg','.png'),'png')
+        #pasando tla imagen a blanco y negro
+        #ByN = im.convert ("L")
+        #ByN.save(pwd+'ByN_'+i.replace('.jpg','.png').replace('.jpeg','.png'),'png')
+    print("Aclaracion Finalizada")
+#aclarar()
