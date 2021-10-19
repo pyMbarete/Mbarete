@@ -8,6 +8,26 @@ d={
     }
 canvas_width = 1100
 canvas_height =int((canvas_width/5)*3)
+def agrupacion_maxima(img,zancada):
+    ancho=img.size[0]
+    alto=img.size[1]
+    ret=img.resize((int(ancho//zancada),int(alto//zancada)))
+    for x in range(1,ancho,zancada):
+        for y in range(1,alto,zancada):
+            maximo=max([max([img.getpixel((x+i,y+j)) for i in range(-1,2)]) for j in range(-1,2)])
+            ret.putpixel((x//zancada,y//zancada),(maximo))
+    return ret
+def filtro(img,nucleo):
+    ancho=img.size[0]
+    alto=img.size[1]
+    ret=img.convert ("L")
+    img=ret
+    for x in range(1,ancho-1):
+        for y in range(1,alto-1):
+            maximo=sum([sum([img.getpixel((x+i,y+j))*nucleo[i+1][j+1] for i in range(-1,2)]) for j in range(-1,2)])
+            ret.putpixel((x,y),(maximo))
+    return ret
+
 def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
     if muestreo:
         global muestra
@@ -16,13 +36,14 @@ def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
-    import time
+    import time,datetime
     inicio_t=time.time()
     n=1
     factor_de_aclaracion=1.0
     i = 1
     j = 1
     valor_permitido=90
+    valor_limite=150
     im = Image.open(pwd_img)#Lea las fotos internas del sistema
     print (im.size)# Tamaño de imagen impresa
     img = im.convert ("L")
@@ -51,26 +72,32 @@ def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
                 [linea_3[j-2],linea_3[j-1],linea_3[j],linea_3[j+1],linea_3[j+2]],
                 [linea_4[j-1],linea_4[j],linea_4[j+1]]
             ]
-            #promedio
-            p=sum([sum(l) for l in m])/21.0
-            #varianza
-            v=sum([sum([abs(abs(x)-p) for x in l]) for l in m])/21.0
             #Color mas CLARO
             #mayor=max([max(l) for l in m])
             #Color mas OSCURO
             menor=min([min(l) for l in m])
-            #valorIdeal
-            Ideal=p-v*2
             if (menor<=valor_permitido):
                 if muestreo:
                     muestra[j]+=1
-            elif valor_permitido>=Ideal:
-                #print(Ideal)
-                if muestreo:
-                    muestra[j]+=1
-            else:
+            elif m[2][2]>=valor_limite:
                 im.putpixel((i,j),(255,255,255,255))# El color de estos píxeles se cambia a blanco
-        print(i/width)
+            else:
+                #promedio
+                p=sum([sum(l) for l in m])/21.0
+                #varianza
+                v=sum([sum([abs(x-p) for x in l]) for l in m])/21.0
+                if valor_permitido>=p-v*2:
+                    #print(Ideal)
+                    if muestreo:
+                        muestra[j]+=1
+                    #if m[2][2]<=p-v:
+                    #    O=im.getpixel((i,j))
+                    #    print(O)
+                    #    im.putpixel((i,j),(int(O[0]*0.8),int(O[1]*0.8),int(O[2]*0.8),255))
+                else:
+                    im.putpixel((i,j),(255,255,255,255))# El color de estos píxeles se cambia a blanco
+                
+        print(i/width,end='\r')
         if i<height:
             linea_0=linea_1
             linea_1=linea_2
@@ -101,7 +128,154 @@ def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
         plt.savefig(pwd_img.split('\\')[-1].replace(".jpg",'').replace(".png",'')+'muestreo_barras_simple.png')
         #Finalmente mostramos la grafica con el metodo show()
         plt.show()
-aclarado_inteligente()
+#aclarado_inteligente()
+def sin_fondo(pwd='media\\img_sin_fondos\\',file='img02.png',img_fondo='img02_fondo.png'):
+    from PIL import Image
+    import time
+    marco='producto\\'
+    pwd_marco='media\\img_marco\\'
+    factor_de_aclaracion=0.5
+    f_0=1.0-factor_de_aclaracion
+    f_1=1.0+factor_de_aclaracion
+    img_f=Image.open(pwd+img_fondo)
+    inicio_t=time.time()
+    #lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.jpg') or img.endswith('.png') or img.endswith('.jpeg') or (img_fondo in img))]
+    lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.png') or (img_fondo in img))]
+    for file in lista:
+        print("Procesando:",file)
+        img_org=Image.open(pwd+file)
+        img=img_org.convert('RGBA')
+        width = img.size[0]#Longitud
+        height = img.size[1]# Ancho
+        for y in range(height):
+            for x in range(width):
+                p=img_org.getpixel((x,y))
+                f=img_f.getpixel((x,y))
+                    
+                if p==f:
+                    img.putpixel((x,y),(0,0,0,0))
+                elif (f[0]*f_0<=p[0]<=f[0]) and (f[1]*f_0<=p[1]<=f[1]) and (f[2]*f_0<=p[2]<=f[2]):
+                    img.putpixel((x,y),(p[0],p[1],p[2],100))
+                elif (f[0]*f_1>=p[0]>=f[0]) and (f[1]*f_1>=p[1]>=f[1]) and (f[2]*f_1>=p[2]>=f[2]):
+                    img.putpixel((x,y),(p[0],p[1],p[2],200))
+                    #print(p,f)
+
+            print((100.0*((y+1.0)/height)),end='\r')
+        archivo_salida=file.replace(".jpg",'').replace(".png",'')+'_sin_fondo_'+str(factor_de_aclaracion)+'_.png'
+        print("Guardando:",archivo_salida)
+        img.save(pwd+archivo_salida,'png')#Guarde la imagen después de modificar los píxeles
+        img.close()#cerramos la imagen
+    img_f.close()
+    print(time.time()-inicio_t)
+sin_fondo()
+def agregar_marco(pwd='media\\img_trabajo\\',file='aclar1.jpg',muestreo=0):
+    if muestreo:
+        global muestra
+        muestra={x:0 for x in range(256)}
+    from PIL import Image
+    import time
+    marco='producto\\'
+    pwd_marco='media\\img_marco\\'
+
+    inicio_t=time.time()
+    lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.jpg') or img.endswith('.png') or img.endswith('.jpeg'))]
+    for file in lista:
+        im=Image.open(pwd+file)
+        width = img.size[0]#Longitud
+        height = img.size[1]# Ancho
+        x_0=x_f=y_0=y_f=None
+
+    print(time.time()-inicio_t)
+def extraer(pwd='media\\img_trabajo\\',file='aclar1.jpg',muestreo=0):
+    if muestreo:
+        global muestra
+        muestra={x:0 for x in range(256)}
+    from PIL import Image
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import time
+    inicio_t=time.time()
+    n=20
+    nucleo=[[-1,-1,-1],[-1,8,-1],[-1,-1,-1]]
+    zancada=3
+    factor_de_aclaracion=1.0
+    i = 1
+    j = 1
+    varianza_permitida=5
+    lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.jpg') or img.endswith('.png') or img.endswith('.jpeg'))]
+    for file in lista:
+        im=Image.open(pwd+file)
+        img=agrupacion_maxima(filtro(im,nucleo),zancada)
+        width = img.size[0]#Longitud
+        height = img.size[1]# Ancho
+        X=[sum([img.getpixel((i,j)) for j in range(0,height)])/height for i in range(0,width)]
+        Y=[sum([img.getpixel((i,j)) for i in range(0,width)])/width for j in range(0,height)]
+        x_0=x_f=y_0=y_f=None
+        print(im.size)# Tamaño de imagen impresa
+        for x in range(0,width-n):# Iterar a través de puntos de todas las longitudes
+            if not x_0:
+                m=[X[i] for i in range(x,x+n)]# Muestra de promedios
+                p=sum(m)/n
+                v=sum([abs(l-p) for l in m])/n
+                if varianza_permitida<=v:
+                    x_0=x
+                    print(x_0,v,p)
+                    for j in range(0,height*zancada):
+                        im.putpixel((x_0*zancada,j),(0,0,0,255))
+        for x in range(width-n,0,-1):# Iterar a través de puntos de todas las longitudes
+            if not x_f:
+                m=[X[i] for i in range(x,x+n)]# Muestra de promedios
+                p=sum(m)/n
+                v=sum([abs(l-p) for l in m])/n
+                if varianza_permitida<=v:
+                    x_f=x+n
+                    print(x_0,v,p)
+                    for j in range(0,height*zancada):
+                        im.putpixel((x_f*zancada-1,j),(0,0,0,255))
+        for y in range(0,height-n):# Iterar a través de puntos de todas las longitudes
+            if not y_0:
+                m=[Y[i] for i in range(y,y+n)]# Muestra de promedios
+                p=sum(m)/n
+                v=sum([abs(l-p) for l in m])/n
+                if varianza_permitida<=v:
+                    y_0=y
+                    print(y_0,v,p)
+                    for i in range(0,width*zancada):
+                        im.putpixel((i,y_0*zancada),(0,0,0,255))
+        for y in range(height-n,0,-1):# Iterar a través de puntos de todas las longitudes
+            if not y_f:
+                m=[Y[i] for i in range(y,y+n)]# Muestra de promedios
+                p=sum(m)/n
+                v=sum([abs(l-p) for l in m])/n
+                if varianza_permitida<=v :
+                    y_f=y+n
+                    print(y_f,v,p)
+                    for i in range(0,width*zancada):
+                        im.putpixel((i,y_f*zancada-1),(0,0,0,255))
+        # img = img.convert("RGB")# Forzar la imagen a RGB
+        archivo_salida=file.replace(".jpg",'').replace(".png",'')+'_extraer_'+str(varianza_permitida)+'_.png'
+        print("Guardando:",archivo_salida)
+        im.save(archivo_salida,'png')#Guarde la imagen después de modificar los píxeles
+    print(time.time()-inicio_t)
+    if muestreo:
+        print(muestra)
+        #Definimos una lista con paises como string
+        color = [k for k in muestra]
+        #Definimos una lista con ventas como entero
+        porciento = [(muestra[k]/total)*100.0 for k in muestra]
+        fig, ax = plt.subplots()
+        #Colocamos una etiqueta en el eje Y
+        ax.set_ylabel('Porciento')
+        #Colocamos una etiqueta en el eje X
+        ax.set_xlabel('Porcentaje de Pexiles por cada Color')
+        ax.set_title(pwd_img)
+        #Creamos la grafica de barras utilizando 'paises' como eje X y 'ventas' como eje y.
+        plt.bar(color, porciento)
+        plt.savefig(file.replace(".jpg",'').replace(".png",'')+'_muestreo_barras_simple.png')
+        #Finalmente mostramos la grafica con el metodo show()
+        plt.show()
+#extraer()
 def actualizarCodigo(pwd,file):
     import os
     ignorar=['temporal.png','fondo.png']
