@@ -1,0 +1,43 @@
+ALLUSERSPROFILE C:\ProgramData
+APPDATA C:\Users\ElectroZone\AppData\Roaming
+COMMONPROGRAMFILES C:\Program Files\Common Files
+COMMONPROGRAMFILES(X86) C:\Program Files (x86)\Common Files
+COMMONPROGRAMW6432 C:\Program Files\Common Files
+COMPUTERNAME ELECTROZONE-PC
+COMSPEC C:\Windows\system32\cmd.exe
+CONFIGSETROOT C:\Windows\ConfigSetRoot
+FP_NO_HOST_CHECK NO
+HOMEDRIVE C:
+HOMEPATH \Users\ElectroZone
+LOCALAPPDATA C:\Users\ElectroZone\AppData\Local
+LOGONSERVER \\ELECTROZONE-PC
+NUMBER_OF_PROCESSORS 4
+OS Windows_NT
+PATH C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Nmap;C:\Program Files\Npcap;C:\Program Files\OpenSSH;C:\Windows\System32\Npcap;C:\Program Files\Inkscape\bin;C:\Program Files\PuTTY\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Users\ElectroZone\AppData\Local\Programs\Python\Python37\Scripts\;C:\Users\ElectroZone\AppData\Local\Programs\Python\Python37\;C:\Users\ElectroZone\.dotnet\tools;C:\Program Files\Inkscape\bin\
+PATHEXT .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+PROCESSOR_ARCHITECTURE AMD64
+PROCESSOR_IDENTIFIER Intel64 Family 6 Model 42 Stepping 7, GenuineIntel
+PROCESSOR_LEVEL 6
+PROCESSOR_REVISION 2a07
+PROGRAMDATA C:\ProgramData
+PROGRAMFILES C:\Program Files
+PROGRAMFILES(X86) C:\Program Files (x86)
+PROGRAMW6432 C:\Program Files
+PROMPT $P$G
+PSMODULEPATH C:\Windows\system32\WindowsPowerShell\v1.0\Modules\
+PUBLIC C:\Users\Public
+SESSIONNAME Console
+SYSTEMDRIVE C:
+SYSTEMROOT C:\Windows
+TEMP C:\Users\ELECTR~1\AppData\Local\Temp
+TMP C:\Users\ELECTR~1\AppData\Local\Temp
+USERDOMAIN ElectroZone-PC
+USERNAME ElectroZone
+USERPROFILE C:\Users\ElectroZone
+WINDIR C:\Windows
+WINDOWS_TRACING_FLAGS 3
+WINDOWS_TRACING_LOGFILE C:\BVTBin\Tests\installpackage\csilogfile.log
+<module 'ntpath' from 'C:\\Program Files\\Inkscape\\lib\\python3.8\\ntpath.py'>
+<module 'ntpath' from 'C:\\Program Files\\Inkscape\\lib\\python3.8\\ntpath.py'>
+[]
+<module 'ntpath' from 'C:\\Program Files\\Inkscape\\lib\\python3.8\\ntpath.py'>

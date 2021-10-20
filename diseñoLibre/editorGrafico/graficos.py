@@ -167,7 +167,7 @@ def sin_fondo(pwd='media\\img_sin_fondos\\',file='img02.png',img_fondo='img02_fo
         img.close()#cerramos la imagen
     img_f.close()
     print(time.time()-inicio_t)
-sin_fondo()
+#sin_fondo()
 def agregar_marco(pwd='media\\img_trabajo\\',file='aclar1.jpg',muestreo=0):
     if muestreo:
         global muestra
@@ -445,3 +445,52 @@ def aclarar():
         #ByN.save(pwd+'ByN_'+i.replace('.jpg','.png').replace('.jpeg','.png'),'png')
     print("Aclaracion Finalizada")
 #aclarar()
+def menu_contextual(estructura):
+    """
+    Windows Registry Editor Version 5.00
+
+    [HKEY_CLASSES_ROOT\Directory\Background\shell\Imagen]
+    @="Imagine Aclarar"
+
+    [HKEY_CLASSES_ROOT\Directory\Background\shell\Imagen\command]
+    @="cmd.exe"
+
+    [HKEY_CLASSES_ROOT\Directory\Background\shell\Aclarar Imagenes\command]
+    @="\"C:\\Program Files (x86)\\Python37-32\\python.exe\" \"C:\\python\\graficos.py\" aclarar"
+    """
+    myCode=estructura['file']
+    import os
+    if 'window' in os.environ['OS'].lower(): 
+        for k in os.environ:
+            d=[pro for pro in os.environ['PATH'].split(';') if ((os.environ['LOCALAPPDATA']+r'\Programs\Python\Python' in pro) and (not 'Script' in pro))]
+        d=d[0]+'\\python.exe'
+    file=open("menu.reg","w")
+    file.write("Windows Registry Editor Version 5.00\n\n")
+    for clave in estructura['menu']:
+        command=r"["+r"HKEY_CLASSES_ROOT\Directory\Background\shell\_"+estructura['menu'][clave]+r']'
+        file.write(command)
+        file.write('\n')
+        command=r'@="'+estructura['menu'][clave]+r'"'
+        file.write(command)
+        file.write('\n')
+        file.write('\n')
+        command=r"["+r"HKEY_CLASSES_ROOT\Directory\Background\shell\_"+estructura['menu'][clave]+r"\command]"
+        file.write(command)
+        file.write('\n')
+        command=r'@="\"'+d+r'\" \"'+myCode+r'\" '+clave+'"\n\n'
+        file.write(command)
+        file.write('\n')
+        
+    file.close()
+    print(os.path)
+    #for k in os.path:
+    #    print(k,os.path[k])
+estructura={
+    'nombre':"Imagenes",
+    'file':"C:\\python\\graficos.py",
+    'menu':{
+        'aclarar':'Aclarar',
+        'sin_fondo':'Quitar Fondo'
+        }
+}
+menu_contextual(estructura)

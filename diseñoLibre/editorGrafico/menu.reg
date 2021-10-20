@@ -1,0 +1,16 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\_Aclarar]
+@="Aclarar"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\_Aclarar\command]
+@="\"C:\Users\ElectroZone\AppData\Local\Programs\Python\Python37\\python.exe\" \"C:\python\graficos.py\" aclarar"
+
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\_Quitar Fondo]
+@="Quitar Fondo"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\_Quitar Fondo\command]
+@="\"C:\Users\ElectroZone\AppData\Local\Programs\Python\Python37\\python.exe\" \"C:\python\graficos.py\" sin_fondo"
+
+
