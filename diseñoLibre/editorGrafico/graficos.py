@@ -129,37 +129,54 @@ def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
         #Finalmente mostramos la grafica con el metodo show()
         plt.show()
 #aclarado_inteligente()
-def sin_fondo(pwd='media\\img_sin_fondos\\',file='img02.png',img_fondo='img02_fondo.png'):
+def sin_fondo(pwd='media\\img_sin_fondos\\',file='cam.jpg',img_fondo='fondo.jpg'):
     from PIL import Image
     import time
     marco='producto\\'
     pwd_marco='media\\img_marco\\'
-    factor_de_aclaracion=0.5
+    factor_de_aclaracion=0.1
     f_0=1.0-factor_de_aclaracion
     f_1=1.0+factor_de_aclaracion
     img_f=Image.open(pwd+img_fondo)
     inicio_t=time.time()
     #lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.jpg') or img.endswith('.png') or img.endswith('.jpeg') or (img_fondo in img))]
-    lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.png') or (img_fondo in img))]
+    lista= [file] if file else [img for img in os.listdir(pwd) if (img.endswith('.png') or img.endswith('.jpg') or (img_fondo in img))]
+
     for file in lista:
         print("Procesando:",file)
         img_org=Image.open(pwd+file)
         img=img_org.convert('RGBA')
         width = img.size[0]#Longitud
         height = img.size[1]# Ancho
-        for y in range(height):
-            for x in range(width):
-                p=img_org.getpixel((x,y))
-                f=img_f.getpixel((x,y))
-                    
+        linea_0=[img_f.getpixel((j,0))for j in range(0,width)]
+        linea_1=[img_f.getpixel((j,1))for j in range(0,width)]
+        linea_2=[img_f.getpixel((j,2))for j in range(0,width)]
+        linea_3=[img_f.getpixel((j,3))for j in range(0,width)]
+        linea_4=[img_f.getpixel((j,4))for j in range(0,width)]
+        for y in range(2,height):
+            j=0
+            for x in range(2,width-2):
+                j=x
+                m=[linea_0[j-1],linea_0[j],linea_0[j+1]]+[linea_1[j-2],linea_1[j-1],linea_1[j],linea_1[j+1],linea_1[j+2]]+[linea_2[j-2],linea_2[j-1],linea_2[j],linea_2[j+1],linea_2[j+2]]+[linea_3[j-2],linea_3[j-1],linea_3[j],linea_3[j+1],linea_3[j+2]]+[linea_4[j-1],linea_4[j],linea_4[j+1]]
+                
+                p=img_org.getpixel((x,y))#pixel objetivo
+                f=img_f.getpixel((x,y))#pixel del fondo
+                
                 if p==f:
                     img.putpixel((x,y),(0,0,0,0))
+                elif p in m:
+                    img.putpixel((x,y),(0,0,0,0))
                 elif (f[0]*f_0<=p[0]<=f[0]) and (f[1]*f_0<=p[1]<=f[1]) and (f[2]*f_0<=p[2]<=f[2]):
-                    img.putpixel((x,y),(p[0],p[1],p[2],100))
+                    img.putpixel((x,y),(p[0],p[1],p[2],0))
                 elif (f[0]*f_1>=p[0]>=f[0]) and (f[1]*f_1>=p[1]>=f[1]) and (f[2]*f_1>=p[2]>=f[2]):
-                    img.putpixel((x,y),(p[0],p[1],p[2],200))
+                    img.putpixel((x,y),(p[0],p[1],p[2],0))
                     #print(p,f)
-
+            if y<height:
+                linea_0=linea_1
+                linea_1=linea_2
+                linea_2=linea_3
+                linea_3=linea_4
+                linea_4=[img_f.getpixel((j,y+2)) for j in range(0,width)]
             print((100.0*((y+1.0)/height)),end='\r')
         archivo_salida=file.replace(".jpg",'').replace(".png",'')+'_sin_fondo_'+str(factor_de_aclaracion)+'_.png'
         print("Guardando:",archivo_salida)
@@ -167,7 +184,7 @@ def sin_fondo(pwd='media\\img_sin_fondos\\',file='img02.png',img_fondo='img02_fo
         img.close()#cerramos la imagen
     img_f.close()
     print(time.time()-inicio_t)
-#sin_fondo()
+sin_fondo()
 def agregar_marco(pwd='media\\img_trabajo\\',file='aclar1.jpg',muestreo=0):
     if muestreo:
         global muestra
@@ -493,4 +510,4 @@ estructura={
         'sin_fondo':'Quitar Fondo'
         }
 }
-menu_contextual(estructura)
+#menu_contextual(estructura)
