@@ -27,5 +27,10 @@ if "%sigue%"=="N" (goto :fin)
 echo Ejecutando: git push origin master
 git push origin master
 
-SET /p sigue=Continuar Session s/n?:
+echo Ejecutando: git status
+git status
+
+pause presione una tecla para salir...
+
 :fin
+
