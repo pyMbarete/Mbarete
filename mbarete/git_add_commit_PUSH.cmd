@@ -1,15 +1,15 @@
-@echo off
+@ECHO off
+cd ..
+cd
 echo Ejecutando: git status
 git status
 SET /p sigue=Hacer "git add -A" s/n?:
-echo %sigue%
 if "%sigue%"=="n" (goto :fin)
 if "%sigue%"=="N" (goto :fin)
 
 echo Ejecutando: git add -A
 git add -A
 SET /p sigue=Hacer "git commit", ahora s/n?:
-echo %sigue%
 if "%sigue%"=="n" (goto :fin)
 if "%sigue%"=="N" (goto :fin)
 
@@ -19,7 +19,6 @@ echo Ejecutando: git commit -m "%mensaje%"
 git commit -m "%mensaje%"
 
 SET /p sigue=hacer "git Push", ahora s/n?:
-echo %sigue%
 if "%sigue%"=="n" (goto :fin)
 if "%sigue%"=="N" (goto :fin)
 
@@ -30,7 +29,5 @@ git push origin master
 echo Ejecutando: git status
 git status
 
-pause presione una tecla para salir...
-
 :fin
-
+pause presione una tecla para salir...
