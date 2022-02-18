@@ -1,0 +1,553 @@
+2021/12/20 22:19:45 Starting cygwin install, version 2.909
+2021/12/20 22:19:45 User has backup/restore rights
+2021/12/20 22:19:45 Current Directory: C:\Users\Mathias\Desktop\0_PYTHON\Mbarete
+Could not open service McShield for query, start and stop. McAfee may not be installed, or we don't have access.
+2021/12/20 22:19:46 Selected local directory: C:\Users\Mathias\Desktop\0_PYTHON\Mbarete
+2021/12/20 22:19:46 net: Preconfig
+Cached mirror list unavailable
+Defaulting to empty mirror list
+2021/12/20 22:19:46 site: http://cygwin.mirror.constant.com/
+User-Agent: default is "Cygwin-Setup/2.909 (Windows NT 10.0.19043;Win64;080a)"
+Request for URL http://cygwin.mirror.constant.com/x86_64/setup.zst.sig satisfied from cache
+Fetched URL: http://cygwin.mirror.constant.com/x86_64/setup.zst.sig
+Request for URL http://cygwin.mirror.constant.com/x86_64/setup.zst satisfied from cache
+Fetched URL: http://cygwin.mirror.constant.com/x86_64/setup.zst
+signature: sig_type 0, pk_alg 17, hash_alg 2
+signature: tried key cygwin, returned 0x0100004f Invalid data
+signature: sig_type 0, pk_alg 1, hash_alg 8
+signature: tried key cygwin, returned 0x00000000 Success
+.ini setup_version is 2.909, our setup_version is 2.909
+2021/12/20 22:19:53 io_stream_cygfile: fopen(/etc/setup/installed.db) failed 2 No such file or directory
+package: nginx version: 
+Added manual package nginx
+2021/12/20 22:20:30 solving: 38 tasks, update: no, use test packages: no
+libsolv: solver started
+libsolv: dosplitprovides=0, noupdateprovide=0, noinfarchcheck=0
+libsolv: allowuninstall=0, allowdowngrade=0, allownamechange=1, allowarchchange=0, allowvendorchange=1
+libsolv: promoteepoch=0, forbidselfconflicts=0
+libsolv: obsoleteusesprovides=0, implicitobsoleteusesprovides=0, obsoleteusescolors=0, implicitobsoleteusescolors=0
+libsolv: dontinstallrecommended=0, addalreadyrecommended=0
+libsolv: number of solvables: 55359, memory used: 3027 K
+libsolv: number of ids: 28320 + 55358
+libsolv: string memory used: 110 K array + 484 K data,  rel memory used: 648 K array
+libsolv: string hash memory: 256 K, rel hash memory : 512 K
+libsolv: provide ids: 12033
+libsolv: provide space needed: 41079 + 110716
+libsolv: shrunk whatprovidesdata from 41079 to 41079
+libsolv: shrunk whatprovidesauxdata from 41079 to 29043
+libsolv: whatprovides memory used: 330 K id array, 592 K data
+libsolv: whatprovidesaux memory used: 110 K id array, 113 K data
+libsolv: WARNING: pool_addfileprovides was not called, this may result in slow operation
+libsolv: lazywhatprovidesq size: 0 entries
+libsolv: createwhatprovides took 14 ms
+libsolv: obsoletes data: 1 entries
+libsolv: added 956 pkg rules for installed solvables
+libsolv: added 0 pkg rules for updaters of installed solvables
+libsolv: added 65 pkg rules for packages involved in a job
+libsolv: added 0 pkg rules because of weak dependencies
+libsolv: 242 of 27706 installable solvables considered for solving
+libsolv: pruned rules from 1022 to 1022
+libsolv:   binary: 410
+libsolv:   normal: 611, 4026 literals
+libsolv: pkg rule memory used: 23 K
+libsolv: pkg rule creation took 17 ms
+libsolv: choice rule creation took 0 ms
+libsolv: 1021 pkg rules, 2 * 2 update rules, 38 job rules, 0 infarch rules, 0 dup rules, 0 choice rules, 0 best rules
+libsolv: overall rule memory used: 24 K
+libsolv: solving...
+libsolv: resolving job rules
+libsolv: resolving installed packages
+libsolv: deciding orphaned packages
+libsolv: solver statistics: 0 learned rules, 0 unsolvable, 0 minimization steps
+libsolv: done solving.
+libsolv: solver took 9 ms
+libsolv: final solver statistics: 0 problems, 0 learned rules, 0 unsolvable
+libsolv: solver_solve took 158 ms
+libsolv: 
+libsolv: transaction:
+libsolv:   install   alternatives-1.3.30c-10.any
+libsolv: 
+libsolv:   install   crypto-policies-20190218-1.any
+libsolv: 
+libsolv:   install   ipc-utils-1.0-2.any
+libsolv: 
+libsolv:   install   which-2.20-2.any
+libsolv: 
+libsolv:   install   _autorebase-001091-1.any
+libsolv: 
+libsolv:   install   base-cygwin-3.8-1.any
+libsolv: 
+libsolv:   install   base-files-4.3-3.any
+libsolv: 
+libsolv:   install   bash-4.4.12-3.any
+libsolv: 
+libsolv:   install   coreutils-8.26-2.any
+libsolv: 
+libsolv:   install   cygutils-1.4.16-7.any
+libsolv: 
+libsolv:   install   cygwin-3.3.3-1.any
+libsolv: 
+libsolv:   install   dash-0.5.11.5-1.any
+libsolv: 
+libsolv:   install   diffutils-3.8-1.any
+libsolv: 
+libsolv:   install   editrights-1.03-1.any
+libsolv: 
+libsolv:   install   file-5.39-1.any
+libsolv: 
+libsolv:   install   findutils-4.8.0-1.any
+libsolv: 
+libsolv:   install   gawk-5.1.1-1.any
+libsolv: 
+libsolv:   install   libsigsegv2-2.10-2.any
+libsolv: 
+libsolv:   install   getent-2.18.90-4.any
+libsolv: 
+libsolv:   install   grep-3.7-2.any
+libsolv: 
+libsolv:   install   gzip-1.11-1.any
+libsolv: 
+libsolv:   install   hostname-3.13-1.any
+libsolv: 
+libsolv:   install   info-6.8-2.any
+libsolv: 
+libsolv:   install   libreadline7-8.1-2.any
+libsolv: 
+libsolv:   install   libssl1.1-1.1.1l-2.any
+libsolv: 
+libsolv:   install   login-1.13-1.any
+libsolv: 
+libsolv:   install   man-db-2.9.4-2.1.any
+libsolv: 
+libsolv:   install   libgdbm6-1.18.1-1.any
+libsolv: 
+libsolv:   install   mintty-3.5.2-1.any
+libsolv: 
+libsolv:   install   ncurses-6.1-1.20190727.any
+libsolv: 
+libsolv:   install   nginx-1.14.2-1.any
+libsolv: 
+libsolv:   install   openssl-1.1.1l-2.any
+libsolv: 
+libsolv:   install   rebase-4.5.0-1.any
+libsolv: 
+libsolv:   install   run-1.3.4-2.any
+libsolv: 
+libsolv:   install   sed-4.8-1.any
+libsolv: 
+libsolv:   install   tar-1.34-1.any
+libsolv: 
+libsolv:   install   terminfo-6.1-1.20190727.any
+libsolv: 
+libsolv:   install   tzdata-2021e-1.any
+libsolv: 
+libsolv:   install   util-linux-2.33.1-2.any
+libsolv: 
+libsolv:   install   vim-minimal-8.2.3755-1.any
+libsolv: 
+libsolv:   install   libiconv2-1.16-2.any
+libsolv: 
+libsolv:   install   libncursesw10-6.1-1.20190727.any
+libsolv: 
+libsolv:   install   libblkid1-2.33.1-2.any
+libsolv: 
+libsolv:   install   libfdisk1-2.33.1-2.any
+libsolv: 
+libsolv:   install   libintl8-0.21-1.any
+libsolv: 
+libsolv:   install   libsmartcols1-2.33.1-2.any
+libsolv: 
+libsolv:   install   libuuid1-2.33.1-2.any
+libsolv: 
+libsolv:   install   zlib0-1.2.11-1.any
+libsolv: 
+libsolv:   install   terminfo-extra-6.1-1.20190727.any
+libsolv: 
+libsolv:   install   bzip2-1.0.8-1.any
+libsolv: 
+libsolv:   install   xz-5.2.4-1.any
+libsolv: 
+libsolv:   install   zstd-1.5.0-1.any
+libsolv: 
+libsolv:   install   liblz4_1-1.7.5-1.any
+libsolv: 
+libsolv:   install   libcrypt2-4.4.20-1.any
+libsolv: 
+libsolv:   install   libpcre1-8.45-1.any
+libsolv: 
+libsolv:   install   groff-1.22.4-1.any
+libsolv: 
+libsolv:   install   less-590-1.any
+libsolv: 
+libsolv:   install   libpipeline1-1.5.3-1.any
+libsolv: 
+libsolv:   install   libgcc1-11.2.0-1.any
+libsolv: 
+libsolv:   install   ca-certificates-2.50-4.any
+libsolv: 
+libsolv:   install   libpcre2_8_0-10.39-1.any
+libsolv: 
+libsolv:   install   libstdc++6-11.2.0-1.any
+libsolv: 
+libsolv:   install   libargp-20110921-3.any
+libsolv: 
+libsolv:   install   libgmp10-6.2.1-2.any
+libsolv: 
+libsolv:   install   libmpfr6-4.1.0-2.any
+libsolv: 
+libsolv:   install   libbz2_1-1.0.8-1.any
+libsolv: 
+libsolv:   install   libpopt0-1.18-1.any
+libsolv: 
+libsolv:   install   libattr1-2.4.48-2.any
+libsolv: 
+libsolv:   install   tzcode-2021e-1.any
+libsolv: 
+libsolv:   install   p11-kit-0.23.20-1.any
+libsolv: 
+libsolv:   install   p11-kit-trust-0.23.20-1.any
+libsolv: 
+libsolv:   install   liblzma5-5.2.4-1.any
+libsolv: 
+libsolv:   install   libp11-kit0-0.23.20-1.any
+libsolv: 
+libsolv:   install   libtasn1_6-4.14-1.any
+libsolv: 
+libsolv:   install   libpopt-common-1.18-1.any
+libsolv: 
+libsolv:   install   libffi6-3.2.1-2.any
+libsolv: 
+libsolv: 
+libsolv: orphaned packages:
+libsolv:   base-0.0-0.any (kept)
+libsolv:   _windows-10.0.19043.any (kept)
+libsolv: 
+libsolv: ordering transaction
+libsolv: transaction elements: 76
+libsolv: edges: 197, edge space: 233
+libsolv: edge creation took 5 ms
+libsolv: cycle: --> 
+libsolv: terminfo-6.1-1.20190727.any ##11##> 
+libsolv: terminfo-extra-6.1-1.20190727.any --10--> 
+libsolv: 
+libsolv: cycle: --> 
+libsolv: bash-4.4.12-3.any ##11##> 
+libsolv: coreutils-8.26-2.any --10--> 
+libsolv: tzcode-2021e-1.any --10--> 
+libsolv: 
+libsolv: cycles broken: 2
+libsolv: cycle breaking took 11 ms
+libsolv: cycle edge creation took 0 ms
+libsolv: invedge space: 288
+libsolv: creating new transaction took 1 ms
+libsolv: transaction ordering took 23 ms
+libsolv: 76 installed packages:
+libsolv:   - _autorebase-001091-1.any
+libsolv:   - alternatives-1.3.30c-10.any
+libsolv:   - base-cygwin-3.8-1.any
+libsolv:   - base-files-4.3-3.any
+libsolv:   - bash-4.4.12-3.any
+libsolv:   - bzip2-1.0.8-1.any
+libsolv:   - ca-certificates-2.50-4.any
+libsolv:   - coreutils-8.26-2.any
+libsolv:   - crypto-policies-20190218-1.any
+libsolv:   - cygutils-1.4.16-7.any
+libsolv:   - cygwin-3.3.3-1.any
+libsolv:   - dash-0.5.11.5-1.any
+libsolv:   - diffutils-3.8-1.any
+libsolv:   - editrights-1.03-1.any
+libsolv:   - file-5.39-1.any
+libsolv:   - findutils-4.8.0-1.any
+libsolv:   - gawk-5.1.1-1.any
+libsolv:   - getent-2.18.90-4.any
+libsolv:   - grep-3.7-2.any
+libsolv:   - groff-1.22.4-1.any
+libsolv:   - gzip-1.11-1.any
+libsolv:   - hostname-3.13-1.any
+libsolv:   - info-6.8-2.any
+libsolv:   - ipc-utils-1.0-2.any
+libsolv:   - less-590-1.any
+libsolv:   - libargp-20110921-3.any
+libsolv:   - libattr1-2.4.48-2.any
+libsolv:   - libblkid1-2.33.1-2.any
+libsolv:   - libbz2_1-1.0.8-1.any
+libsolv:   - libcrypt2-4.4.20-1.any
+libsolv:   - libfdisk1-2.33.1-2.any
+libsolv:   - libffi6-3.2.1-2.any
+libsolv:   - libgcc1-11.2.0-1.any
+libsolv:   - libgdbm6-1.18.1-1.any
+libsolv:   - libgmp10-6.2.1-2.any
+libsolv:   - libiconv2-1.16-2.any
+libsolv:   - libintl8-0.21-1.any
+libsolv:   - liblz4_1-1.7.5-1.any
+libsolv:   - liblzma5-5.2.4-1.any
+libsolv:   - libmpfr6-4.1.0-2.any
+libsolv:   - libncursesw10-6.1-1.20190727.any
+libsolv:   - libp11-kit0-0.23.20-1.any
+libsolv:   - libpcre1-8.45-1.any
+libsolv:   - libpcre2_8_0-10.39-1.any
+libsolv:   - libpipeline1-1.5.3-1.any
+libsolv:   - libpopt-common-1.18-1.any
+libsolv:   - libpopt0-1.18-1.any
+libsolv:   - libreadline7-8.1-2.any
+libsolv:   - libsigsegv2-2.10-2.any
+libsolv:   - libsmartcols1-2.33.1-2.any
+libsolv:   - libssl1.1-1.1.1l-2.any
+libsolv:   - libstdc++6-11.2.0-1.any
+libsolv:   - libtasn1_6-4.14-1.any
+libsolv:   - libuuid1-2.33.1-2.any
+libsolv:   - login-1.13-1.any
+libsolv:   - man-db-2.9.4-2.1.any
+libsolv:   - mintty-3.5.2-1.any
+libsolv:   - ncurses-6.1-1.20190727.any
+libsolv:   - nginx-1.14.2-1.any
+libsolv:   - openssl-1.1.1l-2.any
+libsolv:   - p11-kit-0.23.20-1.any
+libsolv:   - p11-kit-trust-0.23.20-1.any
+libsolv:   - rebase-4.5.0-1.any
+libsolv:   - run-1.3.4-2.any
+libsolv:   - sed-4.8-1.any
+libsolv:   - tar-1.34-1.any
+libsolv:   - terminfo-6.1-1.20190727.any
+libsolv:   - terminfo-extra-6.1-1.20190727.any
+libsolv:   - tzcode-2021e-1.any
+libsolv:   - tzdata-2021e-1.any
+libsolv:   - util-linux-2.33.1-2.any
+libsolv:   - vim-minimal-8.2.3755-1.any
+libsolv:   - which-2.20-2.any
+libsolv:   - xz-5.2.4-1.any
+libsolv:   - zlib0-1.2.11-1.any
+libsolv:   - zstd-1.5.0-1.any
+libsolv: 
+2021/12/20 22:20:31 Augmented Transaction List:
+2021/12/20 22:20:31    0 install base-cygwin     3.8-1          
+2021/12/20 22:20:31    1 install cygwin          3.3.3-1        
+2021/12/20 22:20:31    2 install terminfo        6.1-1.20190727 
+2021/12/20 22:20:31    3 install tzdata          2021e-1        
+2021/12/20 22:20:31    4 install libpopt-common  1.18-1         
+2021/12/20 22:20:31    5 install libffi6         3.2.1-2        
+2021/12/20 22:20:31    6 install libtasn1_6      4.14-1         
+2021/12/20 22:20:31    7 install liblzma5        5.2.4-1        
+2021/12/20 22:20:31    8 install libbz2_1        1.0.8-1        
+2021/12/20 22:20:31    9 install libgmp10        6.2.1-2        
+2021/12/20 22:20:31   10 install libargp         20110921-3     
+2021/12/20 22:20:31   11 install libpcre2_8_0    10.39-1        
+2021/12/20 22:20:31   12 install libgcc1         11.2.0-1       
+2021/12/20 22:20:31   13 install libpipeline1    1.5.3-1        
+2021/12/20 22:20:31   14 install libpcre1        8.45-1         
+2021/12/20 22:20:31   15 install libcrypt2       4.4.20-1       
+2021/12/20 22:20:31   16 install liblz4_1        1.7.5-1        
+2021/12/20 22:20:31   17 install zlib0           1.2.11-1       
+2021/12/20 22:20:31   18 install libiconv2       1.16-2         
+2021/12/20 22:20:31   19 install run             1.3.4-2        
+2021/12/20 22:20:31   20 install mintty          3.5.2-1        
+2021/12/20 22:20:31   21 install login           1.13-1         
+2021/12/20 22:20:31   22 install hostname        3.13-1         
+2021/12/20 22:20:31   23 install libsigsegv2     2.10-2         
+2021/12/20 22:20:31   24 install editrights      1.03-1         
+2021/12/20 22:20:31   25 install dash            0.5.11.5-1     
+2021/12/20 22:20:31   26 install which           2.20-2         
+2021/12/20 22:20:31   27 install ipc-utils       1.0-2          
+2021/12/20 22:20:31   28 install terminfo-extra  6.1-1.20190727 
+2021/12/20 22:20:31   29 install getent          2.18.90-4      
+2021/12/20 22:20:31   30 install libmpfr6        4.1.0-2        
+2021/12/20 22:20:31   31 install libstdc++6      11.2.0-1       
+2021/12/20 22:20:31   32 install file            5.39-1         
+2021/12/20 22:20:31   33 install libintl8        0.21-1         
+2021/12/20 22:20:31   34 install _autorebase     001091-1       
+2021/12/20 22:20:31   35 install libncursesw10   6.1-1.20190727 
+2021/12/20 22:20:31   36 install libp11-kit0     0.23.20-1      
+2021/12/20 22:20:31   37 install libattr1        2.4.48-2       
+2021/12/20 22:20:31   38 install libpopt0        1.18-1         
+2021/12/20 22:20:31   39 install libuuid1        2.33.1-2       
+2021/12/20 22:20:31   40 install libsmartcols1   2.33.1-2       
+2021/12/20 22:20:31   41 install sed             4.8-1          
+2021/12/20 22:20:31   42 install libgdbm6        1.18.1-1       
+2021/12/20 22:20:31   43 install diffutils       3.8-1          
+2021/12/20 22:20:31   44 install alternatives    1.3.30c-10     
+2021/12/20 22:20:31   45 install less            590-1          
+2021/12/20 22:20:31   46 install vim-minimal     8.2.3755-1     
+2021/12/20 22:20:31   47 install ncurses         6.1-1.20190727 
+2021/12/20 22:20:31   48 install libreadline7    8.1-2          
+2021/12/20 22:20:31   49 install info            6.8-2          
+2021/12/20 22:20:31   50 install p11-kit-trust   0.23.20-1      
+2021/12/20 22:20:31   51 install p11-kit         0.23.20-1      
+2021/12/20 22:20:31   52 install cygutils        1.4.16-7       
+2021/12/20 22:20:31   53 install libblkid1       2.33.1-2       
+2021/12/20 22:20:31   54 install gawk            5.1.1-1        
+2021/12/20 22:20:31   55 install bash            4.4.12-3       
+2021/12/20 22:20:31   56 install libfdisk1       2.33.1-2       
+2021/12/20 22:20:31   57 install tzcode          2021e-1        
+2021/12/20 22:20:31   58 install util-linux      2.33.1-2       
+2021/12/20 22:20:31   59 install coreutils       8.26-2         
+2021/12/20 22:20:31   60 install ca-certificates 2.50-4         
+2021/12/20 22:20:31   61 install groff           1.22.4-1       
+2021/12/20 22:20:31   62 install zstd            1.5.0-1        
+2021/12/20 22:20:31   63 install xz              5.2.4-1        
+2021/12/20 22:20:31   64 install bzip2           1.0.8-1        
+2021/12/20 22:20:31   65 install gzip            1.11-1         
+2021/12/20 22:20:31   66 install grep            3.7-2          
+2021/12/20 22:20:31   67 install findutils       4.8.0-1        
+2021/12/20 22:20:31   68 install crypto-policies 20190218-1     
+2021/12/20 22:20:31   69 install tar             1.34-1         
+2021/12/20 22:20:31   70 install man-db          2.9.4-2.1      
+2021/12/20 22:20:31   71 install rebase          4.5.0-1        
+2021/12/20 22:20:31   72 install base-files      4.3-3          
+2021/12/20 22:20:31   73 install libssl1.1       1.1.1l-2       
+2021/12/20 22:20:31   74 install openssl         1.1.1l-2       
+2021/12/20 22:20:31   75 install nginx           1.14.2-1       
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/base-cygwin/base-cygwin-3.8-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/base-cygwin/base-cygwin-3.8-1.tar.xz 3af3f4bd622ae5b1526e397c249f5034d5ee8dd121f8cd62a4fa616cf32d66f3039fe88eeb390402650af1e05faf7ab2480d5fb67fa6307960f20c665529a0c0
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/cygwin/cygwin-3.3.3-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/cygwin/cygwin-3.3.3-1.tar.xz 3884044ba5c5d29d01347fc7e227542ecf4e69517506356c3a3ca89125434282a02aa112a3bfac26160fadfb7e295cb5b7ae17219339377d5798d9d712734734
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/terminfo/terminfo-6.1-1.20190727.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/terminfo/terminfo-6.1-1.20190727.tar.xz 49df3d00cdfa059d7a5f096ebb46df7e94d2d0c40f241505d9972cab2904a4a9a2efb9a13b682f56653d5e4384d25ee14bcc1ab7d3ad89001653cbe5d2194f7d
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/tzdata/tzdata-2021e-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/tzdata/tzdata-2021e-1.tar.xz 618da239c52812cf45178dfa85787f780c3017904e9de80ea1bdab86791049119a680856ad62993ac99b9d10273bda33c48e2b156d039f9c0a732cf1159fe9c0
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/popt/libpopt-common/libpopt-common-1.18-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/popt/libpopt-common/libpopt-common-1.18-1.tar.xz 38cbccb5bdbff6f44086959cd68aa7801f03758013f59e4a71c3eaedaa1070007f24b7865db2d015c08d7b34d23874bae7949304a2d008c9c5535ac1af352924
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libffi/libffi6/libffi6-3.2.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libffi/libffi6/libffi6-3.2.1-2.tar.xz d549f129aba53013d86eb912818f8633c3b4e5b7fb50dff6cdec5a069722ff2a93c246e27f7c99b56b7fa9c0d5ab182aed5b64cb9df7e898f1c02c35fdb445d5
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libtasn1/libtasn1_6/libtasn1_6-4.14-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libtasn1/libtasn1_6/libtasn1_6-4.14-1.tar.xz 6ae80701119a73e8b8ade762fa67a163d4e46699294718c00e7f7dbfadbf38c7687f97a47b7d0fbff97b2870da9bc76115b414c24800269d03341d879c8b355c
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/xz/liblzma5/liblzma5-5.2.4-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/xz/liblzma5/liblzma5-5.2.4-1.tar.xz 1dcea2107010c83fe597fad7f26b7b5a04a28d7734e0cdf0ace5c4eca28f0446c86d23e174bd13d72744adae1946d2d0b75b30f776a89c469e85e3c3bddbcd57
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bzip2/libbz2_1/libbz2_1-1.0.8-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bzip2/libbz2_1/libbz2_1-1.0.8-1.tar.xz 165724df59f96ebafe952b2cd135a4a5d69ebea5948fe1417c1a2ee257e8324e94e57b4f445e279a545dbdbf946e6119a96edefdc3c57839cd5401063eaea0f2
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gmp/libgmp10/libgmp10-6.2.1-2.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gmp/libgmp10/libgmp10-6.2.1-2.tar.zst 24363f4812c286c8eff361d2a67151bcf02f29a2ea83e150c73454b50f5d287dc2ba6a0c6b6c26ac5b6506bfb140ea87830637add42513b58ae4542ca5a2e9e2
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libargp/libargp-20110921-3.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libargp/libargp-20110921-3.tar.xz 07935d9b9450c4fcf9bc2a30163538545003b0390f5ddce1d1ba72eea1894daa04ea647db586eeda4fa2aadf93a30281cd42d3f06dbae147a03100ad16cff3d1
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/pcre2/libpcre2_8_0/libpcre2_8_0-10.39-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/pcre2/libpcre2_8_0/libpcre2_8_0-10.39-1.tar.zst 62aa533931916466e66716dbc4e48a9aa80913d9cd1b466c1083d8d58770feffe106009a07a9f0412053e3e15f022bb4c890f7bf18726cb76200e7b85be741cb
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gcc/libgcc1/libgcc1-11.2.0-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gcc/libgcc1/libgcc1-11.2.0-1.tar.zst 38527a097d7d48c8d229cf9647b690eeb9f6349d8dd4a589d205897cd4885c5a8751a77981f6b946b64029cd287b1918a179b6dcfdd4fbc5345aae92571db7a3
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libpipeline/libpipeline1/libpipeline1-1.5.3-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libpipeline/libpipeline1/libpipeline1-1.5.3-1.tar.xz 15c81ed9d7471cd9dd74ba5cf8b7319bac16a645dc5968a25b46cd1b5bae2fa7d0e260c8e9e4ccc73fd7f7142856098cc3d5ca87d9560ca3f2cca0efc991ef98
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/pcre/libpcre1/libpcre1-8.45-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/pcre/libpcre1/libpcre1-8.45-1.tar.zst 85c793ed3622a00b811773b94c45376882513e267b9f1d2a3efa0bc42ff86a4e4bebd8362a193d302e66ae9e5c9b93befc1bb1096c0fd397e2cd0f5632c808dd
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libxcrypt/libcrypt2/libcrypt2-4.4.20-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libxcrypt/libcrypt2/libcrypt2-4.4.20-1.tar.xz 364833ae860ca997d1749690621b94be8a5ec3e00d2ad5d6e5bc6981d984f47d9b4d322729e789953fdbff4cb430ff9a3ba0c49363f8fb0d5f9e61ab1bbb37bb
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/lz4/liblz4_1/liblz4_1-1.7.5-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/lz4/liblz4_1/liblz4_1-1.7.5-1.tar.xz c52d0df633c5597de9d177a6566eea92f24281034bbb15c97c4d78149c6536563317ac39e30421fec03fbee352bb4068bfadd07e4d058fef2ec3455a45e277cd
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/zlib/zlib0/zlib0-1.2.11-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/zlib/zlib0/zlib0-1.2.11-1.tar.xz d0364b3cf00c1db35221463e7de916020b2ddb72829e38ab35e3b8926310eb6ffb2fa1599de00e496f1a182b79d331784bf004514c8f8b2f03f4f5334a452023
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libiconv/libiconv2/libiconv2-1.16-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libiconv/libiconv2/libiconv2-1.16-2.tar.xz 955dc6d48fbfc103130b0356aaa4f22b45291891bee2ab26285b59b0f4f478e3bbf7a483334c1fe7b0ecb7680e35159f445e602d4a89a0e20dc7dfaaeb18e474
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/run/run-1.3.4-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/run/run-1.3.4-2.tar.xz 7e3156bbddc5f934fde3530879aa5186c9fdccb757ba848fc958e79e96534b336975f2882e413d5c18174628033a422157d25c48f8b5e90f0f1555ff2fa6343f
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/mintty/mintty-3.5.2-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/mintty/mintty-3.5.2-1.tar.xz d25f420f8b47a14c3622e9cf821fd27ea61fb6586b4f63d94ad6c07aa84aa6d112a1659a749f19029c61ff34a2f0c5df7bce947239b0d9160f6a115b9e776710
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/login/login-1.13-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/login/login-1.13-1.tar.xz 66acc3255962a27af8d701a8c02846f3b9180b7b1d65d946f6fb27cd24aeedc8e6a9a2601b419e981c94b356ef376a5c565ea31a4a220e5add9d70ae501a11d1
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/hostname/hostname-3.13-1.tar.bz2
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/hostname/hostname-3.13-1.tar.bz2 75114326fa4575b8341434658a881feb81a6565e7e0adf8fd100dde87022d3818b5fc3df430bd9b3298d818a1d23f6b6c4bc7ff33efb3ded5f0ea0bf118c1aae
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libsigsegv/libsigsegv2/libsigsegv2-2.10-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/libsigsegv/libsigsegv2/libsigsegv2-2.10-2.tar.xz 93c63e94a327dd3fca9dc6d51953705284f3eb4a0acdf1c7f28acc48eaf4bf56693f5957fe0dad1f3287804cc694a923dd7a797a62be25ff80a0eff2a52a8a76
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/editrights/editrights-1.03-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/editrights/editrights-1.03-1.tar.xz c977dc726c095d1957e7d2535698a354ef4c88f7b567ca22f1042f4fe37bd1eac3ee14a59134ec087394e28a54d5a951280ab7aa8a654008d1ebde8663a690e8
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/dash/dash-0.5.11.5-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/dash/dash-0.5.11.5-1.tar.xz 5014baa55936725d7a294cb3cf65b786843483f9d002b474aa8de114412c7a4a7529704aaa1862931a07f576ddda8b0a34e3b2b85c4628764e936f19edd915f5
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/which/which-2.20-2.tar.bz2
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/which/which-2.20-2.tar.bz2 8d3804b90a7830afa6fb583b1d142adb0fbf1556426c7809033a57361bfcbdf2b05901b07bad5506586541531ccc352f8e3003a1855eace0a5f8483cb4110e42
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ipc-utils/ipc-utils-1.0-2.tar.bz2
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ipc-utils/ipc-utils-1.0-2.tar.bz2 409b383f8df821e729297206efc4834003640f2f503f882068f90c4f4359140d4bef38561cbfe77656058263922d493094201bad411ae9b38e15280eabf01720
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/terminfo-extra/terminfo-extra-6.1-1.20190727.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/terminfo-extra/terminfo-extra-6.1-1.20190727.tar.xz da6ba0a9e65298b6113afeb5fb9db475d05c15be9db707ce30aba61be07a3d7adcc6f08079cfe49e38c8aa8a811b0135e7065f8b38f6e4916851530f4eb16b43
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/getent/getent-2.18.90-4.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/getent/getent-2.18.90-4.tar.xz 9bf746e89cec897cf76076a09724a2e3f3fbab5b96f15bb19c1dc36b0e317f586f0c311eb73f024f22bd5f1edbe3c5db0326bcfd8628ebc872aed0bf6bb8f541
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/mpfr/libmpfr6/libmpfr6-4.1.0-2.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/mpfr/libmpfr6/libmpfr6-4.1.0-2.tar.zst f9bee46b7a85a9216cd4bce75f011d1979bc9332c501a5ed2ffe7ec354d975f5d474f028075b84048be816c10b322feef90fbbf249c465307b74d74861d8fbee
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gcc/libstdc++6/libstdc++6-11.2.0-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gcc/libstdc++6/libstdc++6-11.2.0-1.tar.zst 07b46f081e6c8e59a8c00747d9fb3319e6cdea20f243e71ed6c0a8a29825f26b520ae40888979c363f6f4fabe1c72c45c855ac036b59bad6e00cdad2c8f90c57
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/file/file-5.39-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/file/file-5.39-1.tar.xz 83b511be99c7840d68256e564c8a7a4522168df078e5835b0295b14a40b1d4e43390afc64ffab9f8cc024cd7b087fdcc57f428a04847848521d4173ab302382c
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gettext/libintl8/libintl8-0.21-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gettext/libintl8/libintl8-0.21-1.tar.xz a6a83e73c734df1e80e6b648bfbd515b92c85460c83a013c4cba385e3a5dbc45ab30ba714e1d3b18be924374cfc7026d4d2a132d5095de6df9e840a1a0269539
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/_autorebase/_autorebase-001091-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/_autorebase/_autorebase-001091-1.tar.zst a9416ce992ca57f3a6208f46517520d21dfac61988ac84cbb5b17b76e053a0845c15368ccb8ca9c483d8935f9e3db81568433c0d08d0265ec5e6916ea30f2831
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/libncursesw10/libncursesw10-6.1-1.20190727.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/libncursesw10/libncursesw10-6.1-1.20190727.tar.xz cc49f057d9100dea2932486997bd03fe50966cae068af008dc19cc0002189f8e8081c89f8c899034c99f0fc17e39f372c6fc61fc1d1a7b8f0b7bb0b4f7ca77e3
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/libp11-kit0/libp11-kit0-0.23.20-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/libp11-kit0/libp11-kit0-0.23.20-1.tar.xz fcbf6cfa550a7ec78c84cdd579d06aae0d1fad16ac741e7e5e0e9a6f85b0d7c3b53c6af2ac7f8724e722e16d206cc108539f782b5da0b59615a4ee29a321e9fa
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/attr/libattr1/libattr1-2.4.48-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/attr/libattr1/libattr1-2.4.48-2.tar.xz a9b6e6d80dfc211b0377b329cef5b1863a4a8c94d97e6ec73a2f7ad16ee6635310dad3f26e6ad0fa038c14fab6cd9f66c81f0140dd3503d010b247740bce2f47
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/popt/libpopt0/libpopt0-1.18-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/popt/libpopt0/libpopt0-1.18-1.tar.xz e88925646555ba276cd5e60e16251ee55dbe31a1772083921f0d8f34557b6a41db08852bb98ad046d04d40ba46c43850f06932fb67ccb53f83c57a905503ba2d
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libuuid1/libuuid1-2.33.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libuuid1/libuuid1-2.33.1-2.tar.xz 00d04abb865329bfbbe306750d07ab932d8670b6499da43f86fbf873cfd92e7f0ed83832ac5bbf80f27ca3c064b3bc195b1ae2d1d2de3e8930fb5802ecf02087
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libsmartcols1/libsmartcols1-2.33.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libsmartcols1/libsmartcols1-2.33.1-2.tar.xz 7e983314fd55f211842586c8032418da5a0660fd50268e05610872ee63339695f0d87fb1288127affd4adabe0a0862c1b886ac32c813938831b23c0df686064e
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/sed/sed-4.8-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/sed/sed-4.8-1.tar.xz 31e8c4bd675464d90f1b4a17183c0ed1de5c9b9dac8f922a7139a017c7671002b78fac5d284a99a991f944421018af8076a57b796dd8963a752496a0d884cb0d
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gdbm/libgdbm6/libgdbm6-1.18.1-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gdbm/libgdbm6/libgdbm6-1.18.1-1.tar.xz 97fd45a3ca4fb61e0126a67f0411601c8e7fd14181d20cd9db1e0e700b1468bed26830bc3656299442f4672c790db80e45420cf9b2a67993440d4109aaefda94
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/diffutils/diffutils-3.8-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/diffutils/diffutils-3.8-1.tar.xz 2f759f851dd29c8718bd45b29013d5ade1a1cd0ec13b73c023c4a8f56d18decabfc6a4ce941c182b15e35a5effbe498ddf5985b35baab1c42befb7d63e6096ed
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/alternatives/alternatives-1.3.30c-10.tar.bz2
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/alternatives/alternatives-1.3.30c-10.tar.bz2 b10340b5df208b8e7e0bce0b84539d7c4b4f46a2fdf9a58e17282900da8c203447adbe47ccd37b93e0bebd2fa2023b17380dca200b424a887b86aa96944c6580
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/less/less-590-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/less/less-590-1.tar.xz 354a576805c8622514dc8863941ac56faaf031965b05858e5f531d3c25f2899faa683d266f39b3cd7110fd5289d52b57112246b8f7f32869aeca593f2eff224f
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/vim/vim-minimal/vim-minimal-8.2.3755-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/vim/vim-minimal/vim-minimal-8.2.3755-1.tar.xz cbeb923cacc3e4b2a7230cf928eac26266e8882ccf5416a29a7947685d3a551b00759617f09c7d5ef9290c949d15371cc94403f982dbec6c6f3646a203543a71
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/ncurses-6.1-1.20190727.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/ncurses/ncurses-6.1-1.20190727.tar.xz 0c9aaac32b06561ac56a833c733263b6194f0d274b5c0a32ae6add7aa8e76ade479549078f9401e409edea02d006b647f0a44490e3994b2ca4c7992f2103dea9
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/readline/libreadline7/libreadline7-8.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/readline/libreadline7/libreadline7-8.1-2.tar.xz 4533f999e36e02b8632ebb8c2eb8ba9428db5fe574163277079223090b7684b90c9fe6271496d4ccd4ba822ba2d17e95e648cc5503e2e3d38e7e5ef84d094870
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/texinfo/info/info-6.8-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/texinfo/info/info-6.8-2.tar.xz 65d66d6de69c77693f4c317d13018eccd2541b9428b383214c1d8e93d54f7f1b303440b4cb05d9c06d65488b499e194a87e9b881100776fccfc4ae5449432fcd
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/p11-kit-trust/p11-kit-trust-0.23.20-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/p11-kit-trust/p11-kit-trust-0.23.20-1.tar.xz a4b4f91825257abcb365aa2892cfa2525f9583f2649e6fc71a2b7afd68ec3b0a2f58cfc21bfa02c90569e900b283f494d9e6fae1f8ca63641b9c02a7b7076ebc
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/p11-kit-0.23.20-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/p11-kit/p11-kit-0.23.20-1.tar.xz dfa1c60c64e94df9f104996db95abbb01194eb5e546d324e698e32639838dbc685053bfd1fe069d792e7064edc191922638935a8f6a438a1653186750dbc854e
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/cygutils/cygutils-1.4.16-7.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/cygutils/cygutils-1.4.16-7.tar.xz 6543bdbbdffa077c17fdbd36302a27300a14e37898ceb2cf367f9c36cee6b5a167fa25cf44b0618ce0abd52fac025c9fd2cf3b4f05eadad2f27ac033706cd8e3
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libblkid1/libblkid1-2.33.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libblkid1/libblkid1-2.33.1-2.tar.xz 62759e8dcdc49a42c7d4cdfacb673048a371d7b3964eaedeebeb8f0a59988ea41c2f6eae93f9c8609325f1a32fe76b2edb29742917441d377e2cc93cd6dec289
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gawk/gawk-5.1.1-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gawk/gawk-5.1.1-1.tar.xz e1e695a746fa0e08bcd48c85a85c824da45a9a93da13ded5bf94e181f1073e3de1b762da7fc2d3f8f9eca8edca51dcd6e195d01bdab1089a0adad90fb5daf937
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bash/bash-4.4.12-3.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bash/bash-4.4.12-3.tar.xz e7e8309adbe6612553e6aa60521317b4d66db8f8086fcafcd3032a7d2a19e711123e4d16bd8d17b966d710e4a2b7b79b8d0860d931cc1b7b6bc6d1a6bfa3291b
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libfdisk1/libfdisk1-2.33.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/libfdisk1/libfdisk1-2.33.1-2.tar.xz 2d224cf0290e73e2aaf2dc4d654f932562304b68b34249a214728e3ace3e48a58bb59cc4cf03eff8f20c5872b9972eff1ecc96235debeeaa6ae42f94f7ab121a
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/tzcode/tzcode-2021e-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/tzcode/tzcode-2021e-1.tar.xz 22f713126289340ce8d1ddab753c3c4edd324640caece35e59b387d03f1923528e3b4b8bbb6db5b03dabbea70953584ea3adcd5b1519a1c2a1173aae742851dc
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/util-linux-2.33.1-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/util-linux/util-linux-2.33.1-2.tar.xz 1c3590e6f80e6d051dc044d2099e44c14e6e885423a780054b1af88593c12367abda83ea59bc52ff52074272f3002f1bc28608640aa70219698677056d0828bb
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/coreutils/coreutils-8.26-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/coreutils/coreutils-8.26-2.tar.xz d627541b7e2de386ba4333a2e33785762cc076ce5b4e85e775ceddbab32ee7929505fb6f7e2464bed517d04414c26561b19ba010a2fccdd4a9318cd2bb8dd695
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/ca-certificates/ca-certificates-2.50-4.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/ca-certificates/ca-certificates-2.50-4.tar.zst bcdbf45ea8ff81a08201b0f9a9179ca284bed56e2fb23f386147a0bdc1fe284d1b7290f72ecb23cdae753aaa8a3a2016626e05f4396103f6df52e22ac12126c9
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/groff/groff-1.22.4-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/groff/groff-1.22.4-1.tar.xz 0d369dbcdc07973bf8ece428b3500bc901c5d6e34de3ccb0eba48dce40bcb3d6493339341bb34dffd93dcc3cd288b4f0c9c96f5499aa3b854186673914aeb4b5
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/zstd/zstd-1.5.0-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/zstd/zstd-1.5.0-1.tar.zst fa6f145269357ef920ea8e8e84586de18d62bdd657425282594c104b639bef3aa430ff6958dc0b45c63c96c6d2a53db1a51112a0a6794304668361dba3cf753c
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/xz/xz-5.2.4-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/xz/xz-5.2.4-1.tar.xz d8b3e4549a8da31424053e00de9e288f49b3f61bef6ae05aed6c078fbe7956bb201b78f69ef7f2c761c93dd21fe0b56617a28ceac46905c01cb09940d6996665
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bzip2/bzip2-1.0.8-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/bzip2/bzip2-1.0.8-1.tar.xz 647e7642c7346f23b6b1ca1c89359b2576e853ae70d8ff6445d484d4cb518f30650de67673ec79f983138a89dc63b71f7116817fabeb8e137eae628dee2e2722
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gzip/gzip-1.11-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/gzip/gzip-1.11-1.tar.xz c12d5f54c7e49e50b628c7c0400eef0d1b1af6c3bf3b0c43c96c706d1b0a29c8e48c02595fdbfea79c23b620411cff7b9d81555dc2cdc7f6307e768ef7329427
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/grep/grep-3.7-2.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/grep/grep-3.7-2.tar.xz c3a098c5a41a4a2fcb1c5f650edd481dccddd7f22e81b03d1014c3c46eee2a1dce6e5d05e1be1f45fac161da5550b0f4303a6a2747226097f5b5b9ffce8e00b1
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/findutils/findutils-4.8.0-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/findutils/findutils-4.8.0-1.tar.xz 50eaad82537e2d37edff177087c961bcaebea42b8fdb3ffc4c914e61971bb845bb8e9bebe872081e338349bdc1a8e3f0c195a7d2d79cad184d3d8dddc95c8689
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/crypto-policies/crypto-policies-20190218-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/crypto-policies/crypto-policies-20190218-1.tar.xz 44d50ff08528df786eeb26ec1d312445ec92d77ecc9f448a3b741f7647e187f11eabdc0b38f8ab8de803e21d2e610f67eb44de7554f3fa83f6e8172e609b0054
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/tar/tar-1.34-1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/tar/tar-1.34-1.tar.zst 7b35b9cb4857ef2e6d2efb94e776209a636759258c696b4e8ee3f675c9d46c6aff4a42d4cfaa30d24f36fac3f7af67e980ab84649dfbb565c99a64efa2c14343
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/man-db/man-db-2.9.4-2.1.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/man-db/man-db-2.9.4-2.1.tar.zst 65d755ebdd245289cb5c403b4d5e075c54ade28ac4665f8225661a74f7665636e686b3fecf78119e84544b33c9a94925d5af7d53a0c33719c839992bbfd4599a
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/rebase/rebase-4.5.0-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/rebase/rebase-4.5.0-1.tar.xz e43ce3697bf80780a85750a64f2cf36ae6075155575d5a56db3f7b70ee26e9a39b5257765db2db06e79de8c4ace63a653e59145ff2cc75446e271b47e653f819
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/base-files/base-files-4.3-3.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/noarch/release/base-files/base-files-4.3-3.tar.zst dfafbe28fbe89d9b72a2eeb10901712e04de71d9089a85cfd2b8d45ffd739bdd49dadb7b57d098f01b8902456f5b839e9d4a10dbd6a8001573e035fde6797b63
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/openssl/libssl1.1/libssl1.1-1.1.1l-2.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/openssl/libssl1.1/libssl1.1-1.1.1l-2.tar.zst d9178c58a17a74954e2c6153a237e6b10e1524990507a9afd4dcc9af223248ce61aecf5db5b62a39ac97c7190452577a8bd48d9d9f77007c7edefd8478c53d15
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/openssl/openssl-1.1.1l-2.tar.zst
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/openssl/openssl-1.1.1l-2.tar.zst fd5e110fc0adb804fa81c4eca5747d0afd1bc6e7e53e5d68edb6b3657108296742c355bcb057804cc959b4a75c7cc04095d516d56e17f992e7f436595d2d1a1a
+get_url_to_file http://cygwin.mirror.constant.com/x86_64/release/nginx/nginx-1.14.2-1.tar.xz C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/nginx/nginx-1.14.2-1.tar.xz.tmp
+Checking SHA512 for file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/nginx/nginx-1.14.2-1.tar.xz
+SHA512 verified OK: file://C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/nginx/nginx-1.14.2-1.tar.xz d7bd4daa75dbc1c56404ccf446e05f7e07a15c3e376b7d3b76d68851bf0c4f982a42ace97fd7fbc57978c09ac97cf16ca2c0bc5b95a92d8820768f8a3b13f3b5
+2021/12/20 22:20:34 Downloaded C:\Users\Mathias\Desktop\0_PYTHON\Mbarete/http%3a%2f%2fcygwin.mirror.constant.com%2f/x86_64/release/nginx/nginx-1.14.2-1.tar.xz
+2021/12/20 22:20:34 Ending cygwin install

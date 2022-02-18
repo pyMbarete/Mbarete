@@ -5,305 +5,166 @@
 #Modulos importados
 import socket, glob, json  
 import threading
-import os,datetime
-info={
-    'autor':'Lucas Mathias Villalba Diaz',
-    'name':'servidor',
-    'text':'Servidor HTTP Python',
-    'descripcionBreve':'servidor http para  hacer correr como una API rest Full en red, para nuestros proyectos Mbarete',
-    'descripcionLarga':'Servidor HTTP montado con Socket y threading , falta la integracion para que funcione de forma automatica dentro de nuestros proyectos mbarete, cargar logica del proyecto en el servidor y luego generar los response desde la clase mbarete del modulo mbarete',
-    'img':'logo.png',
-    'enlace':'mathiaslucasvidipy@gmail.com',
-    'etiquetas':['default', 'inicio', 'servidor', 'HTTP_server', 'socket', 'APIrest Full', 'html', 'css', 'javascript', 'typescript', 'BBDD','DNS_server']
-}
-widgets={
-    'servidorPanel':{
-        'inputType':'panel',#OBLIGATORIO
-        'etiquetas':['id','Inicio','default','panel','servidor'],
-        'name':'servidor',#OBLIGATORIO
-        'text':'Inicio Servidor HTTP Python',#OBLIGATORIO
-        'anchor':'e',
-        'inputs':{
-            'inicio':{
-                'inputType':'Button',
-                'command':'manager',
-                'text':'Administrador'
-            }
-        }
-    },
-    'servidorFrame':{
-        'inputType':'Frame',#OBLIGATORIO
-        'etiquetas':['id','Inicio','Frame','servidor'],
-        'name':'servidorFrame',#OBLIGATORIO
-        'text':'Frame Servidor HTTP Python',#OBLIGATORIO
-        'inputs':{
-            'inicio':{
-                'inputType':'Button',
-                'command':'manager',
-                'text':'Administrador'
-            }
-        }
-    }
-}
-def arboldearchivos(pwd=''):
-    ret=[]
-    if not pwd:
-        pwd = os.getcwd()
-    for check in os.listdir(pwd):
-        if os.path.isfile(pwd+os.path.sep+check):
-            ret += [pwd+os.path.sep+check]
+import os,datetime,time
+def f1(*a,**k):
+    return datetime.datetime.now()
+f1()
+
+def f2(*a,**k):
+    return str(datetime.datetime.now())
+f2()
+
+def f3(*a,**k):
+    return datetime.datetime.now()
+f3()
+class cola(object):
+    """clase para gestionar los pedidos masivos desde el servidor hacia nuestras funciones"""
+    def __init__(self):
+        super(cola, self).__init__()
+        self.crear()
+    def crear(self):
+        self.cola = []
+        self.prioridad = []
+    def encolar(self,prioridad,elemento):
+        self.cola+=[elemento]
+        self.prioridad+=[int(prioridad)]
+
+    def desencolar(self,indice):
+        if (self.cola and self.prioridad):
+            self.cola.pop(indice)
+            self.prioridad.pop(indice)
+            return 1
         else:
-            ret += arboldearchivos(pwd+os.path.sep+check)
-    return ret
+            return 0
+    def frente(self):
+        if (self.cola and self.prioridad):
+            return self.prioridad.index(min(self.prioridad))
+        else:
+            return -1
+    def vaciar(self):
+        self.cola = []
+        self.prioridad = []
 
-canal={}
-def servidor_eventos(puerto=5050,host='0.0.0.0'):
-    pass
-
-def reglas_para_el_sevidor(pwd,dnsPort=53,sshPort=22,httpPort=80,nombreServicio='Mbarete_Server',reset=0):
-    file="reglas.cmd"
-    reglaDNS=f'netsh advfirewall firewall add rule name=”Open Port {dnsPort} para DNS de {nombreServicio}” dir=in action=allow protocol=TCP localport={dnsPort}\n'
-    reglaSSH=f'netsh advfirewall firewall add rule name=”Open Port {sshPort} para SSH de {nombreServicio}” dir=in action=allow protocol=TCP localport={sshPort}\n'
-    reglaHTTP=f'netsh advfirewall firewall add rule name=”Open Port {httpPort} para HTTP de {nombreServicio}” dir=in action=allow protocol=TCP localport={httpPort}\n'
-    
-    if (not (file in os.listdir(pwd))) or reset:
-        regla=open(pwd+os.path.sep+file,"w")
-        regla.write(reglaDNS)
-        regla.write(reglaSSH)
-        regla.write(reglaHTTP)
-        regla.close()
-
-fileZillaPort=14148
-def DNS_server(pwd,archivo_zone='mbaretePro.zone',dominio_zone="web.mbarete.",ipv4_zone='127.0.0.1',port_zone=80):
-    """
-    if LAN:
-        s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('10.255.255.255',1))
-        ip=s.getsockname()
-        s.close()
-        host = ip[0]
-    else:
-        host = '0.0.0.0'
-    """
-    DNS_host=ipv4_zone
-    DNS_port = 53
-    print((ipv4_zone, port_zone))
-    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server.bind((DNS_host, DNS_port))
-    global zonedata
-    def crear_archivo_ZONE(archivo_zone,dominio_zone,ipv4_zone,port_zone):
-        time='time'
-        #if port_zone:
-        #    ipv4_zone+=':'+str(port_zone)+''
-        archivo='{\n'
-        archivo+='  "$origin":"'+str(dominio_zone)+'.",\n'
-        archivo+='  "$ttl":3600,\n'
-        archivo+='  "soa":{\n'
-        archivo+='      "mname":"ns1.'+str(dominio_zone)+'.",\n'
-        archivo+='      "rname":"admin.'+str(dominio_zone)+'.",\n'
-        archivo+='      "serial":"{time}",\n'
-        archivo+='      "refresh":3600,\n'
-        archivo+='      "retry":600,\n'
-        archivo+='      "expire":604800,\n'
-        archivo+='      "minimun":86400\n'
-        archivo+='  },\n'
-        archivo+='  "ns":[\n'
-        archivo+='      {"host":"ns1.'+str(dominio_zone)+'."},\n'
-        archivo+='      {"host":"ns2.'+str(dominio_zone)+'."}\n'
-        archivo+='  ],\n'
-        archivo+='  "a":[\n'
-        archivo+='      {"name":"@","ttl":400,"value":"0.0.0.0"},\n'
-        archivo+='      {"name":"@","ttl":400,"value":"255.255.255.255"},\n'
-        archivo+='      {"name":"@","ttl":400,"value":"127.0.0.1"},\n'
-        archivo+='      {"name":"@","ttl":400,"value":"'+str(ipv4_zone)+'"},\n'
-        archivo+='      {"name":"@","ttl":400,"value":"'+str(ipv4_zone)+'"}\n'
-        archivo+='  ]\n'
-        archivo+='}\n'
-        file=open(archivo_zone,'wb')
-        file.write(archivo.encode())
-        file.close()
-    def load_zones():
-        if not dominio_zone+'.zone' in os.listdir(pwd):
-            crear_archivo_ZONE(pwd+os.path.sep+dominio_zone+'.zone',dominio_zone,ipv4_zone,port_zone)
-        jsonzone={}
-        zonefiles=glob.glob(pwd+'/*.zone')
-        for zone in zonefiles:
-            with open(zone) as zonedata:
-                data=json.load(zonedata)
-                zonename = data["$origin"]
-                jsonzone[zonename]=data
-        print(jsonzone)
-        return jsonzone
-    zonedata=load_zones()
-    def getflags(flags):
-        byte1=bytes(flags[:1])
-        byte2=bytes(flags[1:2])
-        rflags=''
-        QR='1'
-        OPCODE=''
-        for bit in range(1,5):
-            OPCODE+=str(ord(byte1)&(1<<bit))
-        AA='1'
-        TC='0'
-        RD='0'
-        #Byte 2
-        RA='0'
-        Z='000'
-        RCODE='0000'
-        return int(QR+OPCODE+AA+TC+RD,2).to_bytes(1,byteorder='big')+int(RA+Z+RCODE,2).to_bytes(1,byteorder='big')
-    def getquestiondomain(data):
-        state=0
-        expectedlength=0
-        domainstring=''
-        domainparts=[]
-        x=0
-        y=0
-
-        for byte in data:
-            if state == 1:
-                if byte != 0:
-                    domainstring += chr(byte)
-                x+=1
-                if x == expectedlength:
-                    domainparts.append(domainstring)
-                    domainstring = ''
-                    state=0
-                    x=0
-                if byte == 0:
-                    domainparts.append(domainstring)
-                    break
+class servidor(object):
+    """docstring for servidor"""
+    def __init__(self,pwd, command,subProyectos,puerto=8080):
+        super(servidor, self).__init__()
+        self.metricas_command={}
+        self.command=command #todas las funciones que seran recividas desde los sub proyectos
+        self.cola=cola()         #lista de todas las instrucciones que seran recividas en este servidor
+        self.tiempo_backend=1000       #para poder llevar la cuenta de cuantos procesos ya se estan ejecutando
+        self.ID_Procesos=0       #para poder llevar la cuenta de cuantos procesos ya se estan ejecutando
+        self.hilos={}            #lista de todas las funciones que esteran ejecutando en segundo plano
+        self.limite_hilos=10     #cantidad de procesos que pueden ser ejecutados al mismos tiempo
+        self.responds={}         #salida que corresponde a cada proceso ya ejecutado y terminado
+        self.subProyectos=subProyectos #info de cada subProyecto necesario para poder configurara los datos para cadad funcion
+        self.pwd=pwd #ruta absoluta de donde se esta ejecutando el servidor
+        self.host = '0.0.0.0'    #ipV4 en donde va a estar escuchando este servidor, la direccion '0.0.0.0' es ideal para servir en la red local
+        self.port = puerto       #puerto en donde va a estar escuchando este servidor
+        self.format_encode='utf-8' #la funcion encode comvertira todos los datos que lleguen por los puertos a este formato de texto
+        self.porcion=1024*5      #cantidad de bytes que seran leidos cada ves que se use .recv(bytes)
+        self.status=True         #indica que el servidor debe seguir funcionando
+        self.clients = {}        #coneccones que seran mantenidas
+        self.usernames = {}      #cada ves que alguien se conecte se le asignara un username
+        self.action_download='/download/' #posible programa dentro del proyecto debe ser resuelto mas adelante
+        self.action_upload='/subir/'    #posible programa dentro del proyecto debe ser resuelto mas adelante
+        self.action_borrar='/borrar/'   #posible programa dentro del proyecto debe ser resuelto mas adelante
+        self.pwd_js=self.pwd+'\\js\\'   #carpeta de destino para la informacion JavaScript generada por los subproyectos
+        self.pwd_upload=self.pwd+'\\download\\' #carpeta de destino para todo lo que sea subido al sitio
+        self.pwd_download=self.pwd+'\\'         #carpeta desde donde se puede descargar todo lo que contenga, en este caso la carpeta raiz del proyecto
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.host, self.port))
+        self.server.listen()
+        print(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'")
+        #servidor_archivos=self.download()
+    def check(self):
+        print("check en linea")
+        f=self.cola.frente()
+        while True: 
+            print('self.cola.frente():',f)
+            while (f<0) and (self.status):
+                time.sleep(0.1)
+                f=self.cola.frente()
+            if f >= 0:
+                m=self.cola.cola[f]
+                self.hilos[m['parametros']['ID_Proceso']] = threading.Thread(target=self.hilo, args=(m,) )
+                self.hilos[m['parametros']['ID_Proceso']].start()
+                self.cola.desencolar(f)
+                print(self.cola.cola,self.cola.prioridad)
+            while (len(self.hilos) >= self.limite_hilos) and (self.status):
+                time.sleep(0.1)
+            f=self.cola.frente()
+            if not self.status:
+                break
+        """
+        try:
+            f=self.cola.frente()
+            while True: 
+                m=self.cola.cola[f]
+                self.hilos[m['ID_Proceso']] = threading.Thread(target=self.hilo, args=(m['args'],m['parametros']), kwargs=(m['kwargs'],) )
+                self.hilos[m['ID_Proceso']].start()
+                self.cola.desencolar(f)
+                while len(self.hilos) >= self.limite_hilos:
+                    time.sleep(0.5)
+                f=self.cola.frente()
+                while f<=0:
+                    time.sleep(0.5)
+                    f=self.cola.frente()
+        except Exception as e:
+            print("Error en la funcion Check():",e)
+        """
+    def hilo(self,info):
+        print('ejecutando:',info['parametros']['funcion'])
+        T0=time.time()
+        self.responds[info['parametros']['ID_Proceso']]=self.command[info['parametros']['funcion']](*info['parametros']['args'],**info['parametros']['kwargs'])
+        T=time.time()-T0
+        if info['parametros']['funcion'] in self.metricas_command:
+            self.metricas_command[info['parametros']['funcion']]['min_tiempo']= self.metricas_command[info['parametros']['funcion']]['min_tiempo'] if self.metricas_command[info['parametros']['funcion']]['min_tiempo']<T else T
+            self.metricas_command[info['parametros']['funcion']]['max_tiempo']= self.metricas_command[info['parametros']['funcion']]['max_tiempo'] if self.metricas_command[info['parametros']['funcion']]['max_tiempo']>T else T
+            self.metricas_command[info['parametros']['funcion']]['suma_tiempo']+=T
+            self.metricas_command[info['parametros']['funcion']]['ejecuciones']+=1.0
+            self.metricas_command[info['parametros']['funcion']]['promedio']=self.metricas_command[info['parametros']['funcion']]['suma_tiempo']/self.metricas_command[info['parametros']['funcion']]['ejecuciones']
+        else:
+            self.metricas_command[info['parametros']['funcion']]={}
+            self.metricas_command[info['parametros']['funcion']]['min_tiempo']= T
+            self.metricas_command[info['parametros']['funcion']]['max_tiempo']= T
+            self.metricas_command[info['parametros']['funcion']]['suma_tiempo']=T
+            self.metricas_command[info['parametros']['funcion']]['ejecuciones']=1.0
+            self.metricas_command[info['parametros']['funcion']]['promedio']=self.metricas_command[info['parametros']['funcion']]['suma_tiempo']/self.metricas_command[info['parametros']['funcion']]['ejecuciones']
+    def arboldearchivos(self,pwd=''):
+        ret=[]
+        if not pwd:
+            pwd = os.getcwd()
+        for check in os.listdir(pwd):
+            if os.path.isfile(pwd+os.path.sep+check):
+                ret += [pwd+os.path.sep+check]
             else:
-                state=1
-                expectedlength=byte
-            y+=1
-        questiontype = data[y:y+2]
-        return (domainparts,questiontype)
-    def getzone(domain):
-        global zonedata
-        zone_name = '.'.join(domain)
-        return zonedata[zone_name]
-    def getrecs(data):
-        domain,questiontype=getquestiondomain(data)
-        qt=''
-        if questiontype==b'\x00\x01':
-            qt='a'
-        zone=getzone(domain)
-        return (zone[qt],qt,domain)
-    def buildquestion(domainname,rectype):
-        qbytes=b''
-        for part in domainname:
-            length=len(part)
-            qbytes+=bytes([length])
-            for char in part:
-                qbytes+=ord(char).to_bytes(1,byteorder='big')
-        if rectype =='a':
-            qbytes+=(1).to_bytes(2,byteorder='big')
-        qbytes+=(1).to_bytes(2,byteorder='big')
-        return qbytes
-
-    def rectobytes(domainname,rectype,recttl,recval):
-        rbytes=b'\xc0\x0c'
-        if rectype=='a':
-            rbytes=rbytes+bytes([0])+bytes([1])
-        rbytes=rbytes+bytes([0])+bytes([1])
-        rbytes+=int(recttl).to_bytes(4,byteorder='big')
-        if rectype=='a':
-            rbytes=rbytes+bytes([0])+bytes([4])
-            for part in recval.split('.'):
-                rbytes+=bytes([int(part)])
-        return rbytes
-    def buildresponse(data):
-        #Transaction ID
-        TransactionID=data[:2]
-        #Get the Flags
-        Flags = getflags(data[2:4])
-
-        # Question Count
-        QDCOUNT = b'\x00\x01'
-
-        #Answer Count
-        ANCOUNT = len(getrecs(data[12:])[0]).to_bytes(2,byteorder='big')
-
-        # Name Server
-        NSCOUNT=(0).to_bytes(2,byteorder='big')
-
-        # Additional Count
-        ARCOUNT=(0).to_bytes(2,byteorder='big')
-
-        dnsheader=TransactionID+Flags+QDCOUNT+ANCOUNT+NSCOUNT+ARCOUNT 
-
-        #Create DNS BODY
-        dnsbody=b''
-        #Get answer for query
-        records,rectype,domainname=getrecs(data[12:])
-        dnsquestion=buildquestion(domainname,rectype)
-        for record in records:
-           dnsbody += rectobytes(domainname,rectype,record["ttl"],record["value"]) 
-        print(dnsheader)
-        return dnsheader+dnsquestion+dnsbody
-    print('servidor DNS esta en Linea')
-    while True:
-        data, address = server.recvfrom(512)
-        print(data)
-        r=buildresponse(data)
-        server.sendto(r,address)
-      
-#DNS_server("media"+os.path.sep+"servidor"+os.path.sep+'zones',archivo_zone='mbaretePro.zone',dominio_zone="ElectroZone",ipv4_zone='192.168.100.21',port_zone='80')
-
-def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"servidor",dns=1):
-    global status,recieve,servidor_archivos
-    host = '0.0.0.0'
-    port = 80
-    format_encode='utf-8'
-    status=True
-    clients = []
-    usernames = []
-    action_download='/download/'
-    action_upload='/subir/'
-    action_borrar='/borrar/'
-    pwd_js=pwd+'\\js\\'
-    pwd_upload=pwd+'\\download\\'
-    pwd_download=pwd+'\\'
-    s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('10.255.255.255',1))
-    ip=s.getsockname()
-    s.close()
-    host_DNS = ip[0]
-    reglas_para_el_sevidor(pwd,dnsPort=53,sshPort=22,httpPort=80,nombreServicio='Mbarete_Server',reset=0)
-    #servidor_DNS = threading.Thread(target=DNS_server, args=(pwd+os.path.sep+'zones',), kwargs={'archivo_zone':'ElectroZone.zone','dominio_zone':dominio,'ipv4_zone':host_DNS,'port_zone':port})
-    #servidor_DNS.start()
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, port))
-    server.listen()
-    print(f"\nServidor HTTP corriendo en la direccion 'http://{host_DNS}:{port}/'")
-    def download():
-        index=[{'name':file,'size':os.path.getsize(pwd_upload+file),'fecha':os.path.getmtime(pwd_upload+file),'pwd':str(pwd_upload+file).replace(' ','%20').replace(os.path.sep,'/')} for file in os.listdir(pwd_upload)]
-        #creando un .js que contiene un objeto array con todos los elementos del directorio
-        javascript=open(pwd_js+'files.download.js',"w")
-        javascript.write('var files = new Array();'+'\n')
-        javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
-        javascript.write('  this.name = name;'+'\n')
-        javascript.write('  this.pwd = pwd;'+'\n')
-        javascript.write('  this.size = size;'+'\n')
-        javascript.write('  this.fecha = fecha;'+'\n')
-        javascript.write('  this.id = id;'+'\n')
-        javascript.write('  return this;'+'\n')
-        javascript.write('  }'+'\n')
-        errorWrite={}
-        mayor=0
-        for f in range(len(index)):
-            try:
-                javascript.write('files['+str(f)+'] = new registrar("'+str(index[f]['name'])+'","'+str(index[f]['pwd'].replace(' ','%20').replace(os.path.sep,'/'))+'",'+str(index[f]['size'])+','+str(index[f]['fecha'])+','+str(f)+'); \n')
-            except Exception as e:
-                errorWrite[f]={'pwd':index[f]['pwd']}
-                raise e
-        javascript.close()
-        return arboldearchivos(pwd)
-
-    servidor_archivos=download()
-
-    print(servidor_archivos)
-    def requestToDictionary(request,add={}):
+                ret += self.arboldearchivos(pwd+os.path.sep+check)
+        return ret
+    def download(self,pwd_js,pwd_upload):
+            index=[{'name':file,'size':os.path.getsize(pwd_upload+file),'fecha':os.path.getmtime(pwd_upload+file),'pwd':str(pwd_upload+file).replace(' ','%20').replace(os.path.sep,'/')} for file in os.listdir(pwd_upload)]
+            #creando un .js que contiene un objeto array con todos los elementos del directorio
+            javascript=open(pwd_js+'files.download.js',"w")
+            javascript.write('var files = new Array();'+'\n')
+            javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
+            javascript.write('  this.name = name;'+'\n')
+            javascript.write('  this.pwd = pwd;'+'\n')
+            javascript.write('  this.size = size;'+'\n')
+            javascript.write('  this.fecha = fecha;'+'\n')
+            javascript.write('  this.id = id;'+'\n')
+            javascript.write('  return this;'+'\n')
+            javascript.write('  }'+'\n')
+            errorWrite={}
+            mayor=0
+            for f in range(len(index)):
+                try:
+                    javascript.write('files['+str(f)+'] = new registrar("'+str(index[f]['name'])+'","'+str(index[f]['pwd'].replace(' ','%20').replace(os.path.sep,'/'))+'",'+str(index[f]['size'])+','+str(index[f]['fecha'])+','+str(f)+'); \n')
+                except Exception as e:
+                    errorWrite[f]={'pwd':index[f]['pwd']}
+                    raise e
+            javascript.close()
+            return self.arboldearchivos(pwd)
+    def requestToDictionary(self,request,add={}):
         """
             b'POST /subir HTTP/1.1'
             b'Host: 127.0.0.1:8080'
@@ -330,9 +191,11 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
             b'-----------------------------1262949829386019333586660223--'
 
         """
+        #print(request)
         if b'\r\n\r\n' in request:
-            post=[ request.split(b'\r\n\r\n')[-1]]
-        requ=[r.decode(format_encode) for r in request.split(b'\r\n')]
+            post=request.split(b'\r\n\r\n')[-1].decode(self.format_encode)
+            #print(post)
+        requ=[r.decode(self.format_encode) for r in request.split(b'\r\n')]
         ret={}
         for i in requ:
             if ('POST' in i) or ('GET' in i) or ('HEAD' in i):
@@ -348,237 +211,124 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
                 }
             if 'Content-Type: multipart/form-data; boundary' in i:
                 ret['boundary']=i.split('boundary=')[-1]
+            elif 'Content-Type:' in i:
+                ret['Content-Type']=i.split('Content-Type:')[-1].strip()
+                if ('application/x-www-form-urlencoded' in ret['Content-Type']) and post :
+                    ret['parametros']={k.split('=')[0].strip():k.split('=')[1].strip() for k in post.split('&')}
+                if ('application/json' in ret['Content-Type']) and post :
+                    ret['parametros']=json.loads(post)
+                    #ret['parametros']={k.split(':')[0].strip():k.split(':')[1].strip() for k in post.split('&')}
+                
+            if 'Content-Length:' in i:
+                ret['Content-Length']=int(i.split('Content-Length:')[-1])
+            if 'Origin:' in i:
+                ret['Origin']=i.split('Origin:')[-1]
+            if 'Referer:' in i:
+                ret['Referer']=i.split('Referer:')[-1]
             
+            #if ':' in i:
+            #    ret['']=i.split(':')[-1]
+            #
         if add:
             for a in add:
                 ret[a]=add[a]
         return ret
-    def respond(client, address):
-        global servidor_archivos
-        responder=False
-        request=b''
-        ok=True
-        cabezera=True
-        porcion=1024*5
-        binario=None
-        info={}
-        while ok:
-            try:
-                datos_Bytes=client.recv(porcion)
-                print(datos_Bytes)
-            except:
-                ok=False
-            if (b'Android' in datos_Bytes) and (b'boundary' in datos_Bytes):
-                request+=datos_Bytes
-                info=requestToDictionary(datos_Bytes)
-                datos_Bytes=client.recv(porcion)
-            if (porcion > len(datos_Bytes)) and (b'\r\n' in datos_Bytes):
-                ok = False
-            if b'' == datos_Bytes:
-                ok = False
-            if cabezera:
-                if ((b'\r\n\r\n' in datos_Bytes) or info):
-                    cabezera=False
-                    if 'boundary' in info:
-                        boundary=b'--'+info['boundary'].encode(format_encode)
-                        if boundary in datos_Bytes.split(b'\r\n'):
-                            binario=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n')[2]
-                    elif (b'boundary=----' in datos_Bytes) and (b'\r\n\r\n' in datos_Bytes):
-                        print('############## 2 BIUNDARY',datos_Bytes)
-                        request+=datos_Bytes.split(b'\r\n\r\n')[0]+b'\r\n\r\n'
-                        info=requestToDictionary(datos_Bytes.split(b'\r\n\r\n')[0])
-                        boundary=b'--'+info['boundary'].encode(format_encode)
-                        form_data=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n\r\n')[0]
-                        print(form_data)
-                        request+= boundary+b'\r\n'+form_data
-                        info=requestToDictionary(form_data,add=info)
-                        binario=datos_Bytes.split(form_data+b'\r\n\r\n')[-1]
-                    if binario:
-                        boundary+=b'--\r\n'
-                        #request=datos_Bytes.split(binario)[0]
-                        #info=requestToDictionary(request,add=info)
-                        subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
-                        if boundary in datos_Bytes:
-                            subiendo.write(binario.split(boundary)[0])
-                            request+=boundary+binario.split(boundary)[-1]
-                        else:
-                            subiendo.write(binario)
-                            while binario:
-                                datos_Bytes=client.recv(porcion)
-                                if boundary in datos_Bytes:
-                                    subiendo.write(datos_Bytes.split(boundary)[0])
-                                    request+=boundary+datos_Bytes.split(boundary)[-1]
-                                    binario=None
-                                else:
-                                    subiendo.write(datos_Bytes)
-                        subiendo.close()
-                        print("Subido:",info['form_data']['filename'])
-                        servidor_archivos=download()
-                        ok=False
+    def respond(self,client, address):
+        #80029563
+        info=self.requestToDictionary(client.recv(self.porcion))
+        #header='HTTP:/1.1 404 Not Found \n\n'
+        if 'parametros' in info:
+            print('Content-Type',info)
+            if 'ID_Proceso' in info['parametros']:
+                if 'inicio' in info['parametros']['ID_Proceso']:
+                    print('ID_Proceso',info['parametros']['ID_Proceso'])
+                    self.ID_Procesos+=1
+                    info['parametros']['ID_Proceso']=self.ID_Procesos
+                    #self.clients[self.ID_Procesos]=client
+                    j={
+                        'ID_Proceso':self.ID_Procesos,
+                        'status':'encolado', 
+                        'funcion':info['parametros']['funcion'],
+                        'args':info['parametros']['args'],
+                        'kwargs':info['parametros']['kwargs'],
+                        'prioridad':info['parametros']['prioridad'],
+                        'user':info['parametros']['user']
+                    }
+                    self.cola.encolar(info['parametros']['prioridad'],info)
+                    header=f'HTTP/1.1 200 OK\nContent-Type: application/javascript\n\n'
+                    header+=json.dumps(j)
+                    client.send((header).encode(self.format_encode))
+                else:
+                    print('self.responds: ',self.responds)
+                    respon=[p for p in info['parametros']['ID_Proceso'] if p in self.responds]
+                    if respon:
+                        header='HTTP/1.1 200 OK\n'+'Content-Type: application/javascript\n\n ' + json.dumps({p:self.responds[p] for p in respon}) +' \n '
+                        for p in respon:
+                            del self.responds[p]
+                            del self.hilos[p]
+                        print(header)
+                        client.send((header).encode(self.format_encode))
                     else:
-                        request+=datos_Bytes
-                else:
-                    request+=datos_Bytes
-            else:
-                request+=datos_Bytes
-            print('ok:',ok)
-        print('request:',request)
-        info = requestToDictionary(request,add=info)
-        if ''!= request:
-            print(info)
-            if '/cerrar' in  info['sub_dominio']:
-                print('Servidor Apagado')
-                client.close()
-                server.close()
-                #servidor_DNS.close()
-                status=False
-                os.system("curl http://"+host+":"+str(port)+"/cerrar")
-            elif ('GET' in info['method']):
-                if '/' ==  info['sub_dominio']:
-                    myfile = pwd+os.path.sep+'index.html'
-                elif pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ') in servidor_archivos:
-                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ')
-                    print('method GET full:',myfile)
-                elif '/socket.io/?' in info['sub_dominio']:
-                    io={}
-                    for k in info['sub_dominio'].replace('/socket.io/?','').split('&'):
-                        io[k.split('=')[0]]=k.split('=')[1] 
-                    #print(io)
-                    #print({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')})
-                    myfile=pwd+os.path.sep+'socket_GET.io.html'
-                    file=open(myfile,'wb')
-                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
-                    #file.write(request)
-                    file.close()
-                else:
-                    myfile=pwd+os.path.sep+'GET.html'
-                    file=open(myfile,'wb')
-                    file.write(b'<h1>Archivo No Encontrado</h1>')
-                    file.write(request)
-                    file.close()
-            elif ('HEAD' in info['method']):
-                if '/' ==  info['sub_dominio']:
-                    myfile = pwd+os.path.sep+'index.html'
-                elif pwd+info['sub_dominio'].replace('/',os.path.sep) in servidor_archivos:
-                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep)
-                    print('method HEAD:',myfile)
-                elif '/socket.io/?' in info['sub_dominio']:
-                    io={}
-                    for k in info['sub_dominio'].replace('/socket.io/?','').split('&'):
-                        io[k.split('=')[0]]=k.split('=')[1] 
-                    #print(io)
-                    #print({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')})
-                    myfile=pwd+os.path.sep+'socket_GET.io.html'
-                    file=open(myfile,'wb')
-                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
-                    #file.write(request)
-                    file.close()
-                else:
-                    myfile=pwd+os.path.sep+'GET.html'
-                    file=open(myfile,'wb')
-                    file.write(b'<h1>Archivo No Encontrado</h1>')
-                    file.write(request)
-                    file.close()
-            elif ('POST' in info['method']):
-                if '/subir' in info['sub_dominio']:
-                    myfile=pwd+os.path.sep+'subido.html'
-                    file=open(myfile,'wb')
-                    file.write(b'<h1>Archivo Subido con Exito </h1>')
-                    file.write(request)
-                    file.close()
-                elif '/socket.io/?' in info['sub_dominio']:
-                    myfile=pwd+os.path.sep+'socket_POST.io.html'
-                    file=open(myfile,'wb')
-                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
-                    #file.write(request)
-                    file.close()
-                else:
-                    myfile=pwd+os.path.sep+'POST.html'
-                    file=open(myfile,'wb')
-                    file.write(request)
-                    file.close()
-            #80029563
-            try:
-                print('myfile',myfile)
-                header='HTTP/1.1 200 OK\n'
-                if myfile.endswith('.jpg'): 
-                    mimetype='Content-Type: image/jpg'
-                elif myfile.endswith('.css'): 
-                    mimetype='Content-Type: text/css'
-                elif myfile.endswith('.js'): 
-                    mimetype='Content-Type: text/javascript'
-                elif myfile.endswith('.pdf'): 
-                    mimetype='Content-Type: application/pdf'
-                elif myfile.endswith('.mp4'): 
-                    mimetype='Content-Type: video/mp4'
-                elif '/download/' in info['sub_dominio'][:len('/download/')]:
-                    myfile=info['sub_dominio'][len('/download/'):].replace('/',os.path.sep).replace('%20',' ')
-                    print(myfile,os.path.getsize(myfile),datetime.datetime.now()) 
-                    """
-                    Server: MBARETE_PYTHON
-                    Date: Tue, 28 Sep 2021 00:03:17 GMT
-                    Connection: close
-                    Accept-Ranges: bytes
-                    Content-transfer-encoding: binary
-                    Content-Length: 3942042048
-                    Cache-Control: no-store
-                    X-Robots-Tag:noindex, nofollow
-                    Content-Disposition: attachment; filename="Black - PS2 by Videogames SCZ.pkg"
-                    Content-Type: application/octet-stream
-                    """
-                    #mimetype ='Server: MBARETE_PYTHON\n'
-                    #mimetype+='Date: '+str(datetime.datetime.now())+'\n'
-                    #mimetype+='Connection: close\n'
-                    mimetype='Accept-Ranges: bytes\n'
-                    mimetype+='Content-transfer-encoding: binary\n'
-                    mimetype+='Content-Length: '+str(os.path.getsize(myfile))+'\n'#3942042048
-                    mimetype+='Cache-Control: no-store\n'
-                    #mimetype+='X-Robots-Tag:noindex, nofollow\n'
-                    mimetype+='Content-Disposition: attachment; filename="'+info['sub_dominio'].split('/')[-1]+'"\n'
-                    mimetype+='Content-Type: application/octet-stream\n'
-                    mimetype+='\n'
-                    print('mimetype:',mimetype)
-                else: 
-                    mimetype='Content-Type: text/html'
-                header += str(mimetype)+'\n\n'
-                """
-                if ('GET' in info['method']):
-                
-                 if '/descargar' ==  info['sub_dominio']:
-                        header = '200 OK \nContent-Type: text/html; charset=utf-8 \nContent-Disposition: attachment; filename="genial.html"\nContent-Length: 22\n<HTML>Guárdame!</HTML>'
-                """
-            except Exception as e:
-                print(e)
-                header='HTTP:/1.1 404 Not Found \n\n'
-                response=f'<html><body>Error 404: File NOt Found<br> {e} </body></html>'.encode(format_encode)
-            header=header.encode(format_encode)
-            if '/download/' in info['sub_dominio'][:len('/download/')]:
-                client.send(header)
-                #for linea in pesca.iter_content(100000):
-                file = open(myfile,'rb')
-                part=file.read(porcion*20)
-                while part:
-                    client.send(part)
-                    part=file.read(porcion*20)
-                file.close()
-            else:
-                client.send(header)
-                file=open(myfile,'rb')
-                client.send(file.read())
-                file.close()
-        client.close()
-        print("fin de coneccion")            
-    def receive_connections():
-        while status:
-            client, address = server.accept()
-            thread = threading.Thread(target=respond, args=(client, address))
-            thread.start()
-        print("fin de servicio")
-    
-    receive_connections()
-    server.close()
+                        ejecutando=[p for p in info['parametros']['ID_Proceso'] if p in self.hilos]
+                        header=f'HTTP/1.1 200 OK\nContent-Type: application/javascript\n\n'+ json.dumps({'ejecutando':ejecutando}) +'; \n'
+                        print(header)
+                        client.send((header).encode(self.format_encode))
+            #if info['parametros']['funcion'] in self.command:
+            #    header='HTTP/1.1 200 OK\n\n'
 
-servidor_HTTP_python()
+        if '/test' == info['sub_dominio']:
+            client.send(('HTTP/1.1 200 OK\n'+'Content-Type: text/html\n\n').encode(self.format_encode))
+            file=open(self.pwd+os.path.sep+'index.html','rb')
+            client.send(file.read())
+            file.close()
+        elif '/cerrar' ==  info['sub_dominio']:
+            client.close()
+            self.server.close()
+            self.status=False
+            print('Servidor Apagado')
+        client.close()
+        """
+        except Exception as e :
+            print('ERROR:',e)
+            client.send(('HTTP:/1.1 404 Not Found\n'+'Content-Type: text/html \n\n'+str(e)).encode(self.format_encode))
+            client.close()
+        """
+        print("fin de coneccion")            
+
+    def servidor_HTTP_python(self):
+        def receive_connections():    
+            thread_check = threading.Thread(target=self.check)
+            thread_check.start()
+            try:
+                while self.status:
+                    client, address = self.server.accept()
+                    thread = threading.Thread(target=self.respond, args=(client, address))
+                    thread.start()
+            except Exception as e:
+                print('ERROR receive_connections():', e) 
+                
+        receive_connections()
+        print('self.responds:',self.responds)
+        print('self.cola.cola:',self.cola.cola)
+        print('self.metricas_command:',self.metricas_command)
+        print('self.ID_Procesos:',self.ID_Procesos)
+        print(':',)
+        self.server.close()
+
+funciones={
+    'f1':f1,
+    'f2':f2,
+    'f3':f3
+}
+pwd=os.getcwd()+'\\media\\servidor'
+subProyectos={
+    'a':{'pwd':pwd+'\\'+'a','name':'a'},
+    'b':{'pwd':pwd+'\\'+'b','name':'b'},
+    'c':{'pwd':pwd+'\\'+'c','name':'c'},
+    'd':{'pwd':pwd+'\\'+'d','name':'d'}
+    }
+api=servidor(pwd, funciones,subProyectos,puerto=666)
+api.servidor_HTTP_python()
 
 def servidor_CHAT_socket_python():
     import socket   

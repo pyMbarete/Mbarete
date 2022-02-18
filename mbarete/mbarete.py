@@ -17,8 +17,10 @@ import requests
 #la variables globales permiten acceder a las propiedades y metodos, de estos objetos desde cualquier lugar 
 global variables, tablas, BBDD, RESET, ventana
 
-#FUNCIONES UTILES 
-#PARA DIFERENTES TIPOS DE PROYECTOS, FUNCIONES PARA PRUEBAS, MANEJO DE DATOS, VALIDACIONES, ETC,ETC
+"""
+    #############  FUNCIONES UTILES #############
+    PARA DIFERENTES TIPOS DE PROYECTOS, FUNCIONES PARA PRUEBAS, MANEJO DE DATOS, VALIDACIONES, ETC,ETC
+"""
 def okString(string,para='Clave'):
     myStr=string.strip()
     notKey=['`','ñ','_',"'",'à','è','ì','ò','ù','.','']
@@ -377,9 +379,10 @@ def myFuncion(inputType,nameWitget,comando):
         print("pruebaClickIzquierdo")
     elif comando=="pruebaClickRueda":
         print("pruebaClickRueda")
+
+
 """ 
-    Clases para deferentes tipos de proyectos
-    cesar escobar ieee ras una 
+    ############# CLASES PRINCIPALES DEL MODULO MBARETE  ########################
 """
 
 class mbarete(object):
@@ -394,10 +397,10 @@ class mbarete(object):
         self.archivosInternos=archivosInternos
         self.nombre=nombre
         if ficheroCRUD:
-            self.dirCRUD=self.ubi.pwd+os.path.sep+ficheroCRUD
+            self.dirCRUD=self.ubi.pwd+self.ubi.s+ficheroCRUD
             self.ficheroCRUD=ficheroCRUD
         else:
-            self.dirCRUD=self.ubi.pwd+os.path.sep+nombre.replace(' ','_')+"_CRUD_.sql"
+            self.dirCRUD=self.ubi.pwd+self.ubi.s+nombre.replace(' ','_')+"_CRUD_.sql"
             self.ficheroCRUD=nombre.replace(' ','_')+"_CRUD_.sql"
         self.campoAutoincrement=campoAutoincrement
         self.cargarScript=cargarScript
@@ -454,12 +457,12 @@ class mbarete(object):
         self.transicion(G,entra)
     def preload(self):
         subProyectos=self.ubi.listaDeCarpetas(self.ubi.pwd,ignorar=self.archivosInternos)
-        load=open(self.ubi.pwd+os.path.sep+'preload.py','w')
+        load=open(self.ubi.pwd+self.ubi.s+'preload.py','w')
         load.write(r'proyectos={}'+'\n')
         for subP in subProyectos:
-            if self.cargarScript in self.ubi.listaDeFicheros(self.ubi.pwd+os.path.sep+subP,ignorar=self.archivosInternos): 
+            if self.cargarScript in self.ubi.listaDeFicheros(self.ubi.pwd+self.ubi.s+subP,ignorar=self.archivosInternos): 
                 load.write('from .'+subP+' import '+self.cargarScript[:-3]+' as '+subP+'\n')
-            elif subP+'.py' in self.ubi.listaDeFicheros(self.ubi.pwd+os.path.sep+subP,ignorar=self.archivosInternos): 
+            elif subP+'.py' in self.ubi.listaDeFicheros(self.ubi.pwd+self.ubi.s+subP,ignorar=self.archivosInternos): 
                 load.write('from .'+subP+' import '+subP+' as '+subP+'\n')
             load.write("proyectos['"+subP+"']="+subP+'\n')
         load.write("def command(admin,G,manager):"+'\n')
@@ -469,7 +472,7 @@ class mbarete(object):
         #from diseñoLibre.preload import proyectos
     def getWidget(self,subProyecto,widgets,info):
         w=widgets
-        info['pwd']=self.ubi.pwd+os.path.sep+subProyecto
+        info['pwd']=self.ubi.pwd+self.ubi.s+subProyecto
         metadata={'subProyecto':subProyecto,'command':{},'widget':{},'info':info,'etiquetas':{},'subtransicion':{'aceptar':[self.subtransicionInicio,'default'],'ignorar':[]}}
         for widget in w:
             metadata['widget'][w[widget]['name']]=subProyecto+'_'+w[widget]['name']

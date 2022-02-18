@@ -1,2 +1,7 @@
+*cygwin.mirror.constant.com*
 *bibliografia*
 *__pycache__*
+servidor/nginx
+servidor/zones
+servidor/uwsgi
+env

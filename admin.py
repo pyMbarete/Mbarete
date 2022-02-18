@@ -49,4 +49,4 @@ for proyecto in proyectos:
         G.SetWidget(atributos=widgets[proyecto][widget])
 
 admin.start(G)
-print("plano Libre")
+print(admin.nombre)
