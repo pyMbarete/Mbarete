@@ -327,13 +327,13 @@ subProyectos={
     'c':{'pwd':pwd+'\\'+'c','name':'c'},
     'd':{'pwd':pwd+'\\'+'d','name':'d'}
     }
-api=servidor(pwd, funciones,subProyectos,puerto=666)
-api.servidor_HTTP_python()
+#api=servidor(pwd, funciones,subProyectos,puerto=666)
+#api.servidor_HTTP_python()
 
 def servidor_CHAT_socket_python():
     import socket   
     import threading
-    host = '192.168.43.134'
+    host = '0.0.0.0'
     port = 8080
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
@@ -381,12 +381,12 @@ def cliente_CHAT_socket_python():
     import socket   
     import threading
     #username = input("Ingresa tu nombre de usuario: ")
-    username = "Ingresa"
+    username = user_name if (user_name:=input("Ingresa tu nombre de usuario: "))!='' else "No_Name"
     host = '192.168.43.134'
     port = 8080
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host, port))
-    def receive_messages():
+    def read_messages():
         while True:
             try:
                 message = client.recv(1024).decode('utf-8')
@@ -407,10 +407,11 @@ def cliente_CHAT_socket_python():
             else:
                 message = f"{username}: {tu}"
                 client.send(message.encode('utf-8'))
-    receive_thread = threading.Thread(target=receive_messages)
+    receive_thread = threading.Thread(target=read_messages)
     receive_thread.start()
     write_thread = threading.Thread(target=write_messages)
     write_thread.start()
+
 
 def command(admin,G,info,ec,geo):
     print(info['subProyecto'])
@@ -418,3 +419,41 @@ def command(admin,G,info,ec,geo):
     print('Widgest:',info['widget'])
     print('Comandos',info['command']) 
     G.command[info['command']['manager']]=lambda : admin.transicion(G,admin.manager)
+
+
+print(__name__)
+if 'main' in __name__:
+    import sys
+    pruebas={           
+        0:{'titulo':":",'f':print("")},
+        1:{'titulo':"servidor_CHAT_socket_python",'f':servidor_CHAT_socket_python},
+        2:{'titulo':"cliente_CHAT_socket_python",'f':cliente_CHAT_socket_python},
+        3:{'titulo':"salir",'f':exit}
+        }
+    def f(num):
+        print('######################################################################')
+        print("PRUEBA Inicianda: "+pruebas[num]['titulo'])
+        print('######################################################################'+'\n')
+
+        #llamamos a la funcion
+        pruebas[num]['f']()
+
+        #esperamos que termine
+        
+        #Aviso de que la funcion termino.
+        print('\n'+"PRUEBA Terminada...")
+        print('\n')
+    if len(sys.argv)>1:
+        f(int(sys.argv[1]))
+        exit()        
+    num=1
+    while num > 0:
+        num=0
+        for prueba in pruebas:
+            print(str(prueba)+'. '+pruebas[prueba]['titulo'])
+        inpu=input('Ingrese el numero de la siguiente prueba: ').split(' ')
+        num=int(inpu[0] if inpu[0] != '' else 0)
+        if num > 0:
+            f(num)
+        else:
+            exit()
