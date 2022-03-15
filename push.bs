@@ -1,0 +1,6 @@
+#!/bin/bash
+#Importamos las variables dentro del archivo 'info'
+fuente=mbarete/consolas
+source ./$fuente/bash_principal.bs
+
+git_add_commit_PUSH

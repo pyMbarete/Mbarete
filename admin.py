@@ -37,6 +37,12 @@ widgets[admin.manager]=admin.getWidget(admin.manager, widget_manager, manager.in
 #Comandos Generales Para 'G'
 command(admin,G,admin.manager)
 manager.command(admin, G, admin.info[admin.manager], calculadora, geometria)
+mostrarInfo=1
+if mostrarInfo:
+    print('Mostrar Info:')
+    for subProyecto in proyectos:
+        print(subProyecto,admin.info[subProyecto])
+    
 #Le Pasamos a 'G' los comandos de los Sub-proyectos
 for subProyecto in proyectos:
     proyectos[subProyecto].command(admin, G, admin.info[subProyecto], calculadora, geometria)

@@ -428,7 +428,9 @@ if 'main' in __name__:
         0:{'titulo':":",'f':print("")},
         1:{'titulo':"servidor_CHAT_socket_python",'f':servidor_CHAT_socket_python},
         2:{'titulo':"cliente_CHAT_socket_python",'f':cliente_CHAT_socket_python},
-        3:{'titulo':"salir",'f':exit}
+        3:{'titulo':"salir",'f':lambda : p(('hello',21,True))},
+        4:{'titulo':"salir",'f':lambda : p(('hello',21,True),console=0)},
+        5:{'titulo':"salir",'f':exit}
         }
     def f(num):
         print('######################################################################')

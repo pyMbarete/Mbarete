@@ -6,15 +6,13 @@ import csv
 import time
 import datetime
 import math
-from tkinter import*
-from PIL import Image, ImageTk
 from reportlab.lib.units import mm, inch
 from reportlab.pdfgen import canvas as pdf
 #from mbarete.mbarete import geometria
 global d,canvas_width,canvas_height
 d={
-    'img':os.getcwd()+'\\'+"media"+'\\',
-    'audio':os.getcwd()+'\\'+"media"+'\\'
+    'img':os.getcwd()+os.path.sep+"media"+os.path.sep,
+    'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
     }
 canvas_width = 1100
 canvas_height =1000
@@ -189,21 +187,24 @@ def powerPDF():
         print("Abriendo el archivo "+'"'+txt['Nombre']+'.pdf"')
         os.system('"'+txt['Nombre']+'.pdf"')
 def showAlbum():
-    from tkinter import Tk,Scrollbar,Canvas,Frame,Label
-    from PIL import Image, ImageTk
+    from tkinter import Tk,Scrollbar,Canvas,Frame,Label,Button,RIGHT,PhotoImage,Y
+    #from tkinter import Tk,Scrollbar,Canvas,Frame,Label
+    #from PIL import Image, ImageTk
+    from PIL import Image,ImageTk
     import os
     global d,canvas_width,canvas_height
     pwd=d['img']
     alto=200
-    ancho=500
+    ancho=200
     print('Ubicacion:',pwd)
     #inicia codigo de la prueba
     lista=[img for img in os.listdir(pwd) if (((".jpg" in img[-5:]) and (not ".png" in img)) or ((".png" in img[-5:]) and (not ".jpg" in img)) or ((".jpeg" in img[-5:]) and (not ".png" in img)) )]
     print("archivos encontrados:",lista)
     miniatura={}
     contador=0
-    print(int(range(0,canvas_width,ancho)[-1]/ancho))
-    my_canvas_height=int(int(len(lista)/int(range(0,canvas_width,ancho)[-1]/ancho))*alto+alto)
+    print('columnas:',int(canvas_width//ancho))
+    print('filas:',int(canvas_width//alto))
+    my_canvas_height=int(int(len(lista)//int(canvas_width//ancho))*alto+alto)
     raiz=Tk()
     scrollbar=Scrollbar(raiz)
     c = Canvas(raiz, yscrollcommand=scrollbar.set)
@@ -216,6 +217,7 @@ def showAlbum():
     c.pack(side="left" , fill="both", expand=True)
     c.create_window(0,0,window=miFrameinicio, anchor='nw')
     c.config(scrollregion=c.bbox("all"))
+    """
     for y in range(0,my_canvas_height,alto):
         for x in range(0,canvas_width-ancho,ancho):
             if contador==len(lista):
@@ -224,17 +226,36 @@ def showAlbum():
             redimencionar=(img.size[0]*(ancho/img.size[0]),img.size[1]*(ancho/img.size[0])) if img.size[0]>img.size[1] else (img.size[0]*(alto/img.size[1]),img.size[1]*(alto/img.size[1]))
             redimencionar=(int(redimencionar[0]),int(redimencionar[1]))
             print(redimencionar,str(lista[contador]))
-            if '.jpg' in str(lista[contador])[-5:]:
-                img.save(pwd+str(lista[contador]).replace('.jpg','.png'),'png')
-                img=Image.open(pwd+str(lista[contador]).replace('.jpg','.png'))
-            miniatura.setdefault(contador,{'img':img.resize(redimencionar)})
-            miniatura[contador].setdefault('PhotoImage',ImageTk.PhotoImage(miniatura[contador]['img']))
-            miniatura[contador].setdefault('widget',Label(miFrameinicio,image=miniatura[contador]['PhotoImage']))
-            #miniatura[contador]['widget'].image=miniatura[contador]['PhotoImage']
-            #miniatura[contador]['widget'].place(x=x,y=y)
+            img.resize(redimencionar).save(pwd+str(lista[contador]).replace('.jpg','.png'),'png')
+            img.close()
+            miniatura.setdefault(contador,{'PhotoImage':PhotoImage(file=pwd+str(lista[contador]).replace('.jpg','.png'))})
             canvas.create_image(x+int((ancho-redimencionar[0])/2),y+int((alto-redimencionar[1])/2),image=miniatura[contador]['PhotoImage'],anchor='nw')
             if ".jpg" in str(lista[contador])[-5:]:
                 os.remove(pwd+str(lista[contador]))
+            contador=contador+1
+    """
+    
+    for y in range(10,my_canvas_height,alto):
+        for x in range(0,canvas_width-ancho,ancho):
+            if contador==len(lista):
+                break
+            #cargamos la imagen Original        
+            img=Image.open(pwd+str(lista[contador]))
+            #calculamos las nuevas medidas para la Imagen que Mostraremos Por pantalla
+            if img.size[0]>img.size[1]:
+                redimencionar= (int(img.size[0]*(ancho/img.size[0])),int(img.size[1]*(ancho/img.size[0]))) 
+            else: 
+                redimencionar= (int(img.size[0]*(alto/img.size[1])),int(img.size[1]*(alto/img.size[1])))
+            
+            #Convertimos a PNG si esta en otro formato
+            if ext:=[e for e in ['.jpg','.jpeg','.bmp'] if lista[contador].endswith(e)]:
+                img.save(pwd+str(lista[contador]).replace(ext[0],'.png'),'png')
+                os.remove(pwd+str(lista[contador]))
+            img.close()
+            miniatura.setdefault(contador,{'Image':Image.open(pwd+str(lista[contador]).replace('.jpg','.png')).resize(redimencionar)})
+            miniatura[contador]['PhotoImage']=ImageTk.PhotoImage(image=miniatura[contador]['Image'])
+            canvas.create_image(x+int((ancho-redimencionar[0])/2),y+int((alto-redimencionar[1])/2),image=miniatura[contador]['PhotoImage'],anchor='nw')
+            print(redimencionar,str(lista[contador]))
             contador=contador+1
     raiz.update()
     c.config(scrollregion=c.bbox("all"))
@@ -1155,11 +1176,28 @@ def capturarNumerosMagicos(pwd=d['img'],f='',ret=0):
         print('fin',bi[contador]['fin'])
         contador+=1
 
+
+def git_admin():
+
+    """
+    //Segmento de windows CMD
+    SET /p sigue=Hacer "git add -A" s/n?:
+    if "%sigue%"=="n" (goto :fin)
+    if "%sigue%"=="N" (goto :fin)
+    echo Ejecutando: git add -A
+    git add -A
+
+    #segmento de Linux Bash
+
+    """
+
+salir=lambda: exit()
+
 print(__name__)
 if 'main' in __name__:
     import threading
     pruebas={           
-        0:{'titulo':":",'f':print("")},
+        0:{'titulo':"salir:",'f':salir},
         1:{'titulo':"Lista de las variables del sistema",'f':VariablesDeEntorno},
         2:{'titulo':"os.path, Manipulaciones comunes de nombre de ruta:",'f':powerPath},
         3:{'titulo':"Prueba para calcular espacios en bits de numeros enteros y flotantes:",'f':pasarEnterosaBytes},
@@ -1182,36 +1220,27 @@ if 'main' in __name__:
         20:{'titulo':"leerBinario",'f':manipularArchivos},
         21:{'titulo':"Capturar numeros magicos:",'f':capturarNumerosMagicos},
         22:{'titulo':"DNS SERVER",'f':DNS_server},
-        23:{'titulo':"salir",'f':exit}
+        23:{'titulo':"salir, opcion por defecto",'f':salir}
         }
     def f(num):
-        print('######################################################################')
-        print("PRUEBA Inicianda: "+pruebas[num]['titulo'])
-        print('######################################################################'+'\n')
-        hilo=threading.Thread(target=pruebas[num]['f'])
-
-        #llamamos a la funcion
-        hilo.start()
-
-        #esperamos que termine
-        hilo.join()
+        print("PRUEBA Iniciada: "+pruebas[num]['titulo'])
+        #llamamos a la funcion Decorada y esperamos que termine
+        pruebas[num]['f']()
         #Aviso de que la funcion termino.
-        print('\n'+"PRUEBA Terminada...")
-        print('\n')
+        input('\n'+"PRUEBA Terminada...")
     if len(sys.argv)>1:
         f(int(sys.argv[1]))
         exit()        
     num=1
     while num > 0:
         num=0
+        print('######################################################################')
         for prueba in pruebas:
-            print(str(prueba)+'. '+pruebas[prueba]['titulo'])
-        inpu=input('Ingrese el numero de la siguiente prueba: ').split(' ')
-        num=int(inpu[0] if inpu[0] != '' else 0)
-        if num > 0:
-            f(num)
-        else:
-            exit()
+            print(prueba,'.',pruebas[prueba]['titulo'],'>>> def '+pruebas[prueba]['f'].__name__+'():')
+        i=input('Ingrese el numero de la siguiente prueba: ').strip()
+        num=0 if i=='' else int(float(i))
+        f(num)
+        print('######################################################################'+'\n\n')
             
 #https://youtube.com/playlist?list=PLU8oAlHdN5BlvPxziopYZRd55pdqFwkeS
 #https://drive.google.com/drive/folders/1NXO6zm1WqKvr7x8ZI5U2PgZpkt6sAsYt?usp=sharing
