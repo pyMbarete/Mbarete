@@ -21,7 +21,7 @@ git_add_commit_PUSH()
     super_comand 
 
     principal='git commit'
-    my_array=([m]='"commit automatico desde linuxMint bash "')
+    my_array=([m]='"commit automatico desde linuxMint bash"')
     super_comand
     #git commit -m "commit automatico desde linux bash"
 
