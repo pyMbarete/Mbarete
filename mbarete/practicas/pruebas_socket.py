@@ -27,6 +27,7 @@
     b'-----------------------------1262949829386019333586660223--'
 
 """
+import os
 d={
     'img':os.getcwd()+os.path.sep+"media"+os.path.sep,
     'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
@@ -70,40 +71,41 @@ def red():
     print('ip.lan_ip:',ip.lan_ip,'ip.wan_ip:',ip.wan_ip)
 class nodo_python(object):
     """docstring for nodo_python"""
-    def __init__(IP_clase_C='192.168.100.',dispositivos='2-100',host = '0.0.0.0',port = 30000,format_encode='utf-8',username='',infodir=['mbarete','consolas']):
+    def __init__(self,IP_clase_C='192.168.100.',dispositivos='2-30',host = "",port = 30000,format_encode='utf-8',username='',infodir=['mbarete','consolas']):
         super(nodo_python, self).__init__()
         import os,sys,csv,time
         from datetime import datetime
-        import socket   
-        import threading
-        global status
+        import socket
+        from threading import Thread
+        self.t=Thread
+        self.status=True
         self.infodir=''
         for d in infodir: self.infodir+=d+'\\'
-        self.info={v.split(':')[0]:v[len(v.split(':')[0])+1:] for v in self.getFile(self.infodir+'info')}
-        self.username=self.info['cross_username'] if 'cross_username' in self.info else input("Ingrese un nombre de Ususario:")
+        self.username='cross_username'
         self.ruta_app = os.getcwd()
-        self.media=self.media_me()
+        self.host='0.0.0.0'
         self.port=port
         self.IP_C=IP_clase_C
         self.dispositivos=dispositivos
-        self.host=host
         self.code=format_encode
         self.porcion=1024*5
+        self.media=self.media_me()
         #self.=
         #self.=
+        print(self.host, self.port)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((self.host, self.port))
         self.server.listen()
-        print(f"\nServidor HTTP corriendo en la direccion 'http://{host}:{port}/'")
         self.clients = []
         self.scan()
-    def media_me(self,pwd):
+
+    def media_me(self):
+        from  datetime import datetime
         media={}
         total = 0
         num_archivos = 0
         formato = '%d-%m-%y %H:%M:%S'
         for ruta, directorios, archivos in os.walk(self.ruta_app, topdown=True):
-            print('\nruta       :', ruta) 
             for elemento in archivos:
                 num_archivos += 1
                 archivo = ruta + os.sep + elemento
@@ -118,18 +120,19 @@ class nodo_python(object):
                 media[self.username+'_'+str(num_archivos)]['modificado']=modificado
                 media[self.username+'_'+str(num_archivos)]['ult_acceso']=ult_acceso
                 media[self.username+'_'+str(num_archivos)]['size']=tamanho
-        media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'username':self.username}
+        media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'username':self.username,'address':(self.host,self.port)}
         return media
         
     def scan(self):
         #b'JSONin'
+        import socket
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         inicio,fin=map(int,self.dispositivos.split('-'))
         for c in range(inicio,fin+1):
             med=self.media
-            med['media_me']['host']=self.IP_C+str(c)
             try:
-                client.connect((med['media_me']['host'], self.port))
+                med['media_me']['host']=self.IP_C+str(c)
+                client.connect((self.IP_C+str(c), self.port))
                 client.send(b'JSONin\r\n'+ json.dumps(med).encode(self.code)+b'\r\n\r\n')
                 datos_Bytes=client.recv(self.porcion)
                 j=datos_Bytes
@@ -139,10 +142,10 @@ class nodo_python(object):
                 client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
                 self.clients[client_media['media_me']['username']]=client_media
             except Exception as e:
-                print('ERROR:',(med['host'], self.port),e)
+                print('ERROR:',(self.IP_C+str(c), self.port))
             client.close()
 
-    def respond(client, address):
+    def respond(self,client, address):
         request=b''
         ok=True
         cabezera=True
@@ -156,10 +159,9 @@ class nodo_python(object):
                 j+=datos_Bytes
             client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
             #f'JSONout\n'+ json.dumps(media) +'\n'
-            self.media['media_me']
-            med=self.media
-            med['media_me']['addr']=address
-            client.send(b'JSONout\r\n'+ json.dumps(med).encode(self.code) +b'\r\n\r\n')
+            print(client_media['media_me'])
+            self.clients[client_media['media_me']['username']]=client_media
+            client.send(b'JSONout\r\n'+ json.dumps(self.media).encode(self.code) +b'\r\n\r\n')
         elif (b'GET' in datos_Bytes):
             boundary=datos_Bytes.split(b'\r\n')[1].decode(self.code)
             file=open(media[boundary]['filename'],'rb')
@@ -168,7 +170,8 @@ class nodo_python(object):
         elif (b'CLOSE' in datos_Bytes):
             print('Servidor Apagado')
             client.close()
-            server.close()        
+            self.server.close()  
+            self.status=False      
         else:
             boundary=datos_Bytes.split(b'\r\n')[0]
             if boundary.decode(self.code) in media:
@@ -187,20 +190,43 @@ class nodo_python(object):
                 print("recivido:",media[boundary.decode(self.code)]['filename'])
             else:
                 print('el elemento no esta registrado:',boundary)
-        
         client.close()
         print("fin de coneccion")
-            
-        
-    def receive_connections():
-        while status:
-            client, address = server.accept()
-            thread = threading.Thread(target=respond, args=(client, address))
+    def start(self):
+        print(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'")
+        while self.status:
+            client, address = self.server.accept()
+            thread = self.t(target=self.respond, args=(client, address))
             thread.start()
         print("fin de servicio")
-    receive_connections()
-    server.close()
+    
+def nodo():
+    n=nodo_python()
+    print(n.clients)
+    #print(n.media)
+    n.start()
+    n.server.close()
 
+def CLOSE():
+    #b'JSONin'
+    import socket
+    print( socket.gethostname(), 30000)
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        client.connect(( socket.gethostname(), 30000))
+        client.send(b'CLOSE\r\n')
+        """
+        datos_Bytes=client.recv(self.porcion)
+        j=datos_Bytes
+        while not (b'\r\n\r\n' in datos_Bytes):
+            datos_Bytes=client.recv(self.porcion)
+            j+=datos_Bytes
+        client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
+        self.clients[client_media['media_me']['username']]=client_media
+        """
+    except Exception as e:
+        print(e)
+    client.close()
 
 
 def DNS_server():
@@ -575,13 +601,13 @@ class servidor(object):
 
 if 'main' in __name__:
     import sys
-    from ..setup import main_pruebas
+    from pruebas import main_pruebas
     pruebas={           
-        5:{'titulo':"Servidor Socket Python",'f':servidor_CHAT_socket_python},
-        16:{'titulo':"Cliente Socket Python",'f':cliente_CHAT_socket_python},
-        17:{'titulo':"Administrador Servidor HTTP Python",'f':administrador_servidor_HTTP_python},
-        18:{'titulo':"Servidor HTTP Python",'f':servidor_HTTP_python},
-        22:{'titulo':"DNS SERVER",'f':DNS_server},
+        1:{'titulo':"Servidor Socket Python",'f':servidor_CHAT_socket_python},
+        2:{'titulo':"Cliente Socket Python",'f':cliente_CHAT_socket_python},
+        3:{'titulo':"DNS SERVER",'f':DNS_server},
+        4:{'titulo':"NODO_PYTHON",'f':nodo},
+        5:{'titulo':"CERRAR NODO",'f':CLOSE}
         }
     main_pruebas(pruebas,sys.argv)
             

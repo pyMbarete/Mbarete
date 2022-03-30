@@ -166,7 +166,7 @@ def main_pruebas(pruebas,argv):
     import datetime
     salir=lambda: exit()
     print(__name__,datetime.datetime.now())
-    pruebas[len(pruebas)]={'titulo':"salir, opcion por defecto",'f':salir}
+    pruebas[len(pruebas)+1]={'titulo':"salir, opcion por defecto",'f':salir}
     def f(num):
         print("PRUEBA Iniciada: "+pruebas[num]['titulo'])
         #llamamos a la funcion Decorada y esperamos que termine
