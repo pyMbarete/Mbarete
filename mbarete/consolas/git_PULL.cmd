@@ -15,14 +15,10 @@ echo "  2.Te importan los cambios y te gustaría mantenerlos después de traer l
 echo "  3.Deseas descargar los cambios remotos pero aún no aplicarlos" \n
 echo "  <<< ENTER PARA SALIR >>>"
 
-SET /p sigue=Ingrese una Opcion: 
-if "%sigue%"=="1" (goto :merge)
-if "%sigue%"=="2" (goto :stash)
-if "%sigue%"=="3" (goto :fetsh)
-goto :fin
+SET /p sigue=Ingrese una Opcion:
+if "%sigue%"=="" (goto :fin)
 
-
-:merge
+IF "%sigue%" == "1" (
 echo Ejecutando: git fetch
 echo "git fetch", solo traerá datos del repositorio remoto del 'branch' actual 
 git fetch
@@ -32,10 +28,8 @@ git reset --hard HEAD
 echo Ejecutando: git merge '@{u}'
 echo "git merge '@{u}'", para mezclar los cambios con el repositorio local
 git merge '@{u}'
-goto :status
-
-
-:stash
+)
+IF "%sigue%" == "2" (
 echo Ejecutando: git fetch
 echo "git fetch", solo traerá datos del repositorio remoto del 'branch' actual 
 git fetch
@@ -49,14 +43,11 @@ echo Ejecutando: git stash pop
 echo "git stash pop", para recuperar los cambios guardados en el último stash.
 echi "git stash pop", este comando también elimina el 'stash commit' hecho con "git stash".
 git stash pop
-goto :status
-
-:fetch
+)
+IF "%sigue%" == "3" (
 echo Ejecutando: git fetch --all
 echo "git fetch --all", para obtener los cambios de todos los branches.
 git fetch --all
-
-
 SET /p sigue=¿desea limpiar algunas de las ramas que ya NO existen en el repositorio remoto s/n?.
 if "%sigue%"=="n" (goto :status)
 if "%sigue%"=="N" (goto :status)
@@ -64,7 +55,8 @@ if "%sigue%"=="N" (goto :status)
 echo Ejecutando: git fetch --prune
 echo "git fetch --prune", limpiar algunas de las ramas que ya no existen en el repositorio remoto
 git fetch --prune
-
+)
+goto :status
 
 :fin
 pause presione una tecla para salir...

@@ -1,2 +1,7 @@
 *bibliografia*
 *__pycache__*
+*mbarete/consolas/info*
+*.auto.*
+setup.log
+setup.log.full
+uwsgibuild.lastprofile

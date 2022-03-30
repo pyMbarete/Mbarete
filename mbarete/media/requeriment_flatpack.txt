@@ -1,0 +1,202 @@
+1.Install Flatpak
+
+To install Flatpak on Ubuntu 18.10 (Cosmic Cuttlefish) or later, simply run:
+ sudo apt install flatpak
+    
+With older Ubuntu versions, the official Flatpak PPA is the recommended way to install Flatpak. To install it, run the following in a terminal:
+ sudo add-apt-repository ppa:flatpak/stable
+ sudo apt update
+ sudo apt install flatpak
+    
+2.Install the Software Flatpak plugin
+The Flatpak plugin for the Software app makes it possible to install apps without needing the command line. To install, run:
+    sudo apt install gnome-software-plugin-flatpak
+    
+Note: the Software app is distributed as a Snap since Ubuntu 20.04 and does not support graphical installation of Flatpak apps. Installing the Flatpak plugin will also install a deb version of Software and result in two Software apps being installed at the same time.
+
+3.Add the Flathub repository
+Flathub is the best place to get Flatpak apps. To enable it, run:
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    
+4.Restart
+To complete setup, restart your system. Now all you have to do is install some apps!
+
+    https://flathub.org/apps/collection/popular
+
+
+COMO INSTALAR LAS APPS:
+Como ejemplo, instalamos la aplicacion 'Shotcut' que su nombre de paquete es 'org.shotcut.Shotcut' o sea:
+app=org.shotcut.Shotcut
+Los comandos para instalar y luego iniciar la aplicacion serian:
+Install:    flatpak install flathub $app
+Run:        flatpak run $app
+
+
+
+
+::OFICINA
+    ::ONLYOFFICE Desktop Editors. Work on documents of most popular formats: DOCX, ODT, XLSX, ODS, CSV, PPTX, ODP, etc.
+    app: org.onlyoffice.desktopeditors
+
+    ::WPS Office Writer, Presentation Spreadsheets. It can easily open and read the documents created with Microsoft Office.
+    app: com.wps.Office
+
+    ::AbiWord. Word Office processor
+    app: com.abisource.AbiWord
+
+    ::Microsoft Teams for Linux is your chat-centered workspace in Office 365
+    app: com.microsoft.Teams
+
+    ::Open source GUI client for Google Drive
+    app: io.github.liberodark.OpenDrive
+
+::INTERNET
+    Firefox. Fast, Private & Safe Web Browser
+    app: org.mozilla.firefox
+
+    ::Chromium Web Browser. The web browser from Chromium project
+    app: org.chromium.Chromium
+
+    ::Video Downloader. Download videos from websites like YouTube and many others
+    app: com.github.unrud.VideoDownloader
+
+    Spotify. Online music streaming service
+    app: com.spotify.Client
+    
+    ::Telegram Desktop. Fast. Secure. Powerful.
+    app: org.telegram.desktop
+    
+    ::Zoom. Video Conferencing, Web Conferencing, Webinars, Screen Sharing
+    app: us.zoom.Zoom
+
+    ::Discord. Messaging, Voice, and Video Client
+    app: com.discordapp.Discord
+
+    ::Tor Browser Launcher. A program to help you download, keep updated, and run the Tor Browser Bundle
+    app: com.github.micahflee.torbrowser-launcher
+
+    ::Skype. Call and message skype users, with video chat support
+    app: com.skype.Client
+
+::DESARROLLO
+    ::Sublime Text. Sophisticated text editor for code, markup and prose
+    app: com.sublimetext.three
+
+    ::Geany. Developed to provide a small and fast IDE, which has only a few dependencies on other packages. 
+    app: org.geany.Geany
+    
+    ::DBeaver Community. Free multi-platform database tool for developers, SQL programmers, database administrators and analysts. Supports: MySQL, PostgreSQL, MariaDB, SQLite, Oracle, DB2, SQL Server, Sybase, MS Access, Teradata, Firebird, Derby, etc.
+    app: io.dbeaver.DBeaverCommunity
+
+    ::Sequeler. Friendly SQL Client, connect to your local or remote database. Supported: SQLite,MySQL,MariaDB,PostgreSQL
+    app: com.github.alecaddd.sequeler
+
+    ::Postman is a complete API development environment.
+    app: com.getpostman.Postman
+
+    ::Marker. Powerful markdown editor for the GNOME desktop.
+    app: com.github.fabiocolacio.marker
+
+    ::gitg. Graphical user interface for git
+    app: org.gnome.gitg
+
+    ::Sublime Merge is a Git client, from the makers of Sublime Text
+    app: com.sublimemerge.App
+
+    ::Workbench. Sandbox to learn and prototype with GNOME techologies
+    app: re.sonny.Workbench
+
+    ::Flatpak developer demo application is a companion to the Flatpak developer documentation.
+    app: org.flatpak.qtdemo
+
+    ::Visual Studio Code. Code editing. Redefined.
+    app: com.visualstudio.code
+
+    ::Arduino IDE. Open-source electronics prototyping platform
+    app: cc.arduino.arduinoide
+
+    ::Xilinx Vivado Design Suite for hardware development
+    app: com.github.corna.Vivado
+
+    ::Hardware Probe. Check operability of computer hardware and find drivers
+    app: org.linux_hardware.hw-probe
+
+::SYSTEMA
+    ::NVIDIA card, GreenWithEnvy.System utility designed to provide information, control the fans and overclock your NVIDIA card
+    app: com.leinardi.gwe
+
+    ::GNOME Network Displays. Stream the desktop to Wi-Fi Display capable devices. Miracast Wireless Display on Linux
+    app: org.gnome.NetworkDisplays
+    
+    ::GNOME Boxes. Virtualization made simple. A simple GNOME 3 application to manage virtual systems.
+    app: org.gnome.Boxes
+
+    ::ONVIFViewer. View and control network cameras using the ONVIF protocol
+    app: net.meijn.onvifviewer
+
+::MULTIMEDIA
+    ::Kodi. play and view videos, music, podcasts, and other digital media files from local storage, network storage and the internet. 
+    app: tv.kodi.Kodi
+
+    ::OBS Studio. Live streaming and video recording software
+    app: com.obsproject.Studio
+
+    ::Shotcut. Video editor
+    app: org.shotcut.Shotcut
+    Mixxx DJ Software
+
+Everything you need to perform live DJ mixes
+Install:flatpak install flathub org.mixxx.Mixxx
+Run:flatpak run org.mixxx.Mixxx
+
+::GRAFICOS
+    ::Inkscape. Vector Graphics Editor
+    app: org.inkscape.Inkscape
+
+    GNU Image Manipulation Program. Create images and edit photographs
+    app: org.gimp.GIMP
+
+    ::Blender. Free and open source 3D creation suite
+    app: org.blender.Blender
+
+    ::Pitivi is a video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on efficiency, quality and usability.
+    app: org.pitivi.Pitivi
+
+    ::Kdenlive. Video Editor
+    app: org.kde.kdenlive
+
+::EDUCACION
+    ::Kiwix. View offline content. You need to download contents from https://library.kiwix.org/?lang=spa 
+    app: org.kiwix.desktop
+
+    ::GeoGebra. Solve equations, graph functions, create constructions, analyze data, explore 3D math!
+    app: org.geogebra.GeoGebra
+
+    ::FreeCAD. An open source parametric 3D CAD modeler
+    app: org.freecadweb.FreeCAD
+
+    ::Calculus. Compute derivatives and integrals
+    app: com.github.carlos157oliveira.Calculus
+
+    ::Genius. General purpose calculator program
+    app: org.gnome.Genius
+
+    ::OpenBoard is an open source cross-platform teaching software for interactive whiteboard designed primarily for use in schools and universities.
+    app: ch.openboard.OpenBoard
+
+    ::KTouch. Touch Typing Tutor
+    app: org.kde.ktouch
+
+    ::Abacus. A tool for simple arithmetic calculations
+    app: org.sugarlabs.AbacusActivity
+
+::COMUNICACION Y REDES Y SEGURIDAD
+    ::Wireshark is the world's foremost protocol analyzer
+    app: org.wireshark.Wireshark
+
+    ::Zenmap. A cross-platform GUI for the Nmap Security Scanner
+    app: org.nmap.Zenmap
+
+::CIENCIA
+    ::Gpredict. Real-time satellite tracking and orbit prediction program
+    app: net.oz9aec.Gpredict

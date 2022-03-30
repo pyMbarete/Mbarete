@@ -1,6 +1,11 @@
-cross_sub:'45,microPython,blockChain'
-cross_branch:'master'
-cross_nick:'invitado'
+cross_fuente:mbarete\consolas\
+cross_username:'MbaretePythonPY'
+cross_repo:'Mbarete'
+cross_temporal:temp_mbarete
+cross_sub:'remoto,severIoT'
+cross_branch:master
+cross_nick:'Mathias'
 cross_email:'invitadombarete@gmail.com'
-cross_ip:'192.168.100.12:666@admin:raspberry'
-cross_version:5
+cross_ssh:'192.168.100.12:666@admin:raspberry'
+cross_version:1.0
+cross_modo_seguro:false

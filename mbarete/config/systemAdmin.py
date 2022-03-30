@@ -24,7 +24,7 @@ def setFile(f,valor,echo=1):
     if echo:
         print('Archivo:',f)
     file=open(f,"wb")
-    if 'list' in str(type(valor)):
+    if list == valor__class__:
         for line in valor:
             if echo:
                 #line.encode()
@@ -63,7 +63,6 @@ def scraping(file):
     print(lines)
     return lines
 f['scraping']=scraping
-
 def rootCall(arg,kwarg):
     #print(arg,kwarg)
     goto = kwarg['goto'] if ('goto' in kwarg) else 'root'
@@ -132,7 +131,6 @@ def regla(*arg,**kwargs):
         regla.write(archivo)
         regla.close()
 f['regla']=regla
-
 def dirProgram(program,drive='C:\\',exacta=0,carpetas=['Program Files','Program Files (x86)']):
     carpetas=[drive+d for d in carpetas]
     program=program.upper()
@@ -280,23 +278,6 @@ def enrrutar():
     aplicar_Fordward({p:{'accion':'add','tipo':'v4tov4','direccion':[IP_local,IP_wsl],'puerto':puertos[p]} for p in puertos})
     setFile('actualIpLocal',IP_local)
 f['enrrutar']=enrrutar
-def DNS_stop(*arg):
-    """
-    if LAN:
-        s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('10.255.255.255',1))
-        ip=s.getsockname()
-        s.close()
-        host = ip[0]
-    else:
-        host = '0.0.0.0'
-    """
-    DNS_host='0.0.0.0'
-    DNS_port = 53
-    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server.bind((DNS_host, 53535))
-    server.sendto(b'stop_full',(DNS_host, DNS_port))
-f['DNS_stop']=DNS_stop
 
 def DNS_start(arg,kwarg):
     """
@@ -488,20 +469,14 @@ def DNS_start(arg,kwarg):
 f['DNS_start']=DNS_start  
 #DNS_server("media"+os.path.sep+"servidor"+os.path.sep+'zones',server_name="ElectroZone",server_ip='192.168.100.21',port_zone='80')
 
-
 #Open the Firewall
-#netsh advfirewall firewall add rule name=”Open Port 2222 for WSL2” dir=in action=allow protocol=TCP localport=2222
-
-
+    #netsh advfirewall firewall add rule name=”Open Port 2222 for WSL2” dir=in action=allow protocol=TCP localport=2222
 #Forward Ports into WSL2
-#netsh interface portproxy add v4tov4  listenaddress=192.168.100.21 listenport=7373 connectaddress=172.30.168.253 connectport=7373
-
-
+    #netsh interface portproxy add v4tov4  listenaddress=192.168.100.21 listenport=7373 connectaddress=172.30.168.253 connectport=7373
 #You can list all your portproxy rules like this if you're concerned:
-#netsh interface portproxy show all
-
+    #netsh interface portproxy show all
 #You can remove them all if you want with
-#netsh int portproxy reset all
+    #netsh int portproxy reset all
 def prueba(arg,kwarg):
     print(arg,kwarg)
 f['prueba']=prueba

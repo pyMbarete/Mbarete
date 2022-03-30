@@ -5,7 +5,7 @@ suma(){
 }
 
 sigue(){
-    read -p "Hacer '$1'.Enter para SI,[n o N] para NO?:" mi_var
+    read -p "Hacer '$1'.Enter para SI, [n o N] para NO?:" mi_var
     if [ -z $mi_var ];then
         echo true
     elif [ $mi_var == "N" ];then
@@ -17,9 +17,8 @@ sigue(){
     fi
 }
 
-super_comand()
-{   
-    if [ "$principal" == "" ];then
+super_comand(){   
+    if [ "$principal" == " " ];then
         echo ERROR: debes darle valor a la variable 'principal'
     else
         if [ ${#my_array[@]} != 0 ];then
@@ -41,28 +40,34 @@ super_comand()
             argumento="$argumento -$i ${my_array[$i]}"
         done
         principal="$principal $argumento"
+        
         if [ $confirmar == false ];then
             ejecutar=true
-        elif [ $(sigue "$principal") == true ];then
+        elif [ $(sigue "'$principal'. Obs:$obs") == true ];then
             ejecutar=true
         else
             ejecutar=false
         fi
+        #echo $cross_modo_seguro
+        if [ $cross_modo_seguro == true ];then
+            ejecutar=false
+            echo MODO SEGURO: "'$principal', Obs:$obs"
+        fi
+
         if [ $ejecutar == true ];then
-            echo $principal
+            echo "'$principal'. Obs:$obs"
             #truco para poder ejecutar cualquier linea
-            echo "#!$SHELL" > /tmp/truco.bs
-            echo "$principal" >> /tmp/truco.bs
-            chmod +x /tmp/truco.bs
-            source /tmp/truco.bs
-            rm /tmp/truco.bs
+            echo "#!$SHELL" > $t
+            echo "$principal" >> $t
+            chmod +x $t
+            source $t
+            rm $t
         fi
     fi
     confirmar=true
     my_array=()
     principal=''
 }
-
 #Operator    Description
 #    ! EXPRESSION    The EXPRESSION is false.
 #    -n STRING   The length of STRING is greater than zero.

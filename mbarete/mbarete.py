@@ -21,6 +21,30 @@ global variables, tablas, BBDD, RESET, ventana
     #############  FUNCIONES UTILES #############
     PARA DIFERENTES TIPOS DE PROYECTOS, FUNCIONES PARA PRUEBAS, MANEJO DE DATOS, VALIDACIONES, ETC,ETC
 """
+
+
+def getFile(f,full=1):
+    file=open(f)
+    ret=[]
+    for line in file:
+        #print(line.strip())
+        if str(line.strip())!='':
+            ret += [str(line if full else line.strip())]
+    file.close()
+    return ret if len(ret)>1 else ret[0]
+def setFile(f,valor,echo=1):
+    if echo:
+        print('Archivo:',f)
+    file=open(f,"wb")
+    if list == valor__class__:
+        for line in valor:
+            if echo:
+                #line.encode()
+                print(line.encode('latin-1'))
+            file.write(line.encode('latin-1')+b'\n')    
+    else:
+        file.write(valor)
+    file.close()
 def okString(string,para='Clave'):
     myStr=string.strip()
     notKey=['`','ñ','_',"'",'à','è','ì','ò','ù','.','']
@@ -29,6 +53,7 @@ def okString(string,para='Clave'):
     if para=="Clave":
         for char in notKey:
             myStr=myStr.replace(char,'')
+
 def ordenar(myDict,orden=1,ordenarCampo=""):
     lenString=0
     campo=ordenarCampo if (ordenarCampo in myDict[[key for key in myDict][0]]) else [key for key in myDict[[key for key in myDict][0]]][0]
@@ -494,6 +519,7 @@ class mbarete(object):
                         w[widget]['inputs'][i]['command']=subProyecto+'_'+w[widget]['inputs'][i]['command']
         self.info[subProyecto]=metadata
         return w
+
 class git(object):
     """docstring for git"""
     def __init__(self, branch='',userName=''):
@@ -507,7 +533,6 @@ class git(object):
         self.branchGithub=''
         self.gitignore=''
         self.commitGithub=''
-
 class microservicio(object):
     """ 
         Clase para poder tener microservicios y nodos con contenedores docker o postman.
@@ -664,7 +689,6 @@ class calculadora(object):
             abscisa=(mayor+menor)/2.0   
         return abscisa
     def strToMath(self,string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,composicion=0):
-        
         if not v:
             print('validando',string,composicion)
             v=1
