@@ -1,3 +1,11 @@
+
+latex
+sudo apt install texlive-latex-base
+
+tex
+sudo apt install texlive-binaries
+
+Pillow
 sudo apt-get install python-imaging-tk
 sudo apt-get install python3-pil
 sudo apt-get install python3-pil.imagetk

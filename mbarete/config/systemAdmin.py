@@ -131,7 +131,7 @@ def regla(*arg,**kwargs):
         regla.write(archivo)
         regla.close()
 f['regla']=regla
-def dirProgram(program,drive='C:\\',exacta=0,carpetas=['Program Files','Program Files (x86)']):
+def dirProgram(program,carpetas=['Program Files','Program Files (x86)'],drive='C:\\',exacta=0):
     carpetas=[drive+d for d in carpetas]
     program=program.upper()
     #retorna la Ruta Absoluta del Programa o  del Nombre de la carpeta

@@ -11,9 +11,93 @@ import time
 import threading
 import os
 os.chdir('..')
-from mbarete import geometria,calculadora
-
-def strToMath(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,composicion=0):
+def primos_menores(entero,primos=[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]):
+    ultimo=max(primos)+1
+    if ultimo>=entero:
+        x=0
+        menor=[]
+        while primos[x]<entero:
+            menor+=[primos[x]]
+            x+=1
+        return menor
+    else:
+        while ultimo<entero:
+            add=1
+            for p in primos[:-1]:
+                if ultimo%p == 0:add=0
+            if add: primos+=[ultimo]
+            else:ultimo+=1
+        return primos
+def primo_mayor(primos):
+    ultimo=max(primos)+1
+    add=0
+    while add==0:
+        add=1
+        for p in primos:
+            if ultimo%p == 0:add=0
+        if add: primos+=[ultimo]
+        else: ultimo+=1
+    return ultimo
+def shift_fact(entero):
+    """ retorna una lista con los factores de un numero entero si es entero sino devuelve una lista vacia"""
+    (signo,entero)=(-1,-1*entero) if entero<0.0 else (1,entero)
+    factores=['signo']
+    if entero.__class__ == int:
+        x=2
+        while x<=entero:
+            while entero%x==0:
+                factores+=[x]
+                entero=entero/x
+            x+=1
+    return {f:signo if f=='signo' else factores.count(f) for f in set(factores)}
+def shift_quebrado(numero):
+    precision=16
+    entero,decimales=str(numero).split('.')
+    if len(decimales)>=precision:
+        decimales=decimales[:-1]
+    periodo = next((decimales[:x] for x in range(1,len(decimales)) if decimales in decimales[:x]*len(decimales)), None)
+    mixto=[]
+    for x in range(1,len(decimales)):
+        for m in range(1,len(decimales)-x):
+            scan=decimales[m:m+x]
+            if scan*2 in decimales: mixto+=[{'periodo':scan,'index':m}]
+    mixto.sort(reverse=False,key=lambda x: x['index'])
+    for x in range(len(mixto)):
+        if mixto.__class__ == str: continue
+        else: e=mixto[x]
+        if decimales==(decimales[:e['index']]+e['periodo']*(((len(decimales)-e['index'])//len(e['periodo']))+1))[:len(decimales)]:
+            mixto=e['periodo']
+    #¿es periodica? 
+    if periodo:
+        abc=sum([9*(10**x) for x in range(len(periodo))])
+        entero,decimales=map(int,[entero,decimales])
+        numerador=shift_fact(int(periodo)+entero*abc)
+    elif mixto.__class__ == str:
+        periodo=mixto
+        noperiodo=decimales.split(mixto)[0]
+        abc=sum([9*(10**x) for x in range(len(mixto))])*(10**(len(noperiodo)))
+        numerador=shift_fact(int(noperiodo+mixto)-int(noperiodo))
+    else:
+        abc=10**(len(decimales))
+        numerador=shift_fact(int(numero*abc))
+    denominador=shift_fact(abc)
+    numerador,denominador=reducir(numerador,denominador)
+    return factores_to_entero(numerador), factores_to_entero(denominador)
+def factores_to_entero(d,signo=1):
+    d = [f for f in d for x in range(d[f]) if f != 'signo']+[d['signo']]
+    return math.prod(d)
+def reducir(N,D):
+    for f in N:
+        if f in D and f != 'signo':
+            if N[f]>D[f]:
+                N[f]=N[f]-D[f]
+                D[f]=0
+            else:
+                D[f]=D[f]-N[f]
+                N[f]=0
+    return N,D
+#from mbarete import geometria,calculadora
+def strToMathViejo(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,composicion=0):
     if not v:
         print('validando',string,composicion)
         v=1
@@ -441,7 +525,7 @@ def strToMath(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,
                         return signo*ret
             return suma
         elif esDivision:
-            print('division',string,signoDivision)
+            print('division:',string,signoDivision)
             signoDivision+=[]
             numerador=strToMath(string=string[0:signoDivision[1]],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
             denominador=strToMath(string=string[signoDivision[1]+1:],dy=dy,p=p,decimales=decimales,v=v,composicion=composicion)
@@ -548,17 +632,562 @@ def strToMath(string='',variable='x',dy=0,p=0,c=None,decimales=4,signo=None,v=0,
                     else:
                         return signo*base(x)**exponente(x)
             return potencia
-          
-#pruebaTreeview()
-#ventanaPersonalizada()
-#caja()
-def g(x):
-    return (x*math.e**x)/(math.e**x+math.e**(-x))
 
-f=calculadora()
-f.setEcuacion('senhP',string='sen(360/x)+x',variable='x',constantes={'alto':80.0})
-f.setEcuacion('coshP',string='senhP(x+bajo)/cos(x)',variable='x',constantes={'bajo':10.0})
+class constante(object):
+    """numero operador aritmetico"""
+    def __init__(self,numero,D=1,N=1):
+        super(constante, self).__init__()
+        if None==numero:
+            self.D=D
+            self.N=N
+        else:
+            self.set(numero)
+            self.D=self.D
+            self.N=self.N
+    def __str__(self):
+        return str(self.N)+'/'+str(self.D)
+    def set(self,numero):
+        numero=float(numero) if numero.__class__==str else numero
+        if float == numero.__class__:
+            self.N,self.D = shift_quebrado(numero)
+        else:
+            self.N,self.D = int(numero) ,1
+    def __repr__(self):
+        return self.N
+    def __call__(self):
+        return self.N
+    def __add__(self, other):
+        #suma
+        if other.__class__==int or other.__class__==float:
+            N=shift_fact(self.N+(self.D*other))
+            D=shift_fact(self.D)
+        else:
+            N=shift_fact(self.N*other.D+self.D*other.N)
+            D=shift_fact(self.D*other.D)
+        N,D=reducir(N,D)
+        return constante(None,N=factores_to_entero(N),D=factores_to_entero(D))
 
-print(f.ec['senhP'](3,p=1,dy=1),'=',f.ec['senhP'](3,p=0,dy=1))
-print(f.ec['coshP'](3,p=1,dy=1),'=',f.ec['coshP'](3,p=0,dy=1))
+    def __sub__(self, other):
+        #resta
+        if other.__class__==int or other.__class__==float:
+            N=shift_fact(self.N-(self.D*other))
+            D=shift_fact(self.D)
+        else:
+            N=shift_fact(self.N*other.D-self.D*other.N)
+            D=shift_fact(self.D*other.D)
+        N,D=reducir(N,D)
+        return constante(None,N=factores_to_entero(N),D=factores_to_entero(D))
+
+    def __mul__(self, other):
+        #multiplicacion
+        if other.__class__==int or other.__class__==float:
+            N=shift_fact(self.N*other)
+            D=shift_fact(self.D)
+        else:
+            N=shift_fact(self.N*other.N)
+            D=shift_fact(self.D*other.D)
+        N,D=reducir(N,D)
+        return constante(None,N=factores_to_entero(N),D=factores_to_entero(D))
+
+    def __truediv__(self, other):
+        #division
+        if other.__class__==int or other.__class__==float:
+            N=shift_fact(self.N)
+            D=shift_fact(self.D*other)
+        else:
+            N=shift_fact(self.N*other.D)
+            D=shift_fact(self.D*other.N)
+        N,D=reducir(N,D)
+        return constante(None,N=factores_to_entero(N),D=factores_to_entero(D))
+        
+class Vector():
+    def __init__(self, data):
+        self._data = data
+    
+    def __repr__(self):
+        return self._data
+    def __str__(self):
+        return f"The values are: {self._data}"
+    def __len__(self):
+        return len(self._data)
+    
+    def __getitem__(self, pos):
+        return self._data[pos]
+    
+    def __setitem__(self, pos, value):
+        self._data[pos] = value
+    
+    def __get__(self):
+        return self._data
+    
+    def __set__(self, value):
+        print(value)
+        self._data = value
+    
+    def __iter__(self):
+        for pos in range(0, len(self._data)):
+            yield f"Value[{pos}]: {self._data[pos]}"
+
+    def __add__(self, other):
+        #suma
+        result = [None] * len(self._data)
+        for pos in range(len(self._data)):
+            result[pos] = self._data[pos] + other._data[pos]
+        return Vector(result)
+    def __sub__(self, other):
+        result = [None] * len(self._data)
+        #resta
+        return Vector(result)
+    def __mul__(self, other):
+        #multiplicacion
+        result = [None] * len(self._data)
+        return Vector(result)
+    def __truediv__(self, other):
+        #division
+        result = [None] * len(self._data)
+        return Vector(result)
+class ecuacion(object):
+    """las ecuaciones seran objetos con diferentes metodos, para ser operados,derivados,simplificados,etc,etc..."""
+    def __init__(self, extras):
+        super(ecuacion, self).__init__()
+        self.extras = extras
+        self.simplificado=0
+        self.ret='y'
+        self.op='y'
+        self.f={}
+        self.g={'c':None}
+        self.c={}
+    def __call__(self,x,extras={}):
+        #extras[''] = extras[''] if '' in extras else self.extras['']
+        extras['signo'] = self.extras['signo']
+        ret = extras['ret'] if 'ret' in extras else self.extras['ret']
+        op = extras['op'] if 'op' in extras else self.extras['op']
+        extras['mostrarSigno'] = extras['mostrarSigno'] if 'mostrarSigno' in extras else self.extras['mostrarSigno']
+        extras['decimales'] = extras['decimales'] if 'decimales' in extras else self.extras['decimales']
+        if ret == 'print':
+            if extras['mostrarSigno']:
+                s='+' if extras['signo']>0.0 else '-'
+            else:
+                s=''
+        else:
+            s=0.0
+        extras['mostrarSigno'] = self.extras['mostrarSigno']
+        if self.extras['c']:
+            return self.extras['signo']*self.c[op][ret] if ret=='y' else s+self.c[op][ret]
+        else:
+            return self.extras['signo']*self.f[op][ret](x,extras=extras,g=self.g) if ret=='y' else s+self.f[op][ret](x,extras=extras,g=self.g)
+
+    def set(self,f):
+        self.f=f
+        self.extras['c']=self.isConstante(self.g)
+        if self.extras['c']:
+            extras={'decimales':6,'signo':self.extras['signo']}
+            self.c['dy']={
+                'print':str(self.f['dy']['y'](None,extras={'op':'dy','decimales':6,'signo':self.extras['signo']},g=self.g)),
+                'y':self.f['dy']['y'](None,extras={'op':'dy','decimales':6,'signo':self.extras['signo']},g=self.g)
+                }
+            self.c['y']={
+                'print':str(self.f['y']['y'](None,extras={'decimales':6,'signo':self.extras['signo']},g=self.g)),
+                'y':self.f['y']['y'](None,extras={'decimales':6,'signo':self.extras['signo']},g=self.g)
+                }
+            print(self.extras['ecuacion'],self.c)
+    def isConstante(self,obj):
+        ret=1
+        if obj.__class__ == dict:
+            for ecu in obj:
+                if obj[ecu].__class__ == list:
+                    for i in obj[ecu]:
+                        if not i.extras['c']: ret=0
+                if obj[ecu].__class__ == ecuacion:
+                    if not obj[ecu].extras['c']: ret=0
+        if {'c':None} == obj: ret=0
+        return ret
+def validar(string='',v=0,composicion=0):
+    if v:
+        print('validando',string,composicion)
+    if ' ' in string:
+        s=''
+        for c in string: 
+            if ' '!=c: s+=c
+        string=s
+    composicion += 1
+    nivel=0
+    comas=[0]
+    op=''
+    signos={}
+    signos['suma']=[0]
+    signos['producto']=[0]
+    signos['division']=[0]
+    signos['exponente']=[0]
+    signos['resto']=[0]
+    operador=1
+    monomio=1
+    parentesis=1
+    sig=1.0
+    nivelar=lambda c,n: n+1 if (c=='(') else (n-1 if c==')' else n)
+    string=string.strip()
+    for fondo in range(3):
+        monomio=1
+        parentesis=1
+        for x in range(0,len(string),1):
+            nivel=nivelar(string[x],nivel)
+            if string[x] in '-+' and nivel==0: 
+                if x>0: monomio=0
+            if string[x] in '-+*/%' and nivel==0: 
+                if x>0: parentesis=0
+        if monomio:
+            if string[0] in '-' and nivel==0: sig=-1.0*sig
+            if string[0] in '+-' and nivel==0: string=string[1:].strip()
+        if parentesis:        
+            if ('(' in string[0]) and (')' in string[-1]):
+                string=string[1:-1].strip()
+
+    for x in range(0,len(string),1):
+        nivel=nivelar(string[x],nivel)
+        if nivel!=0: continue
+        if (string[x] in ',') : comas += [x]
+        if (string[x] == '%') : op='resto'
+        if (string[x] in '/') : op='division'
+        if (string[x] in '-+') and (x>0): op='suma'
+        if (string[x] == '*') and ( '*' == string[x+1]) : op='exponente'
+        if (string[x] == '*') and ( '*' != string[x+1]) and ( '*' != string[x-1]):  op='producto'
+        if (string[x] in '-+%*/') and ( '*' != string[x-1]) and op:
+            signos[op] += [x]
+            operador=(1 if monomio else 0) if op=='suma' else 0
+    return string,op,signos,operador,nivel,sig,comas,composicion
+class igualdad(object):
+    """
+        objeto para poder resolver igualdades
+    """
+    def __init__(self,l,r):
+        self.r=r
+        self.l=l
+        self.simplificables=['producto','division','suma','exponente','','','']
+    def simplificar(self,e):
+        simple=1
+        while simple:
+            simple=0
+            if not e.simplificado:
+                if 'constante' == e.extras['ecuacion']:
+                    factores=[]
+def strToMath(string='',extras={'variable':'x','mostrarSigno':0,'c':None,'decimales':4,'signo':None,'v':0,'composicion':0}):
+    constantes={'e':math.e,'pi':3.1416,'g':9.8182}
+    if 'constantes' in extras:
+        for c in extras['constantes']: constantes[c]=extras['constantes'][c]
+    operadores=['w','sen','cos','tg','log','ln','lambert','dy','sec','cosec','cotag','arcsen','arccos','arctg','round','floor','ceil','signo','abs']
+    simbolos=['*','(',')','/','+','-','.','%']
+    string,op,signos,operador,nivel,sig,comas,comp=validar(string=string,v=extras['v'],composicion=extras['composicion'])
+    f=ecuacion(extras={
+        'string':string,
+        'variable':extras['variable'],
+        'mostrarSigno':extras['mostrarSigno'],
+        'c':None,
+        'decimales':extras['decimales'],
+        'signo':sig,
+        'v':extras['v'],
+        'composicion':comp,
+        'op':'y',
+        'ret':'y'})
+    if operador:
+        operador = next((o for o in operadores if o in (string[:len(o)] if len(o)<len(string) else '')), None)
+        if operador and nivel==0:
+            print(operador+':',string,signos[op])
+            f.extras['mostrarSigno']=1
+            f.extras['ecuacion']=op
+            if operador in 'w':
+                f.extras['ecuacion']='NO DEFINIDA'
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return '0.0'
+                def y_y(x,extras={},g={}):
+                    return 0.0
+            if operador in 'dy':
+                f.extras['ecuacion']='NO DEFINIDA'
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return '0.0'
+                def y_y(x,extras={},g={}):
+                    return 0.0
+            if operador in 'log':
+                #math.log(x,base)
+                f.g['parteReal']=strToMath(string=string[len('log'):comas[1]],extras=extras)
+                if len(comas)==1:
+                    f.g['base']=strToMath(string='10.0',extras=extras)
+                else:
+                    f.g['base']=strToMath(string=string[comas[1]+1:-1],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    numerador='(('+g['parteReal'](x,extras=extras)+'/'+g['parteReal'](x,extras={'ret':'print'})+')-('+g['parteReal'](x,extras=extras)+'/'+g['parteReal'](x,extras={'ret':'print'})+'))'
+                    return '('+numerador+'/'+g['parteReal'](x,extras={'ret':'print'})+')'
+                def dy_y(x,extras={},g={}):
+                    numerador=signo*((g['parteReal'](x,extras=extras)/g['parteReal'](x))-(g['base'](x,extras=extras)/g['base'](x)))
+                    return numerador/((math.log(g['base'](x,extras=extras)))**2)
+                def y_print(x,extras={},g={}):
+                    return 'ln('+g['parteReal'](x,extras=extras)+','+g['base'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.log(g['parteReal'](x),g['base'](x))
+            if operador in 'ln':
+                #math.log(x,base)
+                f.g['parteReal']=strToMath(string=string[len('ln'):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '('+g['parteReal'](x,extras=extras)+'/'+g['parteReal'](x,extras={'ret':'print'})+')'
+                def dy_y(x,extras={},g={}):
+                    return g['parteReal'](x,extras=extras)/g['parteReal'](x)
+                def y_print(x,extras={},g={}):
+                    return 'ln('+g['parteReal'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.log(g['parteReal'](x))
+            if operador in 'abs':
+                #math.fabs(-66.43)
+                f.g['valor']=strToMath(string=string[len(''):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '(('+g['valor'](x,extras={'ret':'print'})+'/abs('+g['valor'](x,extras={'ret':'print'})+'))*('+g['valor'](x,extras=extras)+'))'
+                def dy_y(x,extras={},g={}):
+                    return (g['valor'](x)/math.fabs(g['valor'](x)))*g['valor'](x,extras=extras)
+                def y_print(x,extras={},g={}):
+                    return 'abs('+g['valor'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.fabs(g['valor'](x))                
+            if operador in 'tg':
+                #math.tan()
+                f.g['radian']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '((1+tg('+g['radian'](x,extras={'ret':'print'})+')**2)*('+g['radian'](x,extras=extras)+'))'
+                def dy_y(x,extras={},g={}):
+                    return (1+math.tan(g['radian'](x))**2)*g['radian'](x,extras={'op':'dy'})
+                def y_print(x,extras={},g={}):
+                    return 'tg('+g['radian'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.tan(g['radian'](x))
+            if operador in 'sen':
+                #math.sin()
+                f.g['radian']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '(cos('+g['radian'](x,extras={'ret':'print'})+')*('+g['radian'](x,extras=extras)+'))'
+                def dy_y(x,extras={},g={}):
+                    return math.cos(g['radian'](x))*g['radian'](x,extras={'op':'dy'})
+                def y_print(x,extras={},g={}):
+                    return 'sen('+g['radian'](x,extras={'ret':'print'})+')'
+                def y_y(x,extras={},g={}):
+                    return math.sin(g['radian'](x))
+            if operador in 'cos':
+                #math.cos()
+                f.g['radian']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '(sen('+g['radian'](x,extras={'ret':'print'})+')*('+g['radian'](x,extras=extras)+'))'
+                def dy_y(x,extras={},g={}):
+                    return -1*signo*math.sin(g['radian'](x))*g['radian'](x,extras=extras)
+                def y_print(x,extras={},g={}):
+                    return 'cos('+g['radian'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return signo*math.cos(g['radian'](x))
+            if operador in 'arcsen':
+                #math.asin()
+                pass
+            if operador in 'arccos':
+                #math.acos()
+                pass
+            if operador in 'arctg':
+                #math.atan()
+                pass
+            if operador in 'signo':
+                #detecta el signo
+                pass
+            if operador in 'entero':
+                #retorna el entero del la funcion
+                pass
+            if operador in 'decimal':
+                #retorna la parte decimal
+                pass
+            if operador in 'round':
+                f.g['round']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return 'round('+g['round'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.round(g['round'](x))
+            if operador in 'floor':
+                f.g['floor']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return 'floor('+g['floor'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.floor(g['floor'](x))
+            if operador in 'ceil':
+                f.g['ceil']=strToMath(string=string[len(operador):],extras=extras)
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return 'ceil('+g['ceil'](x,extras=extras)+')'
+                def y_y(x,extras={},g={}):
+                    return math.ceil(g['ceil'](x))
+        else:
+            if string in constantes:
+                f.g['c']=constantes[string]
+            elif sum([1 for l in string if ((48<=ord(l)<=57) or (ord(l)==46))])==len(string):
+                f.g['c']=float(string)
+            if f.g['c']:
+                f.extras['ecuacion']='constante'
+                f.extras['c']=1
+                def dy_print(x,extras={},g={}):
+                    return '0.0'
+                def dy_y(x,extras={},g={}):
+                    return 0.0
+                def y_print(x,extras={},g={}):
+                    return str(g['c'])[:extras['decimales']]
+                def y_y(x,extras={},g={}):
+                    return g['c']*extras['signo']
+                
+            if string==extras['variable']:
+                f.extras['ecuacion']='variable'
+                def dy_print(x,extras={},g={}):
+                    return '1.0'
+                def dy_y(x,extras={},g={}):
+                    return 1.0
+                def y_print(x,extras={},g={}):
+                    return str(x)[:extras['decimales']]
+                def y_y(x,extras={},g={}):
+                    return x*extras['signo']
+    else:
+        #parentecis,exponente/radicales,multiplicacion/division,suma/resta
+        print(op+':',string,signos[op])
+        f.extras['ecuacion']=op
+        if op=='suma':
+            if len(signos[op])==1:
+                f.g['sumandos']=[strToMath(string=string[1:],extras=extras)]
+            else:
+                f.g['sumandos']=[]
+                for sumando in range(0,len(signos[op])-1,1):
+                    f.g['sumandos']+=[strToMath(string=string[signos[op][sumando]:signos[op][sumando+1]],extras=extras)]
+                f.g['sumandos']+=[strToMath(string=string[signos[op][-1]:],extras=extras)]
+            def dy_print(x,extras={},g={}):
+                ret = '('
+                for sumando in g['sumandos']:
+                    ret += ' '+sumando(x,extras=extras)
+                return ret+' )'
+            def dy_y(x,extras={},g={}):
+                return sum([sumando(x,extras=extras) for sumando in g['sumandos']])
+            def y_print(x,extras={},g={}):
+                ret = '('
+                for sumando in g['sumandos']:
+                    ret += ' '+sumando(x,extras={'ret':'print','mostrarSigno':1})
+                return ret+' )'
+            def y_y(x,extras={},g={}):
+                ret = 0.0
+                for sumando in g['sumandos']:
+                    ret += sumando(x)
+                return ret
+            
+        elif op=='division':
+            signos[op]+=[]
+            f.g['nume']=strToMath(string=string[0:signos[op][1]],extras=extras)
+            f.g['deno']=strToMath(string=string[signos[op][1]+1:],extras=extras)
+            def dy_print(x,extras={},g={}):
+                return '(('+g['nume'](x,extras=extras)+')*('+g['deno'](x,extras={'ret':'print'})+')-('+g['nume'](x,extras={'ret':'print'})+')*('+g['deno'](x,extras=extras)+'))/(('+g['deno'](x,extras={'ret':'print'})+')**2)'
+            def dy_y(x,extras={},g={}):
+                return extras['signo']*((g['nume'](x,extras=extras)*g['deno'](x))-(g['nume'](x)*g['deno'](x,extras=extras)))/(g['deno'](x)**2)
+            def y_print(x,extras={},g={}):
+                return '('+g['nume'](x,extras=extras)+'/'+g['deno'](x,extras=extras)+')'
+            def y_y(x,extras={},g={}):
+                return extras['signo']*g['nume'](x,extras=extras)/g['deno'](x,extras=extras)
+        elif op=='resto':
+            signos[op]+=[]
+            f.g['nume']=strToMath(string=string[0:signos[op][1]],extras=extras)
+            f.g['deno']=strToMath(string=string[signos[op][1]+1:],extras=extras)
+            def dy_print(x,extras={},g={}):
+                return ''
+            def dy_y(x,extras={},g={}):
+                return None
+            def y_print(x,extras={},g={}):
+                return '('+g['nume'](x,extras=extras)+'%'+g['deno'](x,extras=extras)+')'
+            def y_y(x,extras={},g={}):
+                return extras['signo']*g['nume'](x,extras=extras)%g['deno'](x,extras=extras)
+            
+        elif op=='producto':
+            f.g['factores']=[]
+            for factor in range(0,len(signos[op])-1,1):
+                f.g['factores']+=[strToMath(string=string[signos[op][factor]+(1 if 0<factor else 0 ):signos[op][factor+1]],extras=extras)]
+            f.g['factores']+=[strToMath(string=string[signos[op][-1]+1:],extras=extras)]
+            def dy_print(x,extras={},g={}):
+                ret='('
+                factor='('
+                for derivar in range(0,len(g['factores']),1):
+                    factor=g['factores'][derivar](x,extras=extras)
+                    for escalar in range(0,len(g['factores']),1):
+                        if not (derivar == escalar):
+                            factor += '*'+g['factores'][escalar](x,extras={'ret':'print'})
+                    ret += factor+')+'
+                return ret[:-1]+')'
+            def dy_y(x,extras={},g={}):
+                ret=0.0
+                factor=1.0
+                for derivar in range(0,len(g['factores']),1):
+                    factor=g['factores'][derivar](x,extras=extras)
+                    for escalar in range(0,len(g['factores']),1):
+                        if not (derivar == escalar):
+                            factor*=g['factores'][escalar](x,extras={'op':'y'})
+                    ret += factor
+                return extras['signo']*ret
+            def y_print(x,extras={},g={}):
+                ret = '('+g['factores'][0](x,extras=extras)
+                for factor in g['factores'][1:]:
+                    ret += '*'+factor(x,extras=extras)
+                return ret+')'
+            def y_y(x,extras={},g={}):
+                ret = 1.0
+                for factor in g['factores']:
+                    ret *= factor(x)
+                return extras['signo']*ret
+            
+        elif op=='exponente':
+            signos[op]+=[]
+            f.g['base']=strToMath(string=string[0:signos[op][1]],extras=extras)
+            f.g['exponente']=strToMath(string=string[signos[op][1]+2:],extras=extras)
+            def dy_print(x,extras={},g={}):
+                return '((('+g['exponente'](x,extras={'ret':'print'})+'*('+g['base'](x,extras={'ret':'print'})+'**('+g['exponente'](x,extras={'ret':'print'})+'-1))*'+g['base'](x,extras=extras)+') + ('+g['exponente'](x,extras=extras)+'*('+g['base'](x,extras={'ret':'print'})+'**'+g['exponente'](x,extras={'ret':'print'})+')*ln('+g['base'](x,extras={'ret':'print'})+'))))'
+            def dy_y(x,extras={},g={}):
+                ret = g['exponente'](x)*(g['base'](x)**(g['exponente'](x)-1))*g['base'](x,extras=extras) + g['exponente'](x,extras=extras)*(g['base'](x)**g['exponente'](x))*math.log(g['base'](x))
+                return extras['signo']*ret
+            def y_print(x,extras={},g={}):
+                return g['base'](x,extras={'ret':'print'})+'**('+g['exponente'](x,extras={'ret':'print','mostrarSigno':1})+')'
+            def y_y(x,extras={},g={}):
+                return extras['signo']*g['base'](x)**g['exponente'](x)
+            
+    f.set({'dy':{'print':dy_print,'y':dy_y},'y':{'print':y_print,'y':y_y}})
+    #print(string,op,signos,operador,nivel,extras,comas)
+    return f  
+a=constante(1/5)
+b=constante(5/45)
+c=constante(500)
+print(a,b,c)
+op=[lambda a,b:print(a,'+',b,'=',a+b),lambda a,b:print(a,'-',b,'=',a-b),lambda a,b:print(a,'/',b,'=',a/b),lambda a,b:print(a,'*',b,'=',a*b)]
+for f in op:
+    f(a,9*b())
+    f(a,c)
+    f(b,c)
+v = Vector([1,2])
+w = Vector([2,2])
+ 
+print(v + w)
+
+#print(ecu(3,extras={'ret':'print'}))
 #print('(x*e**x)/(e**x+e**(-x))','=',g(3))
+
+
+"""
+Ecuación general y completa de segundo grado
+Ax2 + Bxy + Cy2 + Dx + Ey + F = 0 
+"""

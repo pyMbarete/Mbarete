@@ -1,0 +1,157 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=latex 2022.3.30)  31 MAR 2022 01:09
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**miprimer.tex
+(./miprimer.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2020/02/14 3.40 The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2020/02/14 3.40 Babel switching mechanism
+)
+Package babel Info: You haven't specified a language. I'll use 'nil'
+(babel)             as the main language. Reported on input line 572.
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/nil.ldf
+Language: nil 2020/02/14 3.40 Nil language
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2020/02/14 3.40 Babel common definitions
+\babel@savecnt=\count175
+\U@D=\dimen135
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count176
+)
+\l@nil=\language3
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
+\@mathmargin=\skip49
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks14
+\ex@=\dimen136
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen137
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count177
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count178
+\leftroot@=\count179
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count180
+\DOTSCASE@=\count181
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box45
+\strutbox@=\box46
+\big@size=\dimen138
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count182
+\c@MaxMatrixCols=\count183
+\dotsspace@=\muskip16
+\c@parentequation=\count184
+\dspbrk@lvl=\count185
+\tag@help=\toks15
+\row@=\count186
+\column@=\count187
+\maxfields@=\count188
+\andhelp@=\toks16
+\eqnshift@=\dimen139
+\alignsep@=\dimen140
+\tagshift@=\dimen141
+\tagwidth@=\dimen142
+\totwidth@=\dimen143
+\lineht@=\dimen144
+\@envbody=\toks17
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks18
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
+File: l3backend-dvips.def 2020-02-03 L3 backend support: dvips
+\l__pdf_internal_box=\box47
+\g__pdf_backend_object_int=\count189
+\l__pdf_backend_content_box=\box48
+\l__pdf_backend_model_box=\box49
+\g__pdf_backend_annotation_int=\count190
+\g__pdf_backend_link_int=\count191
+\g__pdf_backend_link_sf_int=\count192
+)
+(./miprimer.aux)
+\openout1 = `miprimer.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+
+Overfull \hbox (19.99695pt too wide) in paragraph at lines 8--16
+[]\OT1/cmr/m/n/12 L[]T[]X es un programa para preparar documentos con el sistem
+a de tipograf^^S^^Pas[]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8--16
+
+ []
+
+[1
+
+] (./miprimer.aux) ) 
+Here is how much of TeX's memory you used:
+ 1618 strings out of 483184
+ 21874 string characters out of 5966318
+ 266992 words of memory out of 5000000
+ 16672 multiletter control sequences out of 15000+600000
+ 537130 words of font info for 41 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 30i,13n,25p,218b,181s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on miprimer.dvi (1 page, 2656 bytes).

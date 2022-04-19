@@ -1,0 +1,125 @@
+
+"""
+#SERVICIO
+    Ahora puedes listar todos los servicios en Linux. Para hacerlo, ejecuta el comando:
+    sudo systemctl list-unit-files --type service --all
+    Cuando ejecutes el comando, verás todos los servicios que están en el sistema. Sin embargo, también verás que algunos tienen un estado definido. Veamos qué significa todo esto.
+        Los servicios habilitados (Enabled) son los que se están ejecutando actualmente. Generalmente estos no tienen problemas.
+        Los servicios deshabilitados (Disabled) son los que no están activos, pero se pueden activar en cualquier momento sin ningún problema.
+        Los servicios enmascarados (Masked) no se ejecutarán a menos que les quites esa propiedad.
+        Los servicios estáticos (Static) solo se utilizarán en caso de que otro servicio o unidad los necesite.
+        Finalmente, hay servicios generados (generated) a través de un initscript SysV o LSB con el generador systemd.
+    En caso de que solo quieras saber cuáles son los servicios que están activos, tienes que usar un comando junto con grep, así:
+        sudo systemctl | grep running
+    Administrar servicios de Linux
+    Para iniciar un servicio en Linux, necesitas ejecutar el siguiente comando:
+        sudo systemctl start [nombre_servicio]
+    Si el servicio está configurado correctamente, se iniciará. Ahora, si quieres detenerlo, usa el siguiente comando:
+        sudo systemctl stop [nombre_servicio]
+    Por otro lado, para verificar el estado de un servicio puedes usar:
+        sudo systemctl status [nombre_servicio]
+    También es posible ejecutar un servicio mientras se carga el sistema operativo:
+        sudo systemctl enable [nombre_servicio]
+    O eliminarlo de la carga inicial:
+        sudo systemctl disable [nombre_servicio]
+
+    Finalmente, es posible verificar qué puerto está siendo utilizado por un servicio. Para esto, usar netstat.
+    Para instalarlo en Ubuntu, simplemente ejecuta:
+        sudo apt install netstat-nat
+    Si estás usando CentOS 7:
+        yum install net-tools
+    Luego, ejecuta el siguiente comando:
+        sudo netstat -plnt
+    La salida te dará toda la información de red requerida.
+    Conclusión
+    ¡Aprender a listar servicios en Linux es fácil y esto puede acelerar enormemente la resolución de problemas! 
+    ¡En este tutorial, te hemos dicho cómo iniciar, habilitar, deshabilitar, detener y listar todos los servicios en Linux! 
+    Ahora puedes administrar tu VPS de Linux como un profesional.
+    Finalmente, si quieres conocer a profundidad todos los usos de listar servicios en Linux, 
+    te recomendamos que lea más sobre systemctl.
+    
+#server backend
+    CONFIG NGINX, APACHE2
+    config wsgi, fastCGI
+    CONNECT BBDD
+    upload METHOD_SET pwd
+    download METHOD_GET pwd
+
+#cliente
+    url
+    request
+    scrapping
+    client Drive,FireBase,Mega,AWS,AMAZON
+    
+#servidor web
+    backend
+    statisc html,js,css,png,...,multimedia
+
+#servidor API
+    backend
+    WSGI
+    cola de procesos
+
+#servidor USER,Logging
+    backend
+    hash
+    Oauth2.0
+    user BBDD
+    Logging_API Facebook_API, Github_API, Google_API
+
+#servidor scan_DEVICES
+    backend
+    scan_maquina_software SSH, VLC, NGINX, APACHE2, IDEs,
+    scan_maquina_hardware Teclado,Mouse,Microfono,Camaras,Bluetooth,Audio,chromeCast
+    devices Impresoras,Celulares,Consolas,Camaras,Sensores
+    devices Scan and test
+
+#servidor SSL
+    backend
+    Let's Encrypt
+    https://letsencrypt.org
+
+#servidor Streaming
+    backend
+    format_convert audios,videos,imagenes
+    audio, video transmision via http
+    datos_Bytes bidireccion
+
+#servidor Compartido
+    backend
+    reverse_proxy
+
+#servidor METADATOS
+    backend
+    
+#servidor Cluster
+    backend
+    extensibles method
+
+#servidor Correo
+    backend
+    dominio
+    emails bbdd
+    adjuntos bbdd
+
+#servidor FTP,Archivos
+    backend
+    compresion tar,rar
+
+#servidor BBDD
+    backend
+    connect FireBase,sqLite3,postgrest,mariaDB,SQL,Oracol,EXEL,Acces
+    
+#servidor DNS
+    backend
+    hostName to IP_Addresses
+    Client_DNS DNS_AMAZON, DNS_GO_DADDY, DNS_GOOGLE
+    
+
+#servidor 
+    backend
+    
+"""
+
+
+

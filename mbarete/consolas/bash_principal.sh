@@ -9,7 +9,7 @@ done < "$fuente"info
 chmod +x $t
 source $t
 rm $t
-t=/tmp/$cross_temporal.sh
+t=$cross_temporal.sh
 declare -A my_array
 #importar funciones
 source "$fuente"bash_modulo.sh

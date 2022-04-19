@@ -27,206 +27,272 @@
     b'-----------------------------1262949829386019333586660223--'
 
 """
-import os
+import os,sys,csv
+from pruebas import object_prueba
 d={
     'img':os.getcwd()+os.path.sep+"media"+os.path.sep,
     'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
     }
-canvas_width = 1100
-canvas_height =1000
 
-
-"""Cómo se construye una dirección IP:
-    En estos cuatro bloques, los tres primeros constituyen las distintas capas de 
-    la red a la que estamos conectados, mientras que el último es el que 
-    se asigna a nuestro dispositivo.
-    Es decir, en una IP 230.143.089.001, somos el dispositivo número 
-    1 de la red '230.143.089'. 
-    Como la red se construye por capas, la estructura sería la siguiente 
-    (usando el mismo ejemplo).
-        230. Identificador de la red principal.
-        143. Identificador de la primera sub-red.
-        089. Identificador de la segunda sub-red.
-        001. Identificador de nuestro dispositivo en la red general.
-    Pero esto sólo es así en las redes de clase C, pues existen otras dos clases de 
-    redes IP que quedan de la siguiente manera:
-        Clase A: Red.Dispositivo.Dispositivo.Dispositivo.
-        Clase B: Red.Red.Dispositivo.Dispositivo.
-        Clase C: Red.Red.Red.Dispositivo.
-    Las redes que nos interesan son las de clase C, que son las que afectan a 
-    ordenadores, móviles, tablets, televisores, relojes y demás dispositivos 
-    que se conectan a Internet de forma clásica.
-    Como hemos comentado antes, existen dos direcciones IP para cada dispositivo que 
-    tengamos conectado en el hogar, una IP privada y una IP pública. La privada tiene un 
-    formato similar a 192.168.0.1, pues las redes 192 son las reservadas para este uso. 
-    Pero cuando salimos a Internet, a nuestro dispositivo se le asigna una IP pública y 
-    es más fácil de lo que parece saber cuál es en cada momento.
-"""
-
-
-
-def red():
-    from mbarete import internet
-    ip=internet()
-    print('ip.lan_ip:',ip.lan_ip,'ip.wan_ip:',ip.wan_ip)
-class nodo_python(object):
+class nodo_python(object_prueba):
     """docstring for nodo_python"""
-    def __init__(self,IP_clase_C='192.168.100.',dispositivos='2-30',host = "",port = 30000,format_encode='utf-8',username='',infodir=['mbarete','consolas']):
+    def __init__(self,IP_clase_C='192.168.100.',dispositivos='1-30',ignore=[],port = 8002,format_encode='utf-8',name='cross',pwd='',flags=['init','log','error']):
         super(nodo_python, self).__init__()
-        import os,sys,csv,time
+        import socket,json
         from datetime import datetime
-        import socket
         from threading import Thread
         self.t=Thread
-        self.status=True
-        self.infodir=''
-        for d in infodir: self.infodir+=d+'\\'
-        self.username='cross_username'
-        self.ruta_app = os.getcwd()
-        self.host='0.0.0.0'
+        self.j=json
+        self.dt=datetime
+        self.s=socket
+        self.name = name
         self.port=port
         self.IP_C=IP_clase_C
         self.dispositivos=dispositivos
-        self.code=format_encode
+        #self.code=format_encode
+        self.flags=['']+flags
+        self.status=True
+        self.sepUser='_'
+        self.home='home'
+        self.ignore=ignore+['__pycache__',self.home]
+        self.pwd = pwd if pwd else os.getcwd()
+        if not self.home in os.listdir(self.pwd):
+            os.mkdir(self.pwd+os.sep+self.home)
+            self.setFile(self.pwd+os.sep+self.home+os.sep+'__init__.py',valor=['#!/usr/bin/env python','# -*- coding: '+self.code+' -*-'])
+        self.host='0.0.0.0'
         self.porcion=1024*5
         self.media=self.media_me()
-        #self.=
-        #self.=
-        print(self.host, self.port)
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.host, self.port))
-        self.server.listen()
-        self.clients = []
+        self.p(self.host, self.port,flag='init')
+        self.server = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
+        self.clients = {}
         self.scan()
-
+    def crear_cliente(self,med,address):
+        self.media['media_me']['address']=med['media_me']['address']
+        med['media_me']['address']=tuple(address)
+        home=self.pwd+os.sep+self.home
+        name=med['media_me']['name']
+        for e in med:
+            if 'media_me' != e:
+                med[e]['path'] = os.sep+self.home+os.sep+name+med[e]['path']
+        self.clients[name]=med
+        if not name in os.listdir(home): os.mkdir(home+os.sep+name)
+        home=home+os.sep+name
+        for d in med['media_me']['home']:
+            if not d in os.listdir(home): 
+                os.mkdir(home+os.sep+d)
+        self.p(med['media_me'],flag='auto')
     def media_me(self):
-        from  datetime import datetime
         media={}
         total = 0
         num_archivos = 0
         formato = '%d-%m-%y %H:%M:%S'
-        for ruta, directorios, archivos in os.walk(self.ruta_app, topdown=True):
-            for elemento in archivos:
-                num_archivos += 1
-                archivo = ruta + os.sep + elemento
-                media[self.username+'_'+str(num_archivos)]={'path':archivo,'name':elemento}
-                estado = os.stat(archivo)
-                tamanho = estado.st_size
-                ult_acceso = datetime.fromtimestamp(estado.st_atime)
-                modificado = datetime.fromtimestamp(estado.st_mtime)
-                ult_acceso = ult_acceso.strftime(formato)
-                modificado = modificado.strftime(formato)
-                total += tamanho
-                media[self.username+'_'+str(num_archivos)]['modificado']=modificado
-                media[self.username+'_'+str(num_archivos)]['ult_acceso']=ult_acceso
-                media[self.username+'_'+str(num_archivos)]['size']=tamanho
-        media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'username':self.username,'address':(self.host,self.port)}
+        home=[]
+        for ruta, directorios, archivos in os.walk(self.pwd, topdown=True):
+            ruta='' if ruta==self.pwd else ruta.replace(self.pwd+os.sep,'')
+            self.p(ruta,not ruta.split(os.sep)[0] in self.ignore,flag='init')
+            if not ruta.split(os.sep)[0] in self.ignore:
+                if not ruta in home: home+=[ruta]
+                for elemento in archivos:
+                    num_archivos += 1
+                    archivo = ruta+os.sep+elemento if ruta else elemento
+                    self.p(archivo,flag='init')
+                    estado = os.stat(archivo)
+                    tamanho = estado.st_size
+                    name=self.name+self.sepUser+str(num_archivos)
+                    media[name]={'path':os.sep+archivo,'name':elemento}
+                    ult_acceso = self.dt.fromtimestamp(estado.st_atime)
+                    modificado = self.dt.fromtimestamp(estado.st_mtime)
+                    ult_acceso = ult_acceso.strftime(formato)
+                    modificado = modificado.strftime(formato)
+                    total += tamanho
+                    media[name]['modificado']=modificado
+                    media[name]['ult_acceso']=ult_acceso
+                    media[name]['size']=tamanho
+        home=[d.replace(self.pwd,'') for d in home if d]
+        home.sort(reverse=False,key=lambda x: len(x.strip(os.sep)))
+        media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'name':self.name,'address':(self.host,self.port),'pwd':self.pwd,'home':home}
         return media
-        
+    def get(self,files):
+        while files:
+            f=files[-1].split(self.sepUser)[0]
+            cli_files=[]
+            for x in range(len(files)-1,-1,-1):
+                if f in files[x]:
+                    cli_files+=[files[x]]
+                    files.pop(x)
+            if (f in self.clients):
+                cli=self.clients[f]
+                for f in cli_files:
+                    try:
+                        file = cli[f]['path']
+                        client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
+                        client.connect(cli['media_me']['address'])
+                        msj=client.recv(self.porcion)
+                        if b'nodo_python' in msj:
+                            client.send(b'GET\r\n'+f.encode(self.code)+b'\r\n\r\n')
+                            binario=client.recv(self.porcion)
+                            guardando = open(self.pwd+file,"wb")
+                            while binario:
+                                guardando.write(binario)
+                                binario=client.recv(self.porcion)
+                            guardando.close()
+                            self.p("recivido:",file,flag='metodo')
+                        client.close()
+                    except Exception as e:
+                        self.p('ERROR:',e,flag='error')
+            self.p('GET len(files):',len(files),flag='metodo')
+    def connect(self,name):
+
+
+    def set(self,username,files):
+        cli=self.clients[username]
+        for boundary in files:
+            try:
+                client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
+                client.connect(cli['media_me']['address'])
+                msj=client.recv(self.porcion)
+                if b'nodo_python' in msj:
+                    file=open(self.pwd+self.media[boundary]['path'],'rb')
+                    client.send(boundary.encode(self.code)+b'\r\n'+file.read())
+                    file.close()
+                    self.p("enviado:",self.media[boundary]['path'],flag='metodo')
+                client.close()
+            except Exception as e:
+                self.p('ERROR:',e,flag='error')
+        self.p('SET len(files):',len(files),flag='metodo')
     def scan(self):
         #b'JSONin'
-        import socket
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         inicio,fin=map(int,self.dispositivos.split('-'))
         for c in range(inicio,fin+1):
-            med=self.media
+            client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
             try:
-                med['media_me']['host']=self.IP_C+str(c)
-                client.connect((self.IP_C+str(c), self.port))
-                client.send(b'JSONin\r\n'+ json.dumps(med).encode(self.code)+b'\r\n\r\n')
-                datos_Bytes=client.recv(self.porcion)
+                if not (c in self.ignore):
+                    msj=b''
+                    client.connect((self.IP_C+str(c),self.port))
+                    msj=client.recv(self.porcion)
+                    if b'nodo_python' in msj:
+                        med=self.media
+                        med['media_me']['address']=(self.IP_C+str(c),self.port)
+                        client.send(b'JSONin\r\n'+self.j.dumps(med).encode(self.code)+b'\r\n\r\n')
+                        datos_Bytes=client.recv(self.porcion)
+                        j=datos_Bytes
+                        while datos_Bytes:
+                            datos_Bytes=client.recv(self.porcion)
+                            j+=datos_Bytes
+                        client_media=self.j.loads(j.split(b'\r\n')[1].decode(self.code))
+                        self.crear_cliente(client_media,(self.IP_C+str(c),self.port))
+            except Exception as e:
+                self.p('ERROR:',(self.IP_C+str(c), self.port),e,flag='error')
+            client.close()
+    def respond(self,client, address,datos_Bytes):
+        try:
+            if (b'JSONin\r\n' in datos_Bytes):
                 j=datos_Bytes
-                while not (b'\r\n\r\n' in datos_Bytes):
+                while not b'\r\n\r\n' in datos_Bytes:
                     datos_Bytes=client.recv(self.porcion)
                     j+=datos_Bytes
-                client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
-                self.clients[client_media['media_me']['username']]=client_media
-            except Exception as e:
-                print('ERROR:',(self.IP_C+str(c), self.port))
-            client.close()
+                client_media=self.j.loads(j.split(b'\r\n')[1].decode(self.code))
+                med=self.media
+                med['media_me']['address']=(address[0],self.port)
+                client.send(b'JSONout\r\n'+self.j.dumps(med).encode(self.code) +b'\r\n\r\n')
+                self.crear_cliente(client_media,(address[0],self.port))
 
-    def respond(self,client, address):
-        request=b''
-        ok=True
-        cabezera=True
-        binario=None
-        info={}
-        datos_Bytes=client.recv(self.porcion)
-        if (b'JSONin' in datos_Bytes):
-            j=datos_Bytes
-            while not (b'\r\n\r\n' in datos_Bytes):
-                datos_Bytes=client.recv(self.porcion)
-                j+=datos_Bytes
-            client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
-            #f'JSONout\n'+ json.dumps(media) +'\n'
-            print(client_media['media_me'])
-            self.clients[client_media['media_me']['username']]=client_media
-            client.send(b'JSONout\r\n'+ json.dumps(self.media).encode(self.code) +b'\r\n\r\n')
-        elif (b'GET' in datos_Bytes):
-            boundary=datos_Bytes.split(b'\r\n')[1].decode(self.code)
-            file=open(media[boundary]['filename'],'rb')
-            client.send(file.read())
-            file.close()
-        elif (b'CLOSE' in datos_Bytes):
-            print('Servidor Apagado')
-            client.close()
-            self.server.close()  
-            self.status=False      
-        else:
-            boundary=datos_Bytes.split(b'\r\n')[0]
-            if boundary.decode(self.code) in media:
-                binario=datos_Bytes.split(boundary+b'\r\n')[0]
-                guardando = open(media[boundary.decode(self.code)]['filename'],"wb")
-                #guardando.write(numerosMagicos[binario]['inicio']+datos_Bytes.split(numerosMagicos[binario]['inicio'])[-1])
-                while binario:
-                    if boundary+b'--' in binario:
-                        guardando.write(binario.split(boundary+b'--')[0])
-                        #request=info['boundary'].encode(format_encode)+datos_Bytes.split(info['boundary'].encode(format_encode))[-1]
-                        #binario=False
-                    else:
-                        guardando.write(binario)
-                    binario=client.recv(porcion)
-                guardando.close()
-                print("recivido:",media[boundary.decode(self.code)]['filename'])
+            elif (b'GET\r\n' in datos_Bytes):
+                boundary=datos_Bytes.split(b'\r\n')[1].decode(self.code)
+                file=open(self.pwd+self.media[boundary]['path'],'rb')
+                client.send(file.read())
+                file.close()
             else:
-                print('el elemento no esta registrado:',boundary)
+                #b'SET'
+                boundary=datos_Bytes.split(b'\r\n')[0].decode(self.code)
+                cli=boundary.split(self.sepUser)[0]
+                if cli in self.clients:
+                    file=self.pwd+self.clients[cli][boundary]['path']
+                    boundary=boundary.encode(self.code)
+                    binario=datos_Bytes[len(boundary+b'\r\n'):]
+                    guardando = open(file,"wb")
+                    while binario:
+                        guardando.write(binario)
+                        binario=client.recv(self.porcion)
+                    guardando.close()
+                    self.p("recivido:",file,flag='auto')
+                else:
+                    self.p('el elemento no esta registrado:',boundary,flag='auto')
+        except Exception as e:
+            self.p(e,flag='error')
         client.close()
-        print("fin de coneccion")
-    def start(self):
-        print(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'")
+    def hilo_start(self):
+        self.server.bind((self.host, self.port))
+        self.server.listen()
         while self.status:
             client, address = self.server.accept()
-            thread = self.t(target=self.respond, args=(client, address))
-            thread.start()
-        print("fin de servicio")
+            client.send(b'nodo_python')
+            datos_Bytes=client.recv(self.porcion)
+            if (b'CLOSE\r\n' in datos_Bytes):
+                client.close()
+                self.server.close()  
+                self.status=False 
+            else:
+                thread = self.t(target=self.respond, args=( client, address, datos_Bytes))
+                thread.start()
+        self.p('Servidor Apagado',flag='init')
+    def stop(self):
+        self.p( self.s.gethostname(), 8002,flag='init')
+        try:
+            client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
+            client.connect(( self.s.gethostname(), self.port))
+            self.p(client.recv(1024),flag='init')
+            client.send(b'CLOSE\r\n')
+            client.close()
+            self.p("cerrado:",( self.s.gethostname(), self.port),flag='init')
+        except Exception as e:
+            self.p(e,flag='error')
+        
+    def start(self):
+        thread = self.t(target=self.hilo_start)
+        thread.start()
+        self.p(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'",flag='init')
     
 def nodo():
-    n=nodo_python()
-    print(n.clients)
+    import time
+    reloj=['~',r'\ ','|','/','~',r'\ ','|','/']
+    x=7
+    if not 'sigue' in os.listdir():os.mkdir('sigue')
+    n=nodo_python(dispositivos='6-8',ignore=[21],name='cross',flags=['init','metodo','error'],pwd='/home/mbarete/Escritorio/0_PYTHON/Mbarete/mbarete/practicas')
+    print('clients:',[c for c in n.clients])
+    print('n.media:',n.media)
     #print(n.media)
     n.start()
-    n.server.close()
-
+    for client in n.clients:
+        files=[f for f in n.clients[client] if client in f]
+        n.get(files)
+    files=[f for f in n.media if n.media['media_me']['name'] in f]
+    for client in n.clients:
+        n.set(client,files)
+    while 'sigue' in os.listdir():
+        time.sleep(1)
+        #print(reloj[x%7],end='\r')
+        x= 7 if x==70 else x+1
+    print("cerrando:",n.media['media_me']['address'])
+    n.stop()
+def nodoAndroi():
+    import time
+    reloj=['~',r'\ ','|','/','~',r'\ ','|','/']
+    x=7
+    if not 'sigue' in os.listdir():os.mkdir('sigue')
+    n=nodo_python(dispositivos='20-22',ignore=['192.168.100.7'],username='android',pwd='/storage/emulated/0/0_PYTHON')
+    print('clients:',[c for c in n.clients])
+    print('n.media:',n.media)
+    #print(n.media)
+    n.start()
+    for client in n.clients:
+        files=[f for f in n.clients[client] if client in f]
+        n.get(files)
+    files=[f for f in n.media if n.media['media_me']['username'] in f]
+    for client in n.clients:
+        n.set(client,files)
 def CLOSE():
-    #b'JSONin'
-    import socket
-    print( socket.gethostname(), 30000)
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        client.connect(( socket.gethostname(), 30000))
-        client.send(b'CLOSE\r\n')
-        """
-        datos_Bytes=client.recv(self.porcion)
-        j=datos_Bytes
-        while not (b'\r\n\r\n' in datos_Bytes):
-            datos_Bytes=client.recv(self.porcion)
-            j+=datos_Bytes
-        client_media=json.loads(j.split(b'\r\n')[1].decode(self.code))
-        self.clients[client_media['media_me']['username']]=client_media
-        """
-    except Exception as e:
-        print(e)
-    client.close()
+    if 'sigue' in os.listdir():os.rmdir('sigue')
 
 
 def DNS_server():
@@ -241,8 +307,6 @@ def DNS_server():
         print(data)
         if b'/cerrar' in data:
             break
-
-
 def servidor_CHAT_socket_python():
     import socket   
     import threading
@@ -271,21 +335,16 @@ def servidor_CHAT_socket_python():
                 usernames.remove(username)
                 client.close()
                 break
-
     def receive_connections():
         while True:
             client, address = server.accept()
             client.send("@username".encode("utf-8"))
             username = client.recv(1024).decode('utf-8')
-
             clients.append(client)
             usernames.append(username)
-
             print(f"{username} esta conectado desde {str(address)}")
-
             message = f"ChatBot: {username} se unio al chat!".encode("utf-8")
             broadcast(message, client)
-            
             thread = threading.Thread(target=handle_messages, args=(client,))
             thread.start()
 
@@ -324,8 +383,6 @@ def cliente_CHAT_socket_python():
     receive_thread.start()
     write_thread = threading.Thread(target=write_messages)
     write_thread.start()
-
-
 class cola(object):
     """clase para gestionar los pedidos masivos desde el servidor hacia nuestras funciones"""
     def __init__(self):
@@ -353,7 +410,6 @@ class cola(object):
     def vaciar(self):
         self.cola = []
         self.prioridad = []
-
 class servidor(object):
     """docstring for servidor"""
     def __init__(self,pwd, command,subProyectos,puerto=8080):
@@ -597,7 +653,6 @@ class servidor(object):
         print('self.ID_Procesos:',self.ID_Procesos)
         print(':',)
         self.server.close()
-
 
 if 'main' in __name__:
     import sys

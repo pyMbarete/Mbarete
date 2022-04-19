@@ -1,10 +1,123 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
-import os
+import os,sys
 d={
     'img':os.getcwd()+os.path.sep+"media"+os.path.sep,
     'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
     }
+
+class object_prueba(object):
+    """esta clase sera heredada a todas las clases de las demas practicas"""
+    def __init__(self,logFile=__file__+'.log',flags=['log','error','init'],open_modo='wb'):
+        super(object_prueba, self).__init__()
+        self.init_pwd=os.getcwd()
+        self.log=True
+        self.prnt=True
+        self.code='utf-8'
+        self.logFile=logFile
+        self.flags=['']+flags
+        self.open_modo=open_modo
+        self.info=self.info_system()
+    def go_main_pwd(self,pwd='',mkdir='auto.'+__file__,scan=[]):
+
+        if os.path.lexists(pwd):
+            if mkdir:
+                if not mkdir in os.listdir(pwd): os.mkdir(pwd+mkdir)
+            os.chdir(pwd+mkdir)
+
+    def go_back_pwd(self,pwd=''):
+        main_pwd='auto.'+__file__
+        if not main_pwd in os.listdir(pwd): os.mkdir(pwd+main_pwd)
+        os.chdir(pwd+main_pwd)
+
+    def return_system(self,command,join=None,sep=':',prefijo=''):
+        os.system(command+" > "+self.info['tmp']+'mbarete_tmp')
+        ret = self.getFile(self.info['tmp']+'mbarete_tmp',join=join,sep=sep,prefijo=prefijo)
+        os.remove(self.info['tmp']+'mbarete_tmp')
+        return ret
+    def info_system(self):
+        if os.name == 'nt':
+            import platform
+            info={'OS':'windows','V':os.environ['OS'],'tmp':os.environ['TEMP']+os.sep,'home':os.environ['USERPROFILE']+os.sep}
+            info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] ,info['uname_processor'] = platform.uname()
+        elif os.name == 'posix':
+            info=self.getFile('/etc/os-release',join={'OS':'linux','tmp':'/tmp/'},sep='=',prefijo='os_release_')
+            info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] = os.uname()
+            info['V']=info['os_release_ID']
+        elif 'ANDROID_ROOT' in os.environ:
+            info={'OS':'android','V':os.environ['SHELL'],'tmp':'/tmp/'}
+        info['sys_prefix']=sys.prefix
+        info['sys_platform']=sys.platform
+        info['sys_version_info']=sys.version_info
+        info['sys_version']=sys.version.replace('\n',' ')
+        return info
+
+    def p(self,*args,end='\n',sep=' ',flush=True,flag=''):
+        """
+        end='\n'
+            Con el parámetro end podemos modificar esto por el valor que queramos.
+            print( “Hola”, end = “ @ ”)
+            print(“Mundo”)
+            El resultado es:
+            “Hola @ Mundo”
+            No se fue a la siguiente línea.
+        sep=' '
+            Con el parámetro sep, podemos escribir algo entre esos valores.
+            print( “Tengo una”, “ ¿Quieres una ”,  “?”, sep = “Manzana”)
+            El resultado sería:
+            “Tengo 1 Manzana ¿Quieres una Manzana?”
+            Nota: Funciona con variables int y float sin necesidad de convertirlas a String.
+        flush=True
+            Se recomienda usarlo cuando usamos el comando end. Ya que al usarlo el buffer ya 
+            no se vacía (flush), por lo tanto para asegurar que el comando print imprima en 
+            cuanto lo llamemos, se recomienda usar el comando flush = True.
+            Esto se entiende mejor si contamos elementos pero con un tiempo de espera, así 
+            veremos que sin Flush=True, el comando print se actualizará hasta el final.
+            import time
+            print("Números: ")
+            for i in range(8):
+                time.sleep(0.5)
+                print(i, end=" ",  flush=True)
+            Ese código pruébalo con flush=True y flush = False y ahí versa la diferencia.
+        """
+        if self.prnt and (flag in self.flags):
+            print(*args,end=end,sep=sep,flush=flush)
+        if self.log:
+            valor=''
+            for e in [*args]: valor+=str(e)+sep
+            valor+=end
+            self.setFile(self.logFile,valor=valor.encode(self.code),echo='log' in self.flags,modo='ab')
+    def getFile(self,name,full=1,code='',modo='rb',join=None,sep=':',prefijo=''):
+        if not code: code=self.code
+        file=open(name,modo)
+        ret=[]
+        for line in file:
+            line=line.decode(code)[:-1]
+            if line.strip()!='':
+                ret += [line if full else line.strip()]
+        file.close()
+        if join==None:
+            return ret if len(ret)>1 else ret[0]
+        elif join.__class__ == dict:
+            for k in ret:join[prefijo+k.split(sep)[0]]=k[len(k.split(sep)[0])+1:]
+            return join
+        elif join.__class__ == list:
+            return join+ret
+    def setFile(self,name,valor=[],echo=1,code='',modo='wb'):
+        if not code: code=self.code
+        file=open(name,modo)
+        if echo: print('Archivo:',name)
+        if list == valor.__class__:
+            for line in valor:
+                if echo: print(line.encode(code))
+                file.write(line.encode(code)+b'\n')    
+        else:
+            if echo: print(valor)
+            file.write(valor+b'\n')
+        file.close()  
+    def auto_info(self):
+        info=self.getFile('home/info')
+
 def funciones():
     import time
     """
@@ -118,36 +231,6 @@ def ahorcado(pwd=d['img']+"palabras.txt"):
             print("Te quedaste sin vidas JAJAJA. \nLa palabra Secreta es: "+secreto)
             break
 
-def manipularArchivos(pwd=d['img'],f='',ret=0):
-    bi=b''
-    if not f:
-        file=f
-    else:
-        file='subiendo'
-    binario=open(file,'rb')
-    for b in binario:
-        bi+=b
-    binario.close()
-    print(bi[:1024])
-    print(bi[-1024:])
-def capturarNumerosMagicos(pwd=d['img'],f='',ret=0):
-    bi={}
-    miDir=os.listdir(pwd)
-    muestra=100
-    contador=0
-    for file in miDir:
-        bi[contador]={'name':file,'inicio':b''}
-        binario=open(pwd+'\\'+file,'rb')
-        for inicio in binario:
-            bi[contador]['inicio']+=inicio
-        binario.close()
-        bi[contador]['fin']=bi[contador]['inicio'][-muestra:]
-        bi[contador]['inicio']=bi[contador]['inicio'][:muestra]
-        print('name',bi[contador]['name'])
-        print('inicio',bi[contador]['inicio'])
-        print('fin',bi[contador]['fin'])
-        contador+=1
-
 
 def git_admin():
 
@@ -163,10 +246,10 @@ def git_admin():
 
     """
 def main_pruebas(pruebas,argv):
-    import datetime
+    import datetime,time
     salir=lambda: exit()
     print(__name__,datetime.datetime.now())
-    pruebas[len(pruebas)+1]={'titulo':"salir, opcion por defecto",'f':salir}
+    pruebas[0]={'titulo':"salir, opcion por defecto",'f':salir}
     def f(num):
         print("PRUEBA Iniciada: "+pruebas[num]['titulo'])
         #llamamos a la funcion Decorada y esperamos que termine
@@ -187,11 +270,25 @@ def main_pruebas(pruebas,argv):
         f(num)
         print('######################################################################'+'\n\n')
 
+def argvToParametros(prefijo='-'):
+    kw=[]
+    p = sys.argv
+    arg=[]
+    kwarg={}
+    for i in range(0,len(sys.argv)):
+        if prefijo in p[i][0]:
+            kw+=[i,i+1]
+            kwarg[p[i][1:]]=p[i+1]
+        else:
+            if not i in kw:
+                arg+=[p[i]]
+    return (arg,kwarg)
 
+    if 1<len(sys.argv):
+        f[sys.argv[1]](*argvToParametros())
 
 if 'main' in __name__:
-    import sys
-    #from ..setup import main_pruebas
+    #from pruebas import main_pruebas
     pruebas={           
         0:{'titulo':"Nombre del script:",'f':lambda: print(__name__)}
         }

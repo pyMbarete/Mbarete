@@ -1,0 +1,214 @@
+SET len(files): 12 
+
+ True 
+
+pruebas_pdf_imagenes.py 
+
+googlearconpython.py 
+
+animacion en vivo con matplotlib.py 
+
+pruebas_os_sys.py 
+
+canvas.py 
+
+pruebas_socket.py 
+
+pruebas_matematica.py 
+
+testFirebase.py 
+
+pruebas.log 
+
+__init__.py 
+
+modulos.py 
+
+pruebas.py 
+
+practica_sqlite3.py 
+
+__pycache__ False 
+
+sigue True 
+
+home False 
+
+home/android False 
+
+home/android/sigue False 
+
+home/android/media False 
+
+0.0.0.0 8002 
+
+ERROR: ('192.168.100.6', 8002) [Errno 113] No route to host 
+
+{'num_archivos': 19, 'peso_total_kb': 326.7, 'name': 'android', 'address': ('192.168.100.7', 8002), 'pwd': '/storage/emulated/0/0_PYTHON', 'home': ['media', 'sigue']} 
+
+ERROR: ('192.168.100.8', 8002) [Errno 113] No route to host 
+
+
+Servidor HTTP corriendo en la direccion 'http://0.0.0.0:8002/' 
+
+recivido: /home/android/media/happy_food.jpg 
+
+recivido: /home/android/media/meme0.jpg 
+
+recivido: /home/android/media/Logo-Mbarete.png 
+
+recivido: /home/android/__init__.py 
+
+recivido: /home/android/pruebas_socket.py 
+
+recivido: /home/android/datetime_practicas.py 
+
+recivido: /home/android/arbol.txt 
+
+recivido: /home/android/arbol.py 
+
+recivido: /home/android/test_while_continue.py 
+
+recivido: /home/android/generador_map.py 
+
+recivido: /home/android/buscadorOptimazado.py 
+
+recivido: /home/android/for_anidado_ternario.py 
+
+recivido: /home/android/constructores_polinomios.py 
+
+recivido: /home/android/multiprocessing_test.py 
+
+recivido: /home/android/walrus_while_asignador_y_comparador.py 
+
+recivido: /home/android/refrigeracion_componentes.py 
+
+recivido: /home/android/buscaMinas_PYDROID.py 
+
+recivido: /home/android/prueba_tkinter_en_PYDROID.py 
+
+recivido: /home/android/cliente_socket.py 
+
+GET len(files): 0 
+
+SET len(files): 13 
+
+ True 
+
+pruebas_pdf_imagenes.py 
+
+googlearconpython.py 
+
+animacion en vivo con matplotlib.py 
+
+pruebas_os_sys.py 
+
+canvas.py 
+
+pruebas_socket.py 
+
+pruebas_matematica.py 
+
+testFirebase.py 
+
+pruebas.log 
+
+__init__.py 
+
+modulos.py 
+
+pruebas.py 
+
+practica_sqlite3.py 
+
+__pycache__ False 
+
+sigue True 
+
+home False 
+
+home/android False 
+
+home/android/sigue False 
+
+home/android/media False 
+
+0.0.0.0 8002 
+
+ERROR: ('192.168.100.6', 8002) [Errno 113] No route to host 
+
+{'num_archivos': 19, 'peso_total_kb': 326.7, 'name': 'android', 'address': ('192.168.100.7', 8002), 'pwd': '/storage/emulated/0/0_PYTHON', 'home': ['media', 'sigue']} 
+
+ERROR: ('192.168.100.8', 8002) [Errno 113] No route to host 
+
+
+Servidor HTTP corriendo en la direccion 'http://0.0.0.0:8002/' 
+
+recivido: /home/android/media/happy_food.jpg 
+
+recivido: /home/android/media/meme0.jpg 
+
+recivido: /home/android/media/Logo-Mbarete.png 
+
+recivido: /home/android/__init__.py 
+
+recivido: /home/android/pruebas_socket.py 
+
+recivido: /home/android/datetime_practicas.py 
+
+recivido: /home/android/arbol.txt 
+
+recivido: /home/android/arbol.py 
+
+recivido: /home/android/test_while_continue.py 
+
+recivido: /home/android/generador_map.py 
+
+recivido: /home/android/buscadorOptimazado.py 
+
+recivido: /home/android/for_anidado_ternario.py 
+
+recivido: /home/android/constructores_polinomios.py 
+
+recivido: /home/android/multiprocessing_test.py 
+
+recivido: /home/android/walrus_while_asignador_y_comparador.py 
+
+recivido: /home/android/refrigeracion_componentes.py 
+
+recivido: /home/android/buscaMinas_PYDROID.py 
+
+recivido: /home/android/prueba_tkinter_en_PYDROID.py 
+
+recivido: /home/android/cliente_socket.py 
+
+GET len(files): 0 
+
+enviado: /pruebas_pdf_imagenes.py 
+
+enviado: /googlearconpython.py 
+
+enviado: /animacion en vivo con matplotlib.py 
+
+enviado: /pruebas_os_sys.py 
+
+enviado: /canvas.py 
+
+enviado: /pruebas_socket.py 
+
+enviado: /pruebas_matematica.py 
+
+enviado: /testFirebase.py 
+
+enviado: /pruebas.log 
+
+enviado: /__init__.py 
+
+enviado: /modulos.py 
+
+enviado: /pruebas.py 
+
+enviado: /practica_sqlite3.py 
+
+SET len(files): 13 
+

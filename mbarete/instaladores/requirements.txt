@@ -18,3 +18,4 @@ importlib-metadata
 pyserial
 tk
 uwsgi
+plotly==5.6.0

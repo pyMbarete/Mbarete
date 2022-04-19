@@ -30,9 +30,7 @@ def timeConOsPath():
     print(r'strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime(os.path.getatime(sys.argv[0]))):',time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(os.path.getatime(sys.argv[0]))))
 def VariablesDeEntorno():
     import os
-    variables_de_entorno={env:os.environ[env] for env in os.environ}
-    for variable in variables_de_entorno: 
-        print("%s: %s" % (variable, variables_de_entorno[variable]))
+    for k in os.environ:  print("%s: %s" % (k, os.environ[k]))
 def powerPath(pwd=os.getcwd()):
     import os
     """

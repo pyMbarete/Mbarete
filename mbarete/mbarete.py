@@ -408,6 +408,11 @@ def myFuncion(inputType,nameWitget,comando):
 
 """ 
     ############# CLASES PRINCIPALES DEL MODULO MBARETE  ########################
+        def __get__(self, instance, cls):
+        # Retorna un método si se llama en una instancia
+        print(self,instance,cls)
+        return self if instance is None else MethodType(self, instance)
+
 """
 
 class mbarete(object):
@@ -519,7 +524,30 @@ class mbarete(object):
                         w[widget]['inputs'][i]['command']=subProyecto+'_'+w[widget]['inputs'][i]['command']
         self.info[subProyecto]=metadata
         return w
-
+class deco(object):
+    def __init__(self, flag='ignore'):
+        self.flag = flag
+    def __call__(self, original_func):
+        decorator_self = self
+        if decorator_self.flag=='geo':
+            def wrappee(*args, **kwargs):
+                ret = []
+                for a in [*args]:
+                    if (list == a.__class__) and (len(a)<3):
+                        ret += [[float(c) for c in a]+[0.0 for c in range(3-len(a))]]
+                    else:
+                        ret += [a]
+                ret=tuple(ret)
+                f_return= original_func(*ret,**kwargs)
+                return f_return
+            return wrappee
+        else:
+            def wrappee(*args, **kwargs):
+                print('#'*30+'\n'+'#'*30)
+                print('En decorador:', decorator_self.flag)
+                print("Funcion Ignorada:",original_func.__name__)
+                print('#'*30+'\n'+'#'*30)
+            return args,kwargs
 class git(object):
     """docstring for git"""
     def __init__(self, branch='',userName=''):
@@ -540,7 +568,6 @@ class microservicio(object):
         Esta clase no fue estudiada a fundo, osea que esta en desuso 
         El objetivo es tener una formade conectarse a nuestro proyecto desde distintas maquinas
         Definiendo una maquina Servidor, para luego este poder ser accedido desde otras maquinas 
-
     """
     def __init__(self,wan_url='https://8.8.8.8'):
         super(microservicio, self).__init__()
@@ -2447,22 +2474,11 @@ class GUI(object):
 
         del myWidget
 class geometria(object):
-    """docstring for geometria"""
+    """ecuaciones vectoriales,modulo"""
     def __init__(self):
         super(geometria, self).__init__()
-    def corrector(f):
-        def corregido(*arg,**kwargs):
-            ret = []
-            for a in [*arg]:
-                if ("list" in type(a)) and (len(a)<3):
-                    ret += [[float(c) for c in a]+[0.0 for c in range(3-len(a))]]
-                else:
-                    ret += [a]
-            ret=tuple(ret)
-            f_return= f(*ret,**kwargs)
-            return f_return
-        return corregido
-    @corrector
+    
+    @deco(flag='geo')
     def colineales(self,A,B,C,decimales=4):
         AB=self.resta(B,A)
         AC=self.resta(C,A)
@@ -2470,20 +2486,20 @@ class geometria(object):
             return True
         else:
             return False
-    @corrector
+    @deco(flag='geo')
     def modulo(self,A):
         return (((A[0])**2)+((A[1])**2)+((A[2])**2))**(1/2)
-    @corrector
+    @deco(flag='geo')
     def vectorUnitario(self,A):
         m=self.modulo(A)
         return [A[0]/m,A[1]/m,A[2]/m]
     def hypotenusa(self,catOp,catAd):
         return (((catAd)**(2))+((catOp)**(2)))**(1/2)
-    @corrector
+    @deco(flag='geo')
     def dist(self,A,B):
         #calcula la dsitancia entre A y B
         return (((A[0]-B[0])**2)+((A[1]-B[1])**2)+((A[2]-B[2])**2))**(1/2)
-    @corrector
+    @deco(flag='geo')
     def coseno(self,A,B):
         #retorna el valor del coseno del angulo formado entre los vectores A y B
         divisor=(((((A[0])**2)+((A[1])**2)+((A[2])**2))**(1/2))*((((B[0])**2)+((B[1])**2)+((B[2])**2))**(1/2)))
@@ -2491,25 +2507,26 @@ class geometria(object):
             return ((A[0]*B[0]+A[1]*B[1]+A[2]*B[2])/divisor)
         else:
             return 3.1416/2
-    @corrector
+    
     def angRad(self,A,B):
         return math.acos(self.coseno(A,B))
-    @corrector
+    
     def ang(self,A,B):
         return math.degrees(math.acos(self.coseno(A,B)))
-    @corrector
+
+    @deco(flag='geo')
     def resta(self,A,B):
         #retorna el vector AB o A-B considerando el punto A como el nuevo origen
         return [B[0]-A[0],B[1]-A[1],B[2]-A[2]]
-    @corrector
+    @deco(flag='geo')
     def suma(self,A,B):
         #retorna el vector A+B.
         return [B[0]+A[0],B[1]+A[1],B[2]+A[2]]
-    @corrector
+    @deco(flag='geo')
     def medio(self,A,B):
         #retorna el vector A+B.
         return [(B[0]+A[0])/2,(B[1]+A[1])/2,(B[2]+A[2])/2]
-    @corrector
+    @deco(flag='geo')
     def alt(self,A,B,C):
         #retorna el punto de origen del segmento que define la altura del triangulo A,B,C. Considerando al lado BC como la base del triangulo.
         ab=self.dist(A,B)
@@ -2521,13 +2538,13 @@ class geometria(object):
         y=((BC[1]/bc)*(cosB*ab))+B[1]
         z=((BC[2]/bc)*(cosB*ab))+B[2]
         return  [x,y,z]
-    @corrector
+    @deco(flag='geo')
     def rotar(self,rad,P):
         #sobre el origen, rotar el angulo dado en sentido antiorario el punto P 
         x=P[0]*math.cos(rad)-P[1]*math.sin(rad)
         y=P[0]*math.sin(rad)+P[1]*math.cos(rad)
         return x,y
-    @corrector
+    @deco(flag='geo')
     def trasladar(self,O,P):
         #trasladar el punto P, al nuevo origen O
         x=P[0]+O[0]

@@ -1,11 +1,44 @@
-cross_fuente:mbarete\consolas\
-cross_username:'MbaretePythonPY'
-cross_repo:'Mbarete'
-cross_temporal:temp_mbarete
-cross_sub:'remoto,severIoT'
-cross_branch:master
-cross_nick:'Mathias'
-cross_email:'invitadombarete@gmail.com'
-cross_ssh:'192.168.100.12:666@admin:raspberry'
+cross_git_repo_path:/home/mbarete/Escritorio/0_PYTHON/Mbarete/
+cross_OS:linux
+cross_tmp:/tmp/
+cross_os_release_NAME:"Ubuntu"
+cross_os_release_VERSION:"20.04.4 LTS (Focal Fossa)"
+cross_os_release_ID:ubuntu
+cross_os_release_ID_LIKE:debian
+cross_os_release_PRETTY_NAME:"Linux Lite 5.6"
+cross_os_release_VERSION_ID:"20.04"
+cross_os_release_HOME_URL:"https://www.ubuntu.com/"
+cross_os_release_SUPPORT_URL:"https://help.ubuntu.com/"
+cross_os_release_BUG_REPORT_URL:"https://bugs.launchpad.net/ubuntu/"
+cross_os_release_PRIVACY_POLICY_URL:"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+cross_os_release_VERSION_CODENAME:focal
+cross_os_release_UBUNTU_CODENAME:focal
+cross_uname_sysname:Linux
+cross_uname_nodename:mbarete-HP-15-Notebook-PC
+cross_uname_release:5.4.0-104-generic
+cross_uname_version:#118-Ubuntu SMP Wed Mar 2 19:02:41 UTC 2022
+cross_uname_machine:x86_64
+cross_V:ubuntu
+cross_sys_prefix:/usr
+cross_sys_platform:linux
+cross_sys_version_info:sys.version_info(major=3, minor=8, micro=10, releaselevel='final', serial=0)
+cross_sys_version:3.8.10 (default, Nov 26 2021, 20:14:08)  [GCC 9.3.0]
+cross_git_branch:pruebas_shell
+cross_git_repo_username:MbaretePythonPY
+cross_git_repo_name:Mbarete.git
+cross_git_origin:origin
+cross_git_email:mathiaslucasvidipy@gmail.com
+cross_git_username:MbaretePythonPY
+cross_file:info
+prefijo:cross_
+cross_sub_proyectos:diseñoLibre
+cross_pwd_practicas:/home/mbarete/Escritorio/0_PYTHON/Mbarete/mbarete/practicas/home/
+cross_pwd_consolas:/home/mbarete/Escritorio/0_PYTHON/Mbarete/mbarete/consolas/
+cross_temporal:/tmp/temp_mbarete
+cross_git_user.email:mathiaslucasvidipy@gmail.com
 cross_version:1.0
 cross_modo_seguro:false
+cross_os_name:posix
+cross_fuente:mbarete\consolas\
+cross_install:
+cross_install_flatpack:
