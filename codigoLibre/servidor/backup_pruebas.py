@@ -499,7 +499,7 @@ def servidor_HTTP_python(dominio="electrozone.local",pwd="media"+os.path.sep+"se
                     file.close()
             #80029563
             try:
-                print('myfile',myfile)
+                print('myfile:',myfile)
                 header='HTTP/1.1 200 OK\n'
                 if myfile.endswith('.jpg'): 
                     mimetype='Content-Type: image/jpg'

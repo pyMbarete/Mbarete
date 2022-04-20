@@ -5,27 +5,42 @@ d={
     'img':os.getcwd()+os.path.sep+"media"+os.path.sep,
     'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
     }
+def arboldearchivos(pwd=''):
+    ret=[]
+    if not pwd:
+        pwd = os.getcwd()
+    for check in os.listdir(pwd):
+        if os.path.isfile(pwd+os.path.sep+check):
+            ret += [pwd+os.path.sep+check]
+        else:
+            ret += arboldearchivos(pwd+os.path.sep+check)
+    return ret
+
 
 class object_prueba(object):
     """esta clase sera heredada a todas las clases de las demas practicas"""
     def __init__(self,logFile=__file__+'.log',flags=['log','error','init'],open_modo='wb'):
         super(object_prueba, self).__init__()
-        self.init_pwd=os.getcwd()
+        self.init_pwd=os.getcwd()+os.sep
         self.log=True
         self.prnt=True
         self.code='utf-8'
         self.logFile=logFile
         self.flags=['']+flags
         self.open_modo=open_modo
-        self.info=self.info_system()
-    def go_main_pwd(self,pwd='',mkdir='auto.'+__file__,scan=[]):
-
+    def go_pwd(self,pwd='',mkdir='auto.'+__file__,scan=[]):
+        equivalente={
+            'practicas':'pwd_practicas',
+            'consolas':'pwd_consolas',
+            'repo':'git_repo_path'
+        }
+        pwd = self.info[equivalente[pwd]] if pwd in equivalente else pwd
         if os.path.lexists(pwd):
             if mkdir:
                 if not mkdir in os.listdir(pwd): os.mkdir(pwd+mkdir)
             os.chdir(pwd+mkdir)
 
-    def go_back_pwd(self,pwd=''):
+    def back_pwd(self,pwd=''):
         main_pwd='auto.'+__file__
         if not main_pwd in os.listdir(pwd): os.mkdir(pwd+main_pwd)
         os.chdir(pwd+main_pwd)
@@ -35,22 +50,72 @@ class object_prueba(object):
         ret = self.getFile(self.info['tmp']+'mbarete_tmp',join=join,sep=sep,prefijo=prefijo)
         os.remove(self.info['tmp']+'mbarete_tmp')
         return ret
+    def join(self,*arg): 
+        return {k:ret[k] for ret in [*arg] for k in ret}
+
     def info_system(self):
+        ignorar='.auto.'
+        info={
+            'file':'info'+ignorar,
+            'pwd_practicas':'mbarete/practicas/',
+            'pwd_consolas':'mbarete/consolas/',
+            'prefijo':'cross_',
+            'ignorar':ignorar
+            }
         if os.name == 'nt':
             import platform
-            info={'OS':'windows','V':os.environ['OS'],'tmp':os.environ['TEMP']+os.sep,'home':os.environ['USERPROFILE']+os.sep}
+            info=self.join(info,{'OS':'windows','V':os.environ['OS'],'tmp':os.environ['TEMP']+os.sep,'home':os.environ['USERPROFILE']+os.sep})
             info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] ,info['uname_processor'] = platform.uname()
         elif os.name == 'posix':
-            info=self.getFile('/etc/os-release',join={'OS':'linux','tmp':'/tmp/'},sep='=',prefijo='os_release_')
+            info=self.getFile('/etc/os-release',join=self.join(info,{'OS':'linux','tmp':'/tmp/'}),sep='=',prefijo='OS_',buscar=['VERSION','ID','ID_LIKE','PRETTY_NAME'])
             info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] = os.uname()
-            info['V']=info['os_release_ID']
+            info['V']=info['OS_ID']+', '+info['OS_PRETTY_NAME']
         elif 'ANDROID_ROOT' in os.environ:
-            info={'OS':'android','V':os.environ['SHELL'],'tmp':'/tmp/'}
+            info=join(info,{'OS':'android','V':os.environ['SHELL'],'tmp':'/tmp/'})
+        t='temp_mbarete.'
+        myTMP=[file[len(t):]for file in os.listdir(info['tmp']) if t in file[:len(t)]]
+        buscar=[info['prefijo']+b for b in ['git_repo_path','git_repo_name','git_branch','pwd_consolas','pwd_practicas']]
+        info['mis_repos']={ repo.split('.git.')[0]:self.getFile(info['tmp']+t+repo,join={},buscar=buscar) for repo in myTMP if '.git.'+info['file'] in repo }
+
+            
         info['sys_prefix']=sys.prefix
         info['sys_platform']=sys.platform
         info['sys_version_info']=sys.version_info
         info['sys_version']=sys.version.replace('\n',' ')
         return info
+    def media_me(self,pwd,ret='media'):
+        media={}
+        total = 0
+        num_archivos = 0
+        formato = '%d-%m-%y %H:%M:%S'
+        home=[]
+        for ruta, directorios, archivos in os.walk(pwd, topdown=True):
+            ruta='' if ruta==pwd else ruta.replace(self.pwd+os.sep,'')
+            self.p(ruta,not ruta.split(os.sep)[0] in self.ignore,flag='init')
+            if not ruta.split(os.sep)[0] in self.ignore:
+                if not ruta in home: home+=[ruta]
+                for elemento in archivos:
+                    num_archivos += 1
+                    archivo = ruta+os.sep+elemento if ruta else elemento
+                    self.p(archivo,flag='init')
+                    estado = os.stat(archivo)
+                    tamanho = estado.st_size
+                    name=self.name+self.sepUser+str(num_archivos)
+                    media[name]={'path':os.sep+archivo,'name':elemento,'size':tamanho}
+                    ult_acceso = self.dt.fromtimestamp(estado.st_atime)
+                    modificado = self.dt.fromtimestamp(estado.st_mtime)
+                    ult_acceso = ult_acceso.strftime(formato)
+                    modificado = modificado.strftime(formato)
+                    total += tamanho
+                    media[name]['modificado']=modificado
+                    media[name]['ult_acceso']=ult_acceso
+        home=[d.replace(pwd,'') for d in home if d]
+        home.sort(reverse=False,key=lambda x: len(x.strip(os.sep)))
+        if ret=='media':
+            media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'name':self.name,'address':(self.host,self.port),'pwd':pwd,'home':home}
+            return media
+        elif ret=='lista':
+            return [ media[f]['path'] for f in media]
 
     def p(self,*args,end='\n',sep=' ',flush=True,flag=''):
         """
@@ -87,7 +152,7 @@ class object_prueba(object):
             for e in [*args]: valor+=str(e)+sep
             valor+=end
             self.setFile(self.logFile,valor=valor.encode(self.code),echo='log' in self.flags,modo='ab')
-    def getFile(self,name,full=1,code='',modo='rb',join=None,sep=':',prefijo=''):
+    def getFile(self,name,full=1,code='',modo='rb',join=None,sep=':',prefijo='',buscar=[]):
         if not code: code=self.code
         file=open(name,modo)
         ret=[]
@@ -99,7 +164,12 @@ class object_prueba(object):
         if join==None:
             return ret if len(ret)>1 else ret[0]
         elif join.__class__ == dict:
-            for k in ret:join[prefijo+k.split(sep)[0]]=k[len(k.split(sep)[0])+1:]
+            for k in ret:
+                clave=k.split(sep)[0]
+                if buscar:
+                    if clave in buscar:join[prefijo+clave]=k[len(clave)+1:]
+                else:
+                    join[prefijo+clave]=k[len(clave)+1:]
             return join
         elif join.__class__ == list:
             return join+ret

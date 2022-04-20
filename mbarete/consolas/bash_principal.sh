@@ -5,7 +5,7 @@ t="$fuente"tmp.sh
 echo "#!$SHELL" > $t
 while IFS=: read -r var valor;do
     echo $var=$valor >> $t
-done < "$fuente"info
+done < "$fuenteinfo"
 chmod +x $t
 source $t
 rm $t

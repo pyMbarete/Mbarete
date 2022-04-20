@@ -34,10 +34,9 @@ d={
     'audio':os.getcwd()+os.path.sep+"media"+os.path.sep
     }
 
-class nodo_python(object_prueba):
-    """docstring for nodo_python"""
-    def __init__(self,IP_clase_C='192.168.100.',dispositivos='1-30',ignore=[],port = 8002,format_encode='utf-8',name='cross',pwd='',flags=['init','log','error']):
-        super(nodo_python, self).__init__()
+class object_servidor(object_prueba):
+    """ SERVIDOR COMPLETO PARA TODO TIPO DE PROYECTOS WEB """
+    def __init__(pwd="media"+os.sep+"servidor",ignore=[],port = 8002,format_encode='utf-8',name='cross',flags=['init','log','error']):
         import socket,json
         from datetime import datetime
         from threading import Thread
@@ -45,20 +44,181 @@ class nodo_python(object_prueba):
         self.j=json
         self.dt=datetime
         self.s=socket
+        self.action_download='/download/'
+        self.action_upload='/subir/'
+        self.action_borrar='/borrar/'
+        self.host = '0.0.0.0'    #ipV4 en donde va a estar escuchando este servidor, la direccion '0.0.0.0' es ideal para servir en la red local
+        self.flags=['']+flags    #para controlar los diferentes print() asignandole una bandera con self.p("mensaje",flag='prueba')
         self.name = name
+        self.pwd=pwd #ruta absoluta de donde se esta ejecutando el servidor
+        self.port = puerto       #puerto en donde va a estar escuchando este servidor
+        self.format_encode='utf-8' #la funcion encode comvertira todos los datos que lleguen por los puertos a este formato de texto
+        self.porcion=1024*5      #cantidad de bytes que seran leidos cada ves que se use .recv(bytes)
+        self.status=True         #indica que el servidor debe seguir funcionando
+        self.sepUser='_'
+        self.home='home'
+        self.ignore=ignore+['__pycache__',self.home,self.info['file']]
+        self.pwd = pwd if pwd else os.getcwd()
+        self.pwd_js=pwd+'\\js\\'
+        self.pwd_upload=pwd+'\\download\\'
+        self.pwd_download=pwd+'\\'
+        s=self.s.socket(self.s.AF_INET, self.s.SOCK_DGRAM)
+        s.connect(('10.255.255.255',1))
+        ip=s.getsockname()
+        s.close()
+        host_DNS = ip[0]
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((host, port))
+        self.server.listen()
+        print(f"\nServidor HTTP corriendo en la direccion 'http://{host_DNS}:{port}/'")
+        self.file_download_js()
+        print(self.servidor_archivos)
+    def file_download_js(self):
+        media=self.media_me(self.pwd_upload)
+        #creando un .js que contiene un objeto array con todos los elementos del directorio
+        javascript=open(self.pwd_js+'files.download.js',"w")
+        javascript.write('var files = new Array();'+'\n')
+        javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
+        javascript.write('  this.name = name;'+'\n')
+        javascript.write('  this.pwd = pwd;'+'\n')
+        javascript.write('  this.size = size;'+'\n')
+        javascript.write('  this.fecha = fecha;'+'\n')
+        javascript.write('  this.id = id;'+'\n')
+        javascript.write('  return this;'+'\n')
+        javascript.write('  }'+'\n')
+        errorWrite={}
+        mayor=0
+        for f in range(len(index)-1):
+            try:
+                if 'media_me'!=f:
+                    javascript.write('files['+str(f)+'] = new registrar("'+media[f]['name']+'","'+media[f]['path'].replace(' ','%20').replace(os.sep,'/')+'",'+media[f]['size']+','+media[f]['fecha']+','+str(f)+'); \n')
+            except Exception as e:
+                errorWrite[f]={'pwd':media[f]['path']}
+                raise e
+        javascript.close()
+        self.arboldearchivos= [ media[f]['path'] for f in media if 'media_me'!=f]
+    def requestToDictionary(self,request,add={}):
+        if b'\r\n\r\n' in request:
+            post=[ request.split(b'\r\n\r\n')[-1] ]
+        requ=[r.decode(self.format_encode) for r in request.split(b'\r\n')]
+        ret={}
+        for i in requ:
+            if ('POST' in i) or ('GET' in i) or ('HEAD' in i):
+                ret['method']=i.split(' ')[0]
+                ret['sub_dominio']=i.split(' ')[1]
+                ret['http']=i.split(' ')[2]
+            if 'User-Agent:' in i:
+                ret['User_Agent']=i[len('User_Agent: '):-1]
+            if 'Content-Disposition:' in i:
+                ret['form_data']={
+                    'name':i.split('form-data; ')[-1].split(';')[0][len('name='):-1],
+                    'filename':i.split('form-data; ')[-1].split(';')[1][len(' filename="'):-1]
+                }
+            if 'Content-Type: multipart/form-data; boundary' in i:
+                ret['boundary']=i.split('boundary=')[-1]
+            
+        if add:
+            for a in add:
+                ret[a]=add[a]
+        return ret
+    def get_header(myfile,sub_dominio):
+            try:
+                print('myfile:',myfile)
+                header='HTTP/1.1 200 OK\n'
+                ext='.'+myfile.split('.')[-1]
+                mimetype={
+                    '.jpg':'Content-Type: image/jpg',
+                    '.css':'Content-Type: text/css',
+                    '.js':'Content-Type: text/javascript',
+                    '.pdf':'Content-Type: application/pdf',
+                    '.mp4':'Content-Type: video/mp4'
+                    }
+                if ext in mimetype:
+                    mimetype=mimetype[ext]
+                elif self.action_download in info['sub_dominio'][:len(self.action_download)]:
+                    myfile=info['sub_dominio'][len(self.action_download):].replace('/',os.path.sep).replace('%20',' ')
+                    self.p(myfile,self.dt.now(),flag='mimetype')
+                    """
+                    Server: MBARETE_PYTHON
+                    Date: Tue, 28 Sep 2021 00:03:17 GMT
+                    Connection: close
+                    Accept-Ranges: bytes
+                    Content-transfer-encoding: binary
+                    Content-Length: 3942042048
+                    Cache-Control: no-store
+                    X-Robots-Tag:noindex, nofollow
+                    Content-Disposition: attachment; filename="Black - PS2 by Videogames SCZ.pkg"
+                    Content-Type: application/octet-stream
+                    """
+                    #mimetype ='Server: MBARETE_PYTHON\n'
+                    #mimetype+='Date: '+str(datetime.datetime.now())+'\n'
+                    #mimetype+='Connection: close\n'
+                    mimetype='Accept-Ranges: bytes\n'
+                    mimetype+='Content-transfer-encoding: binary\n'
+                    mimetype+='Content-Length: '+str(os.path.getsize(myfile))+'\n'#3942042048
+                    mimetype+='Cache-Control: no-store\n'
+                    #mimetype+='X-Robots-Tag:noindex, nofollow\n'
+                    mimetype+='Content-Disposition: attachment; filename="'+info['sub_dominio'].split('/')[-1]+'"\n'
+                    mimetype+='Content-Type: application/octet-stream\n'
+                    mimetype+='\n'
+                    self.p('mimetype:',mimetype,flag='mimetype')
+                else: 
+                    mimetype='Content-Type: text/html'
+                header += str(mimetype)+'\n\n'
+            except Exception as e:
+                self.p(e,myfile,sub_dominio,flag='error')
+                header='HTTP:/1.1 404 Not Found \n\n'
+        return header.encode(self.format_encode)
+    def receive_connections(self):
+        while self.status:
+            client, address = self.server.accept()
+            thread = self.t(target=self.respond, args=(client, address))
+            thread.start()
+        print("fin de servicio")
+        self.server.close()
+    def auto_send(self,client):
+        pass
+    def hilo_start(self):
+        self.server.bind((self.host, self.port))
+        self.server.listen()
+        while self.status:
+            client, address = self.server.accept()
+            self.auto_send(client)
+            datos_Bytes=client.recv(self.porcion)
+            b'POST /subir HTTP/1.1'
+            if (b'CLOSE\r\n' in datos_Bytes):
+                client.close()
+                self.server.close()  
+                self.status=False 
+            else:
+                thread = self.t(target=self.respond, args=( client, address, datos_Bytes))
+                thread.start()
+        self.p('Servidor Apagado',flag='init')
+    def stop(self):
+        self.p( self.s.gethostname(), 8002,flag='init')
+        try:
+            client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
+            client.connect(( self.s.gethostname(), self.port))
+            self.p(client.recv(1024),flag='init')
+            client.send(b'CLOSE\r\n')
+            client.close()
+            self.p("cerrado:",( self.s.gethostname(), self.port),flag='init')
+        except Exception as e:
+            self.p(e,flag='error')
+        
+    def start(self):
+        thread = self.t(target=self.hilo_start)
+        thread.start()
+        self.p(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'",flag='init')
+    
+class nodo_python(object_servidor):
+    """docstring for nodo_python"""
+    def __init__(self,IP_clase_C='192.168.100.',dispositivos='1-30'):
+        super(nodo_python, self).__init__()
         self.port=port
         self.IP_C=IP_clase_C
         self.dispositivos=dispositivos
         #self.code=format_encode
-        self.flags=['']+flags
-        self.status=True
-        self.sepUser='_'
-        self.home='home'
-        self.ignore=ignore+['__pycache__',self.home]
-        self.pwd = pwd if pwd else os.getcwd()
-        if not self.home in os.listdir(self.pwd):
-            os.mkdir(self.pwd+os.sep+self.home)
-            self.setFile(self.pwd+os.sep+self.home+os.sep+'__init__.py',valor=['#!/usr/bin/env python','# -*- coding: '+self.code+' -*-'])
         self.host='0.0.0.0'
         self.porcion=1024*5
         self.media=self.media_me()
@@ -81,37 +241,7 @@ class nodo_python(object_prueba):
             if not d in os.listdir(home): 
                 os.mkdir(home+os.sep+d)
         self.p(med['media_me'],flag='auto')
-    def media_me(self):
-        media={}
-        total = 0
-        num_archivos = 0
-        formato = '%d-%m-%y %H:%M:%S'
-        home=[]
-        for ruta, directorios, archivos in os.walk(self.pwd, topdown=True):
-            ruta='' if ruta==self.pwd else ruta.replace(self.pwd+os.sep,'')
-            self.p(ruta,not ruta.split(os.sep)[0] in self.ignore,flag='init')
-            if not ruta.split(os.sep)[0] in self.ignore:
-                if not ruta in home: home+=[ruta]
-                for elemento in archivos:
-                    num_archivos += 1
-                    archivo = ruta+os.sep+elemento if ruta else elemento
-                    self.p(archivo,flag='init')
-                    estado = os.stat(archivo)
-                    tamanho = estado.st_size
-                    name=self.name+self.sepUser+str(num_archivos)
-                    media[name]={'path':os.sep+archivo,'name':elemento}
-                    ult_acceso = self.dt.fromtimestamp(estado.st_atime)
-                    modificado = self.dt.fromtimestamp(estado.st_mtime)
-                    ult_acceso = ult_acceso.strftime(formato)
-                    modificado = modificado.strftime(formato)
-                    total += tamanho
-                    media[name]['modificado']=modificado
-                    media[name]['ult_acceso']=ult_acceso
-                    media[name]['size']=tamanho
-        home=[d.replace(self.pwd,'') for d in home if d]
-        home.sort(reverse=False,key=lambda x: len(x.strip(os.sep)))
-        media['media_me']={'num_archivos':num_archivos,'peso_total_kb':round(total/1024, 1),'name':self.name,'address':(self.host,self.port),'pwd':self.pwd,'home':home}
-        return media
+    
     def get(self,files):
         while files:
             f=files[-1].split(self.sepUser)[0]
@@ -142,8 +272,7 @@ class nodo_python(object_prueba):
                         self.p('ERROR:',e,flag='error')
             self.p('GET len(files):',len(files),flag='metodo')
     def connect(self,name):
-
-
+        pass
     def set(self,username,files):
         cli=self.clients[username]
         for boundary in files:
@@ -221,38 +350,292 @@ class nodo_python(object_prueba):
         except Exception as e:
             self.p(e,flag='error')
         client.close()
-    def hilo_start(self):
-        self.server.bind((self.host, self.port))
-        self.server.listen()
-        while self.status:
-            client, address = self.server.accept()
-            client.send(b'nodo_python')
-            datos_Bytes=client.recv(self.porcion)
-            if (b'CLOSE\r\n' in datos_Bytes):
-                client.close()
-                self.server.close()  
-                self.status=False 
+    def auto_send(self,client):
+        client.send(b'nodo_python')
+
+
+
+
+class servidor_HTTP__web(object_servidor):
+    """ SERVIDOR COMPLETO PARA TODO TIPO DE PROYECTOS WEB """
+    def __init__(dominio="electrozone.local",pwd="media"+os.path.sep+"servidor",dns=1):
+        self.download()
+        print(self.servidor_archivos)
+    def download(self):
+        media=self.media_me(self.pwd_upload)
+        #creando un .js que contiene un objeto array con todos los elementos del directorio
+        javascript=open(self.pwd_js+'files.download.js',"w")
+        javascript.write('var files = new Array();'+'\n')
+        javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
+        javascript.write('  this.name = name;'+'\n')
+        javascript.write('  this.pwd = pwd;'+'\n')
+        javascript.write('  this.size = size;'+'\n')
+        javascript.write('  this.fecha = fecha;'+'\n')
+        javascript.write('  this.id = id;'+'\n')
+        javascript.write('  return this;'+'\n')
+        javascript.write('  }'+'\n')
+        errorWrite={}
+        mayor=0
+        for f in range(len(index)-1):
+            try:
+                if 'media_me'!=f:
+                    javascript.write('files['+str(f)+'] = new registrar("'+media[f]['name']+'","'+media[f]['path'].replace(' ','%20').replace(os.sep,'/')+'",'+media[f]['size']+','+media[f]['fecha']+','+str(f)+'); \n')
+            except Exception as e:
+                errorWrite[f]={'pwd':media[f]['path']}
+                raise e
+        javascript.close()
+        self.arboldearchivos= [ media[f]['path'] for f in media if 'media_me'!=f]
+
+    def requestToDictionary(self,request,add={}):
+        if b'\r\n\r\n' in request:
+            post=[ request.split(b'\r\n\r\n')[-1]]
+        requ=[r.decode(format_encode) for r in request.split(b'\r\n')]
+        ret={}
+        for i in requ:
+            if ('POST' in i) or ('GET' in i) or ('HEAD' in i):
+                ret['method']=i.split(' ')[0]
+                ret['sub_dominio']=i.split(' ')[1]
+                ret['http']=i.split(' ')[2]
+            if 'User-Agent:' in i:
+                ret['User_Agent']=i[len('User_Agent: '):-1]
+            if 'Content-Disposition:' in i:
+                ret['form_data']={
+                    'name':i.split('form-data; ')[-1].split(';')[0][len('name='):-1],
+                    'filename':i.split('form-data; ')[-1].split(';')[1][len(' filename="'):-1]
+                }
+            if 'Content-Type: multipart/form-data; boundary' in i:
+                ret['boundary']=i.split('boundary=')[-1]
+            
+        if add:
+            for a in add:
+                ret[a]=add[a]
+        return ret
+    def respond(client, address):
+        global servidor_archivos
+        responder=False
+        request=b''
+        ok=True
+        cabezera=True
+        porcion=1024*5
+        binario=None
+        info={}
+        while ok:
+            try:
+                datos_Bytes=client.recv(porcion)
+                print(datos_Bytes)
+            except:
+                ok=False
+            if (b'Android' in datos_Bytes) and (b'boundary' in datos_Bytes):
+                request+=datos_Bytes
+                info=requestToDictionary(datos_Bytes)
+                datos_Bytes=client.recv(porcion)
+            if (porcion > len(datos_Bytes)) and (b'\r\n' in datos_Bytes):
+                ok = False
+            if b'' == datos_Bytes:
+                ok = False
+            if cabezera:
+                if ((b'\r\n\r\n' in datos_Bytes) or info):
+                    cabezera=False
+                    if 'boundary' in info:
+                        boundary=b'--'+info['boundary'].encode(format_encode)
+                        if boundary in datos_Bytes.split(b'\r\n'):
+                            binario=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n')[2]
+                    elif (b'boundary=----' in datos_Bytes) and (b'\r\n\r\n' in datos_Bytes):
+                        print('############## 2 BIUNDARY',datos_Bytes)
+                        request+=datos_Bytes.split(b'\r\n\r\n')[0]+b'\r\n\r\n'
+                        info=requestToDictionary(datos_Bytes.split(b'\r\n\r\n')[0])
+                        boundary=b'--'+info['boundary'].encode(format_encode)
+                        form_data=datos_Bytes.split(boundary+b'\r\n')[-1].split(b'\r\n\r\n')[0]
+                        print(form_data)
+                        request+= boundary+b'\r\n'+form_data
+                        info=requestToDictionary(form_data,add=info)
+                        binario=datos_Bytes.split(form_data+b'\r\n\r\n')[-1]
+                    if binario:
+                        boundary+=b'--\r\n'
+                        #request=datos_Bytes.split(binario)[0]
+                        #info=requestToDictionary(request,add=info)
+                        subiendo = open(pwd_upload+info['form_data']['filename'],"wb")
+                        if boundary in datos_Bytes:
+                            subiendo.write(binario.split(boundary)[0])
+                            request+=boundary+binario.split(boundary)[-1]
+                        else:
+                            subiendo.write(binario)
+                            while binario:
+                                datos_Bytes=client.recv(porcion)
+                                if boundary in datos_Bytes:
+                                    subiendo.write(datos_Bytes.split(boundary)[0])
+                                    request+=boundary+datos_Bytes.split(boundary)[-1]
+                                    binario=None
+                                else:
+                                    subiendo.write(datos_Bytes)
+                        subiendo.close()
+                        print("Subido:",info['form_data']['filename'])
+                        servidor_archivos=download()
+                        ok=False
+                    else:
+                        request+=datos_Bytes
+                else:
+                    request+=datos_Bytes
             else:
-                thread = self.t(target=self.respond, args=( client, address, datos_Bytes))
-                thread.start()
-        self.p('Servidor Apagado',flag='init')
-    def stop(self):
-        self.p( self.s.gethostname(), 8002,flag='init')
-        try:
-            client = self.s.socket(self.s.AF_INET, self.s.SOCK_STREAM)
-            client.connect(( self.s.gethostname(), self.port))
-            self.p(client.recv(1024),flag='init')
-            client.send(b'CLOSE\r\n')
-            client.close()
-            self.p("cerrado:",( self.s.gethostname(), self.port),flag='init')
-        except Exception as e:
-            self.p(e,flag='error')
-        
-    def start(self):
-        thread = self.t(target=self.hilo_start)
-        thread.start()
-        self.p(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'",flag='init')
+                request+=datos_Bytes
+            print('ok:',ok)
+        print('request:',request)
+        info = requestToDictionary(request,add=info)
+        if ''!= request:
+            print(info)
+            if '/cerrar' in  info['sub_dominio']:
+                print('Servidor Apagado')
+                client.close()
+                server.close()
+                #servidor_DNS.close()
+                status=False
+                os.system("curl http://"+host+":"+str(port)+"/cerrar")
+            elif ('GET' in info['method']):
+                if '/' ==  info['sub_dominio']:
+                    myfile = pwd+os.path.sep+'index.html'
+                elif pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ') in servidor_archivos:
+                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep).replace('%20',' ')
+                    print('method GET full:',myfile)
+                elif '/socket.io/?' in info['sub_dominio']:
+                    io={}
+                    for k in info['sub_dominio'].replace('/socket.io/?','').split('&'):
+                        io[k.split('=')[0]]=k.split('=')[1] 
+                    #print(io)
+                    #print({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')})
+                    myfile=pwd+os.path.sep+'socket_GET.io.html'
+                    file=open(myfile,'wb')
+                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
+                    #file.write(request)
+                    file.close()
+                else:
+                    myfile=pwd+os.path.sep+'GET.html'
+                    file=open(myfile,'wb')
+                    file.write(b'<h1>Archivo No Encontrado</h1>')
+                    file.write(request)
+                    file.close()
+            elif ('HEAD' in info['method']):
+                if '/' ==  info['sub_dominio']:
+                    myfile = pwd+os.path.sep+'index.html'
+                elif pwd+info['sub_dominio'].replace('/',os.path.sep) in servidor_archivos:
+                    myfile=pwd+info['sub_dominio'].replace('/',os.path.sep)
+                    print('method HEAD:',myfile)
+                elif '/socket.io/?' in info['sub_dominio']:
+                    io={}
+                    for k in info['sub_dominio'].replace('/socket.io/?','').split('&'):
+                        io[k.split('=')[0]]=k.split('=')[1] 
+                    #print(io)
+                    #print({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')})
+                    myfile=pwd+os.path.sep+'socket_GET.io.html'
+                    file=open(myfile,'wb')
+                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
+                    #file.write(request)
+                    file.close()
+                else:
+                    myfile=pwd+os.path.sep+'GET.html'
+                    file=open(myfile,'wb')
+                    file.write(b'<h1>Archivo No Encontrado</h1>')
+                    file.write(request)
+                    file.close()
+            elif ('POST' in info['method']):
+                if '/subir' in info['sub_dominio']:
+                    myfile=pwd+os.path.sep+'subido.html'
+                    file=open(myfile,'wb')
+                    file.write(b'<h1>Archivo Subido con Exito </h1>')
+                    file.write(request)
+                    file.close()
+                elif '/socket.io/?' in info['sub_dominio']:
+                    myfile=pwd+os.path.sep+'socket_POST.io.html'
+                    file=open(myfile,'wb')
+                    file.write(str({k.split('=')[0]:k.split('=')[1] for k in info['sub_dominio'].replace('/socket.io/?','').split('&')}).encode())
+                    #file.write(request)
+                    file.close()
+                else:
+                    myfile=pwd+os.path.sep+'POST.html'
+                    file=open(myfile,'wb')
+                    file.write(request)
+                    file.close()
+            #80029563
+            try:
+                print('myfile:',myfile)
+                header='HTTP/1.1 200 OK\n'
+                if myfile.endswith('.jpg'): 
+                    mimetype='Content-Type: image/jpg'
+                elif myfile.endswith('.css'): 
+                    mimetype='Content-Type: text/css'
+                elif myfile.endswith('.js'): 
+                    mimetype='Content-Type: text/javascript'
+                elif myfile.endswith('.pdf'): 
+                    mimetype='Content-Type: application/pdf'
+                elif myfile.endswith('.mp4'): 
+                    mimetype='Content-Type: video/mp4'
+                elif '/download/' in info['sub_dominio'][:len('/download/')]:
+                    myfile=info['sub_dominio'][len('/download/'):].replace('/',os.path.sep).replace('%20',' ')
+                    print(myfile,os.path.getsize(myfile),datetime.datetime.now()) 
+                    """
+                    Server: MBARETE_PYTHON
+                    Date: Tue, 28 Sep 2021 00:03:17 GMT
+                    Connection: close
+                    Accept-Ranges: bytes
+                    Content-transfer-encoding: binary
+                    Content-Length: 3942042048
+                    Cache-Control: no-store
+                    X-Robots-Tag:noindex, nofollow
+                    Content-Disposition: attachment; filename="Black - PS2 by Videogames SCZ.pkg"
+                    Content-Type: application/octet-stream
+                    """
+                    #mimetype ='Server: MBARETE_PYTHON\n'
+                    #mimetype+='Date: '+str(datetime.datetime.now())+'\n'
+                    #mimetype+='Connection: close\n'
+                    mimetype='Accept-Ranges: bytes\n'
+                    mimetype+='Content-transfer-encoding: binary\n'
+                    mimetype+='Content-Length: '+str(os.path.getsize(myfile))+'\n'#3942042048
+                    mimetype+='Cache-Control: no-store\n'
+                    #mimetype+='X-Robots-Tag:noindex, nofollow\n'
+                    mimetype+='Content-Disposition: attachment; filename="'+info['sub_dominio'].split('/')[-1]+'"\n'
+                    mimetype+='Content-Type: application/octet-stream\n'
+                    mimetype+='\n'
+                    print('mimetype:',mimetype)
+                else: 
+                    mimetype='Content-Type: text/html'
+                header += str(mimetype)+'\n\n'
+                """
+                if ('GET' in info['method']):
+                
+                 if '/descargar' ==  info['sub_dominio']:
+                        header = '200 OK \nContent-Type: text/html; charset=utf-8 \nContent-Disposition: attachment; filename="genial.html"\nContent-Length: 22\n<HTML>Guárdame!</HTML>'
+                """
+            except Exception as e:
+                print(e)
+                header='HTTP:/1.1 404 Not Found \n\n'
+                response=f'<html><body>Error 404: File NOt Found<br> {e} </body></html>'.encode(format_encode)
+            header=header.encode(format_encode)
+            if '/download/' in info['sub_dominio'][:len('/download/')]:
+                client.send(header)
+                #for linea in pesca.iter_content(100000):
+                file = open(myfile,'rb')
+                part=file.read(porcion*20)
+                while part:
+                    client.send(part)
+                    part=file.read(porcion*20)
+                file.close()
+            else:
+                client.send(header)
+                file=open(myfile,'rb')
+                client.send(file.read())
+                file.close()
+        client.close()
+        print("fin de coneccion")            
+    def receive_connections(self):
+        while status:
+            client, address = self.server.accept()
+            thread = threading.Thread(target=self.respond, args=(client, address))
+            thread.start()
+        print("fin de servicio")
     
+    receive_connections()
+    server.close()
+
+
 def nodo():
     import time
     reloj=['~',r'\ ','|','/','~',r'\ ','|','/']
@@ -410,10 +793,10 @@ class cola(object):
     def vaciar(self):
         self.cola = []
         self.prioridad = []
-class servidor(object):
-    """docstring for servidor"""
-    def __init__(self,pwd, command,subProyectos,puerto=8080):
-        super(servidor, self).__init__()
+class servidor_API(object):
+    """docstring for servidor_API"""
+    def __init__(self,pwd, command,subProyectos):
+        super(servidor_API, self).__init__()
         self.metricas_command={}
         self.command=command #todas las funciones que seran recividas desde los sub proyectos
         self.cola=cola()         #lista de todas las instrucciones que seran recividas en este servidor
@@ -423,24 +806,8 @@ class servidor(object):
         self.limite_hilos=10     #cantidad de procesos que pueden ser ejecutados al mismos tiempo
         self.responds={}         #salida que corresponde a cada proceso ya ejecutado y terminado
         self.subProyectos=subProyectos #info de cada subProyecto necesario para poder configurara los datos para cadad funcion
-        self.pwd=pwd #ruta absoluta de donde se esta ejecutando el servidor
-        self.host = '0.0.0.0'    #ipV4 en donde va a estar escuchando este servidor, la direccion '0.0.0.0' es ideal para servir en la red local
-        self.port = puerto       #puerto en donde va a estar escuchando este servidor
-        self.format_encode='utf-8' #la funcion encode comvertira todos los datos que lleguen por los puertos a este formato de texto
-        self.porcion=1024*5      #cantidad de bytes que seran leidos cada ves que se use .recv(bytes)
-        self.status=True         #indica que el servidor debe seguir funcionando
         self.clients = {}        #coneccones que seran mantenidas
         self.usernames = {}      #cada ves que alguien se conecte se le asignara un username
-        self.action_download='/download/' #posible programa dentro del proyecto debe ser resuelto mas adelante
-        self.action_upload='/subir/'    #posible programa dentro del proyecto debe ser resuelto mas adelante
-        self.action_borrar='/borrar/'   #posible programa dentro del proyecto debe ser resuelto mas adelante
-        self.pwd_js=self.pwd+'\\js\\'   #carpeta de destino para la informacion JavaScript generada por los subproyectos
-        self.pwd_upload=self.pwd+'\\download\\' #carpeta de destino para todo lo que sea subido al sitio
-        self.pwd_download=self.pwd+'\\'         #carpeta desde donde se puede descargar todo lo que contenga, en este caso la carpeta raiz del proyecto
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.host, self.port))
-        self.server.listen()
-        print(f"\nServidor HTTP corriendo en la direccion 'http://{self.host}:{self.port}/'")
         #servidor_archivos=self.download()
     def check(self):
         print("check en linea")
@@ -506,75 +873,10 @@ class servidor(object):
             else:
                 ret += self.arboldearchivos(pwd+os.path.sep+check)
         return ret
-    def download(self,pwd_js,pwd_upload):
-            index=[{'name':file,'size':os.path.getsize(pwd_upload+file),'fecha':os.path.getmtime(pwd_upload+file),'pwd':str(pwd_upload+file).replace(' ','%20').replace(os.path.sep,'/')} for file in os.listdir(pwd_upload)]
-            #creando un .js que contiene un objeto array con todos los elementos del directorio
-            javascript=open(pwd_js+'files.download.js',"w")
-            javascript.write('var files = new Array();'+'\n')
-            javascript.write('function registrar (name,pwd,size,fecha,id){'+'\n')
-            javascript.write('  this.name = name;'+'\n')
-            javascript.write('  this.pwd = pwd;'+'\n')
-            javascript.write('  this.size = size;'+'\n')
-            javascript.write('  this.fecha = fecha;'+'\n')
-            javascript.write('  this.id = id;'+'\n')
-            javascript.write('  return this;'+'\n')
-            javascript.write('  }'+'\n')
-            errorWrite={}
-            mayor=0
-            for f in range(len(index)):
-                try:
-                    javascript.write('files['+str(f)+'] = new registrar("'+str(index[f]['name'])+'","'+str(index[f]['pwd'].replace(' ','%20').replace(os.path.sep,'/'))+'",'+str(index[f]['size'])+','+str(index[f]['fecha'])+','+str(f)+'); \n')
-                except Exception as e:
-                    errorWrite[f]={'pwd':index[f]['pwd']}
-                    raise e
-            javascript.close()
-            return self.arboldearchivos(pwd)
-    def requestToDictionary(self,request,add={}):
-        #print(request)
-        if b'\r\n\r\n' in request:
-            post=request.split(b'\r\n\r\n')[-1].decode(self.format_encode)
-            #print(post)
-        requ=[r.decode(self.format_encode) for r in request.split(b'\r\n')]
-        ret={}
-        for i in requ:
-            if ('POST' in i) or ('GET' in i) or ('HEAD' in i):
-                ret['method']=i.split(' ')[0]
-                ret['sub_dominio']=i.split(' ')[1]
-                ret['http']=i.split(' ')[2]
-            if 'User-Agent:' in i:
-                ret['User_Agent']=i[len('User_Agent: '):-1]
-            if 'Content-Disposition:' in i:
-                ret['form_data']={
-                    'name':i.split('form-data; ')[-1].split(';')[0][len('name='):-1],
-                    'filename':i.split('form-data; ')[-1].split(';')[1][len(' filename="'):-1]
-                }
-            if 'Content-Type: multipart/form-data; boundary' in i:
-                ret['boundary']=i.split('boundary=')[-1]
-            elif 'Content-Type:' in i:
-                ret['Content-Type']=i.split('Content-Type:')[-1].strip()
-                if ('application/x-www-form-urlencoded' in ret['Content-Type']) and post :
-                    ret['parametros']={k.split('=')[0].strip():k.split('=')[1].strip() for k in post.split('&')}
-                if ('application/json' in ret['Content-Type']) and post :
-                    ret['parametros']=json.loads(post)
-                    #ret['parametros']={k.split(':')[0].strip():k.split(':')[1].strip() for k in post.split('&')}
-                
-            if 'Content-Length:' in i:
-                ret['Content-Length']=int(i.split('Content-Length:')[-1])
-            if 'Origin:' in i:
-                ret['Origin']=i.split('Origin:')[-1]
-            if 'Referer:' in i:
-                ret['Referer']=i.split('Referer:')[-1]
-            
-            #if ':' in i:
-            #    ret['']=i.split(':')[-1]
-            #
-        if add:
-            for a in add:
-                ret[a]=add[a]
-        return ret
-    def respond(self,client, address):
+    
+    def respond(self,client, address,datos_Bytes):
         #80029563
-        info=self.requestToDictionary(client.recv(self.porcion))
+        info=self.requestToDictionary(datos_Bytes)
         #header='HTTP:/1.1 404 Not Found \n\n'
         if 'parametros' in info:
             print('Content-Type',info)
@@ -626,22 +928,16 @@ class servidor(object):
             self.status=False
             print('Servidor Apagado')
         client.close()
-        """
-        except Exception as e :
-            print('ERROR:',e)
-            client.send(('HTTP:/1.1 404 Not Found\n'+'Content-Type: text/html \n\n'+str(e)).encode(self.format_encode))
-            client.close()
-        """
-        print("fin de coneccion")            
+        self.p("fin de coneccion con ",address,flag='respond')
 
     def servidor_HTTP_python(self):
         def receive_connections():    
-            thread_check = threading.Thread(target=self.check)
+            thread_check = self.t(target=self.check)
             thread_check.start()
             try:
                 while self.status:
                     client, address = self.server.accept()
-                    thread = threading.Thread(target=self.respond, args=(client, address))
+                    thread = self.t(target=self.respond, args=(client, address))
                     thread.start()
             except Exception as e:
                 print('ERROR receive_connections():', e) 

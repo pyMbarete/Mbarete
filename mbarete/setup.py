@@ -23,6 +23,7 @@ class consola(object_prueba):
     """docstring for programador_consola"""
     def __init__(self, name='',fuente=['mbarete','consolas'],code='latin-1',info={},force=0):
         super(consola, self).__init__()
+        self.info=self.info_system()
         self.name=name
         self.fuente=fuente
         self.code=code
@@ -33,10 +34,9 @@ class consola(object_prueba):
     def start(self,name='',fuente=[]):
         if not name: name=self.name
         if not fuente: fuente=self.fuente
-        import os
-        if 'WINDIR' in os.environ:
-            o={'OS':'windows','V':os.environ['OS']}
-            o['name']=name+'.auto.cmd'
+        o={'OS':self.info['OS'],'V':self.info['V']}
+        if 'windows' in self.info['OS']:
+            o['name']=name+self.info['ignorar']+'cmd'
             o['cross']=r'%cross% '
             o['f']=''
             for d in fuente: o['f']+=d+'\\'
@@ -44,6 +44,7 @@ class consola(object_prueba):
                 '@ECHO off',
                 'setlocal',
                 'set "fuente='+o['f']+'"',
+                'set "fuenteinfo='+o['f']+self.info['file']+'"',
                 r'set "cross=call %fuente%cmd_principal.cmd command"',
                 r'call %fuente%cmd_principal.cmd inicio %fuente%'
                 ]
@@ -52,28 +53,26 @@ class consola(object_prueba):
             o['if_eq']=lambda a,b: 'IF "%'+str(a)+'%" == "'+str(b)+'" ('
             o['fi']=')'
             o['read']=lambda a: 'SET /p '+str(a)+'=Ingrese una Opcion:'
-        elif 'SHELL' in os.environ:
-            if os.environ['SHELL'].strip()=='/bin/bash':
-                o={'OS':'linux','V':self.info['os_release_ID']}
-                o['name']=name+'.auto.sh'
-                o['cross']=r'cross '
-                o['f']='./'
-                for d in fuente: o['f']+=d+'/'
-                o['start']=[
-                    '#!/bin/bash',
-                    'fuente='+o['f'],
-                    'source "$fuente"bash_principal.sh'
-                ]
-                o['end']=['']
-                o['to_var']=lambda v: r'$'+v
-                o['if_eq']=lambda a,b: 'if [ "$'+str(a)+'" == "'+str(b)+'" ];then'
-                o['fi']='fi'
-                o['read']=lambda a: 'read -p "Ingrese una Opcion:" '+str(a)
-            else:
-                o={'OS':os.environ['SHELL'],'V':os.environ['SHELL']}
-        elif 'ANDROID_ROOT' in os.environ:
-            o={'OS':'android','V':os.environ['SHELL']}
-        o['info']={v.split(':')[0]:v[len(v.split(':')[0])+1:] for v in self.getFile(o['f']+'info')}
+        elif 'linux' in self.info['OS']:
+            o['name']=name+self.info['ignorar']+'sh'
+            o['cross']=r'cross '
+            o['f']='./'
+            for d in fuente: o['f']+=d+'/'
+            o['start']=[
+                '#!/bin/bash',
+                'fuente='+o['f'],
+                'fuenteinfo='+o['f']+self.info['file'],
+                'source "$fuente"bash_principal.sh'
+            ]
+            o['end']=['']
+            o['to_var']=lambda v: r'$'+v
+            o['if_eq']=lambda a,b: 'if [ "$'+str(a)+'" == "'+str(b)+'" ];then'
+            o['fi']='fi'
+            o['read']=lambda a: 'read -p "Ingrese una Opcion:" '+str(a)
+        
+        elif 'android' in self.info['OS']:
+            pass
+        o['info']=self.getFile(o['f']+self.info['file'],join={})
         o['loop_num']=1
         o['for_num']=1
         o['while_num']=1
@@ -117,42 +116,33 @@ class consola(object_prueba):
     def save(self):
         self.setFile(self.o['name'],self.s+self.o['end'],echo=0)
     def crearInfo(self,info={},force=0):
-        import os,sys,platform
-        for cross in self.info: info[cross]=info[cross] if cross in info else self.info[cross]
+        if 'git_repo_path' in info:self.info['git_repo_path']=info['git_repo_path']
+        info=self.join(self.info,info)
         info['git_branch']=next((e[2:] for e in self.return_system("git branch")if '*' in e[0]),None)
+
         if info['git_branch']:
             git=self.return_system("git config --list",join={},sep='=')
             (info['git_repo_username'],info['git_repo_name'])=git['remote.origin.url'].split('/')[-2:]
-            info['git_origin']= git['branch.master.remote'] if 'branch.master.remote' in git else 'origin'
             info['git_email']= git['user.email'] if 'user.email' in git else input('Ingrese su email de github:')
             info['git_username']= git['user.name'] if 'user.name' in git else input('Ingrese su username de github:')
             #info['git_']= git[''] if '' in git else ''
-            
         info_default={
-            'file':'info',
-            'prefijo':'cross_',
             'git_repo_path':'',
-            'sub_proyectos':'diseñoLibre',
-            'pwd_practicas':'mbarete/practicas/home/',
-            'pwd_consolas':'mbarete/consolas/',
+            'git_repo_branch':'master',
+            'git_repo_email':'mathiaslucasvidipy@gmail.com',
+            'git_repo_whatsapp':'+595991753962',
+            'sub_proyectos':'codigoLibre',
             'temporal':self.info['tmp']+'temp_mbarete',
-            'git_user.email':'mathiaslucasvidipy@gmail.com',
             'version':1.0,
             'modo_seguro':'false',
             'os_name':os.name 
         }
-        for cross in info_default: info[cross]=info[cross] if cross in info else info_default[cross]
+        info=self.join(info_default,info)
         info={k:(info['git_repo_path']+info[k]).replace('/',os.sep) if 'pwd_' in k[:4] else info[k] for k in info }
         info=self.getFile(info['pwd_consolas']+'info.'+info['OS'],join=info)
         print(info['OS']+'.'+info['V'])
-        if os.name == 'nt':
-            if info['OS']+'.'+info['V'] in os.listdir(info['pwd_consolas']):
-                print(info['uname_sysname']+'.'+info['uname_release'])
-        if os.name == 'posix':
-            if info['OS']+'.'+info['V'] in os.listdir(info['pwd_consolas']):
-                print(info['os_release_ID']+'.'+info['os_release_VERSION_CODENAME'])
         pwd=[info[k]+info['file'] for k in info if 'pwd_' in k[:4]]
-        tmp=info['temporal']+'.'+info['file']
+        tmp=info['temporal']+'.'+info['git_repo_name']+'.'+info['file']
         info=[ (info['prefijo'] if k!='prefijo' else '')+k+':'+str(info[k]) for k in info ]
         self.setFile(tmp,valor=info,echo=0)
         for file in pwd: 
@@ -173,18 +163,26 @@ def buscarVariableDeEntorno(search=[],info={}):
         else:
             print("%s: %s" % (variable, variables_de_entorno[variable]))
 
-def programador_init():
-    auto=consola(name='subir_push',fuente=['mbarete','consolas'],info={'git_repo_path':os.getcwd()+os.sep},force=1)
-
+def git_checkout():
+    #"comando principla;confirmarComando;banderas;archivoDeSalida;observacion"
+    auto=consola(name='checkout_pull',fuente=['mbarete','consolas'],info={'git_repo_path':os.getcwd()+os.sep},force=1)
+    commands=[
+        'git checkout $git_repo_branch;false;;',
+        "git pull origin $git_repo_branch;false; ; ;trae datos del repositorio remoto y luego mezcla los cambios con el repositorio local",
+        "git checkout $git_branch;false;;"
+    ]
+    auto.set(commands)
+    auto.save()
 def git_push():
     #"comando principla;confirmarComando;banderas;archivoDeSalida;observacion"
     auto=consola(name='subir_push',fuente=['mbarete','consolas'])
     print(auto.o['info'])
     commands=[
+        'git checkout $git_branch;false;;',
         'git status;false;;',
         'git add -A;;;',
-        'git commit;;m="commit automatico desde LinuxLite bash";output',
-        "git push origin $branch;true;;",
+        'git commit;;m="automatico desde $V";output',
+        "git push origin $git_branch;true;;",
         "git status;false;;"
     ]
     auto.set(commands)
@@ -348,6 +346,6 @@ if 'main' in __name__:
         3:{'titulo':"programando en shell un bucle loop para GIT_PULL",'f':git_pull},
         4:{'titulo':"mostrar valores de start('nombre_de_archivo'):",'f':lambda: print(consola.start(name='nombre_de_archivo'))},
         5:{'titulo':"buscar",'f':buscador},
-        6:{'titulo':"crearInfo con class consola",'f':programador_init}
+        6:{'titulo':"crearInfo con class consola",'f':git_checkout}
         }
     main_pruebas(pruebas,sys.argv)

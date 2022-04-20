@@ -4,7 +4,7 @@ IF "%1" == "" ( goto:VACIO ) ELSE ( goto:%1 )
 :inicio
 ::echo parametros pasados: "%*"
 set fuente=%2
-for /f "tokens=1,2* delims=:" %%i in (%fuente%info) do ( IF "%%k" NEQ "" ( set "%%i=%%j:%%~k" ) ELSE ( set "%%i=%%j" ) )
+for /f "tokens=1,2* delims=:" %%i in (%fuenteinfo%) do ( IF "%%k" NEQ "" ( set "%%i=%%j:%%~k" ) ELSE ( set "%%i=%%j" ) )
 goto:fin
 
 :seguimos

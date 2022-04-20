@@ -14,8 +14,6 @@ ECHO %token% %username% %repositoryname%
 
 if not "%token%"=="GITHUBTOKEN" (goto :token_Acces)
 git clone https://github.com/%username%/%repositoryname%.git
-git config --global user.name "MbaretePythonPY"
-git config --global user.email "mathiaslucasvidipy@gmail.com"
 goto :fin
 
 :token_Acces
