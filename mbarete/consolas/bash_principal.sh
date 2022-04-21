@@ -4,11 +4,12 @@
 t="$fuente"tmp.sh
 echo "#!$SHELL" > $t
 while IFS=: read -r var valor;do
+    echo $var=$valor 
     echo $var=$valor >> $t
 done < "$fuenteinfo"
 chmod +x $t
 source $t
-rm $t
+#rm $t
 t=$cross_temporal.sh
 declare -A my_array
 #importar funciones

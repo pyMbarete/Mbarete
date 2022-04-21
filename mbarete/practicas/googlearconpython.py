@@ -62,6 +62,7 @@ from PIL import *
 from tkinter import Tk
 from PIL import Image
 from pruebas import object_pruebas
+
 class GoogleSearch:
 	global results1,results,buscar1
 	results1 =results = []
@@ -157,6 +158,8 @@ class GoogleSearch:
 		return results
 
 global results1, buscar1
+test=object_pruebas(pwd=os.getcwd())
+test.go_pwd(self,pwd='',mkdir=test.info['ignorar']+__file__)
 buscar ="producto "+input("BUSCAR: ")
 
 buscare=os.listdir()

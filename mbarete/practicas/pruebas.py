@@ -19,15 +19,20 @@ def arboldearchivos(pwd=''):
 
 class object_prueba(object):
     """esta clase sera heredada a todas las clases de las demas practicas"""
-    def __init__(self,logFile=__file__+'.log',flags=['log','error','init'],open_modo='wb'):
+    def __init__(self,pwd=os.getcwd(),logFile=__file__+'.log',flags=['log','error','init'],open_modo='wb',code='utf-8',home='home',ignore=[],**kwargs):
         super(object_prueba, self).__init__()
-        self.init_pwd=os.getcwd()+os.sep
+        self.pwd= pwd #ruta absoluta de donde se esta ejecutando el servidor
+        self.historial_pwd=[0,[self.pwd]]
         self.log=True
         self.prnt=True
-        self.code='utf-8'
+        self.code=code
         self.logFile=logFile
         self.flags=['']+flags
         self.open_modo=open_modo
+        self.info=self.info_system()
+        self.home=home
+        self.ignore= ignore+['__pycache__',self.home,self.info['file']]
+
     def go_pwd(self,pwd='',mkdir='auto.'+__file__,scan=[]):
         equivalente={
             'practicas':'pwd_practicas',
@@ -37,14 +42,13 @@ class object_prueba(object):
         pwd = self.info[equivalente[pwd]] if pwd in equivalente else pwd
         if os.path.lexists(pwd):
             if mkdir:
-                if not mkdir in os.listdir(pwd): os.mkdir(pwd+mkdir)
-            os.chdir(pwd+mkdir)
-
+                if not mkdir in os.listdir(pwd): os.mkdir(pwd+os.sep+mkdir)
+            os.chdir(pwd+os.sep+mkdir)
+            self.historial_pwd[0]+=1
+            self.historial_pwd[1]+=[pwd+os.sep+mkdir]
+        self.p(os.getcwd())
     def back_pwd(self,pwd=''):
-        main_pwd='auto.'+__file__
-        if not main_pwd in os.listdir(pwd): os.mkdir(pwd+main_pwd)
-        os.chdir(pwd+main_pwd)
-
+        self.p(os.getcwd())
     def return_system(self,command,join=None,sep=':',prefijo=''):
         os.system(command+" > "+self.info['tmp']+'mbarete_tmp')
         ret = self.getFile(self.info['tmp']+'mbarete_tmp',join=join,sep=sep,prefijo=prefijo)
@@ -66,22 +70,21 @@ class object_prueba(object):
             import platform
             info=self.join(info,{'OS':'windows','V':os.environ['OS'],'tmp':os.environ['TEMP']+os.sep,'home':os.environ['USERPROFILE']+os.sep})
             info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] ,info['uname_processor'] = platform.uname()
+            info['uname_version']='"'+info['uname_version']+'"'
         elif os.name == 'posix':
             info=self.getFile('/etc/os-release',join=self.join(info,{'OS':'linux','tmp':'/tmp/'}),sep='=',prefijo='OS_',buscar=['VERSION','ID','ID_LIKE','PRETTY_NAME'])
             info['uname_sysname'] ,info['uname_nodename'] ,info['uname_release'] ,info['uname_version'] ,info['uname_machine'] = os.uname()
-            info['V']=info['OS_ID']+', '+info['OS_PRETTY_NAME']
+            info['V']='"'+info['OS_ID']+', '+info['OS_PRETTY_NAME'][1:-1]+'"'
+            info['uname_version']='"'+info['uname_version']+'"'
         elif 'ANDROID_ROOT' in os.environ:
             info=join(info,{'OS':'android','V':os.environ['SHELL'],'tmp':'/tmp/'})
         t='temp_mbarete.'
         myTMP=[file[len(t):]for file in os.listdir(info['tmp']) if t in file[:len(t)]]
         buscar=[info['prefijo']+b for b in ['git_repo_path','git_repo_name','git_branch','pwd_consolas','pwd_practicas']]
-        info['mis_repos']={ repo.split('.git.')[0]:self.getFile(info['tmp']+t+repo,join={},buscar=buscar) for repo in myTMP if '.git.'+info['file'] in repo }
-
-            
-        info['sys_prefix']=sys.prefix
+        self.mis_repos={ repo.split('.git.')[0]:self.getFile(info['tmp']+t+repo,join={},buscar=buscar) for repo in myTMP if '.git.'+info['file'] in repo }
+        info['sys_prefix']='"'+sys.prefix+'"'
         info['sys_platform']=sys.platform
-        info['sys_version_info']=sys.version_info
-        info['sys_version']=sys.version.replace('\n',' ')
+        info['sys_version']='"'+sys.version.replace('\n',' ')+'"'
         return info
     def media_me(self,pwd,ret='media'):
         media={}
@@ -98,7 +101,7 @@ class object_prueba(object):
                     num_archivos += 1
                     archivo = ruta+os.sep+elemento if ruta else elemento
                     self.p(archivo,flag='init')
-                    estado = os.stat(archivo)
+                    estado = os.stat(pwd+os.sep+archivo)
                     tamanho = estado.st_size
                     name=self.name+self.sepUser+str(num_archivos)
                     media[name]={'path':os.sep+archivo,'name':elemento,'size':tamanho}

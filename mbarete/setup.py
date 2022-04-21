@@ -21,9 +21,8 @@ import math
 from practicas.pruebas import object_prueba
 class consola(object_prueba):
     """docstring for programador_consola"""
-    def __init__(self, name='',fuente=['mbarete','consolas'],code='latin-1',info={},force=0):
-        super(consola, self).__init__()
-        self.info=self.info_system()
+    def __init__(self, name='',fuente=['mbarete','consolas'],code='latin-1',info={},force=0,**kwargs):
+        super(consola, self).__init__(**kwargs)
         self.name=name
         self.fuente=fuente
         self.code=code
@@ -130,7 +129,7 @@ class consola(object_prueba):
             'git_repo_path':'',
             'git_repo_branch':'master',
             'git_repo_email':'mathiaslucasvidipy@gmail.com',
-            'git_repo_whatsapp':'+595991753962',
+            'git_repo_whatsapp':'"+595991753962"',
             'sub_proyectos':'codigoLibre',
             'temporal':self.info['tmp']+'temp_mbarete',
             'version':1.0,
@@ -148,7 +147,7 @@ class consola(object_prueba):
         for file in pwd: 
             if (not os.path.exists(file)) or force:
                 self.setFile(file,valor=info,echo=0)
-        for e in info:print(e)
+        for e in info:self.p(e,flag='info')
 
 def buscarVariableDeEntorno(search=[],info={}):
     import os
@@ -163,9 +162,10 @@ def buscarVariableDeEntorno(search=[],info={}):
         else:
             print("%s: %s" % (variable, variables_de_entorno[variable]))
 
-def git_checkout():
+def git_crear_branch():
     #"comando principla;confirmarComando;banderas;archivoDeSalida;observacion"
-    auto=consola(name='checkout_pull',fuente=['mbarete','consolas'],info={'git_repo_path':os.getcwd()+os.sep},force=1)
+    auto=consola(name='checkout_pull',fuente=['mbarete','consolas'],info={'git_repo_path':os.getcwd()+os.sep},force=1,flags=['init','error',''])
+    branchName=input("Ingrese el nombre de la branch:")
     commands=[
         'git checkout $git_repo_branch;false;;',
         "git pull origin $git_repo_branch;false; ; ;trae datos del repositorio remoto y luego mezcla los cambios con el repositorio local",
@@ -176,13 +176,12 @@ def git_checkout():
 def git_push():
     #"comando principla;confirmarComando;banderas;archivoDeSalida;observacion"
     auto=consola(name='subir_push',fuente=['mbarete','consolas'])
-    print(auto.o['info'])
     commands=[
         'git checkout $git_branch;false;;',
-        'git status;false;;',
         'git add -A;;;',
         'git commit;;m="automatico desde $V";output',
         "git push origin $git_branch;true;;",
+        'git checkout $git_branch;false;;',
         "git status;false;;"
     ]
     auto.set(commands)
@@ -190,7 +189,13 @@ def git_push():
 def git_pull():
     auto=consola(name='bajar_pull',fuente=['mbarete','consolas'])
     #print(auto.o)
-    auto.set("git pull; ; ; ;trae datos del repositorio remoto y luego mezcla los cambios con el repositorio local")
+    commands=[
+        'git checkout $git_repo_branch;false;;;pasamas a la branch "$git_repo_branch"',
+        "git pull origin $git_repo_branch;false; ; ;trae datos de la branch $git_repo_branch del repositorio remoto y luego mezcla los cambios con la branch $git_repo_branch del repositorio local",
+        'git checkout $git_branch;false; ; ;pasamas a la branch "$git_branch"',
+        "git pull origin $git_branch;false; ; ;trae datos del repositorio remoto de la branch '$git_branch' y luego mezcla los cambios con la branch '$git_branch' del repositorio local",
+    ]
+    auto.set(commands)
     menu={
         'inicio':'git status;false;;;',
         'cabezera':'Si obtuvo algun error, por favor ingrese un numero de las siguientes opciones',
@@ -346,6 +351,6 @@ if 'main' in __name__:
         3:{'titulo':"programando en shell un bucle loop para GIT_PULL",'f':git_pull},
         4:{'titulo':"mostrar valores de start('nombre_de_archivo'):",'f':lambda: print(consola.start(name='nombre_de_archivo'))},
         5:{'titulo':"buscar",'f':buscador},
-        6:{'titulo':"crearInfo con class consola",'f':git_checkout}
+        6:{'titulo':"crear info para la branch de este repo",'f':git_crear_branch}
         }
     main_pruebas(pruebas,sys.argv)
