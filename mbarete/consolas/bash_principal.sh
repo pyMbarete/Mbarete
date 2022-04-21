@@ -9,7 +9,7 @@ while IFS=: read -r var valor;do
 done < "$fuenteinfo"
 chmod +x $t
 source $t
-#rm $t
+rm $t
 t=$cross_temporal.sh
 declare -A my_array
 #importar funciones

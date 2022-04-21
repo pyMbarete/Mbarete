@@ -19,7 +19,7 @@ def arboldearchivos(pwd=''):
 
 class object_prueba(object):
     """esta clase sera heredada a todas las clases de las demas practicas"""
-    def __init__(self,pwd=os.getcwd(),logFile=__file__+'.log',flags=['log','error','init'],open_modo='wb',code='utf-8',home='home',ignore=[],**kwargs):
+    def __init__(self,pwd=os.getcwd(),logFile=__file__+'.log',flags=['error','init'],open_modo='wb',code='utf-8',home='home',ignore=[],**kwargs):
         super(object_prueba, self).__init__()
         self.pwd= pwd #ruta absoluta de donde se esta ejecutando el servidor
         self.historial_pwd=[0,[self.pwd]]
