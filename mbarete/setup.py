@@ -142,6 +142,7 @@ class consola(object_prueba):
         print(info['OS']+'.'+info['V'])
         pwd=[info[k]+info['file'] for k in info if 'pwd_' in k[:4]]
         tmp=info['temporal']+'.'+info['git_repo_name']+'.'+info['file']
+        info={k:('"'+info[k]+'"') if 'comand_' in k[:7] else info[k] for k in info }
         info=[ (info['prefijo'] if k!='prefijo' else '')+k+':'+str(info[k]) for k in info ]
         self.setFile(tmp,valor=info,echo=0)
         for file in pwd: 

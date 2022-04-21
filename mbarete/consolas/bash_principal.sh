@@ -4,7 +4,6 @@
 t="$fuente"tmp.sh
 echo "#!$SHELL" > $t
 while IFS=: read -r var valor;do
-    echo $var=$valor 
     echo $var=$valor >> $t
 done < "$fuenteinfo"
 chmod +x $t
@@ -12,11 +11,7 @@ source $t
 rm $t
 t=$cross_temporal.sh
 declare -A my_array
-#importar funciones
 source "$fuente"bash_modulo.sh
-
-
-
 cross()
 {
     IFS=";" read -r -a arr <<< $1
@@ -39,12 +34,7 @@ cross()
             #echo my_array[${clave[0]}] = ${clave[1]}
         done
     fi
-
     super_comand
-    #echo "principal : '${principal}'"
-    #echo "confimar : '${confirmar}'"
-    #echo "argumentos : '${my_array}'"
-    #echo "salida : '${salida}'"
 }
 my_pruebas()
 {    
