@@ -1,5 +1,4 @@
-import os
-import math
+import os,math,time
 global d,canvas_width,canvas_height
 d={
     'img':os.getcwd()+'\\'+'media'+'\\'+"img_recursos"+'\\',
@@ -8,6 +7,22 @@ d={
     }
 canvas_width = 1100
 canvas_height =int((canvas_width/5)*3)
+
+def cronometro(*total):
+    if total:
+        total=int(total[0])
+    else:
+        total=2
+    t=0
+    suma=0.0
+    t0=time.time()
+    T=t0
+    while t <= total:
+        T=time.time()
+        suma += T-t0
+        yield 'T%s:%s, suma:%s'%(t,round(T-t0,4),suma)
+        t0=T
+        t+=1
 def agrupacion_maxima(img,zancada):
     ancho=img.size[0]
     alto=img.size[1]
@@ -28,107 +43,69 @@ def filtro(img,nucleo):
             ret.putpixel((x,y),(maximo))
     return ret
 
-def aclarado_inteligente(pwd_img='media\\img_trabajo\\aclar1.jpg',muestreo=0):
-    if muestreo:
-        global muestra
-        muestra={x:0 for x in range(256)}
+def aclarado_inteligente(pwd_img='media/img_trabajo/',muestreo=0):
     from PIL import Image
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import time,datetime
-    inicio_t=time.time()
-    n=1
-    factor_de_aclaracion=1.0
-    i = 1
-    j = 1
-    valor_permitido=90
-    valor_limite=150
-    im = Image.open(pwd_img)#Lea las fotos internas del sistema
-    print (im.size)# Tamaño de imagen impresa
-    img = im.convert ("L")
-    width = img.size[0]#Longitud
-    height = img.size[1]# Ancho
-    total=width*height
-    #aclarado = img.point(lambda x: pixel(x)*factor_de_aclaracion)  #'aclarado' contiene la imagen aligerada
-    #print(muestra)
-    linea_0=[img.getpixel((0,j))for j in range(0,height)]
-    linea_1=[img.getpixel((1,j))for j in range(0,height)]
-    linea_2=[img.getpixel((2,j))for j in range(0,height)]
-    linea_3=[img.getpixel((3,j))for j in range(0,height)]
-    linea_4=[img.getpixel((4,j))for j in range(0,height)]
-    for i in range(2,width-2):# Iterar a través de puntos de todas las longitudes
-        for j in range(2,height-2):# Iterar a través de puntos de todos los anchos
-            #p=img.getpixel((i,j))
-            #print(((i*width)+j)/total)
-            #data = (img.getpixel((i,j)))# Imprima todos los puntos de la imagen
-            #print (data)# Imprima el valor del color RGBA de cada píxel (r, g, b, alfa)
-            #print (data[0])# Imprimir valor de RGBA
-            #matriz
-            m=[
-                [linea_0[j-1],linea_0[j],linea_0[j+1]],
-                [linea_1[j-2],linea_1[j-1],linea_1[j],linea_1[j+1],linea_1[j+2]],
-                [linea_2[j-2],linea_2[j-1],linea_2[j],linea_2[j+1],linea_2[j+2]],
-                [linea_3[j-2],linea_3[j-1],linea_3[j],linea_3[j+1],linea_3[j+2]],
-                [linea_4[j-1],linea_4[j],linea_4[j+1]]
-            ]
-            #Color mas CLARO
-            #mayor=max([max(l) for l in m])
-            #Color mas OSCURO
-            menor=min([min(l) for l in m])
-            if (menor<=valor_permitido):
-                if muestreo:
-                    muestra[j]+=1
-            elif m[2][2]>=valor_limite:
-                im.putpixel((i,j),(255,255,255,255))# El color de estos píxeles se cambia a blanco
-            else:
-                #promedio
-                p=sum([sum(l) for l in m])/21.0
-                #varianza
-                v=sum([sum([abs(x-p) for x in l]) for l in m])/21.0
-                if valor_permitido>=p-v*2:
-                    #print(Ideal)
-                    if muestreo:
-                        muestra[j]+=1
-                    #if m[2][2]<=p-v:
-                    #    O=im.getpixel((i,j))
-                    #    print(O)
-                    #    im.putpixel((i,j),(int(O[0]*0.8),int(O[1]*0.8),int(O[2]*0.8),255))
+    imgs=['aclar0','aclar1','aclar2','aclar3','aclar4','aclar5']
+    tiempo=cronometro(len(imgs))
+    print(next(tiempo))
+    limiteInferior=90
+    limiteSuperior=150
+    seccion=[1,3,5,3,1]
+    #cantidad total de puntos por seccion
+    n=float(sum(seccion))
+    seccion = [s//2 for s in seccion]
+    cY = (len(seccion)//2)+1
+    cX = seccion[cY]+1
+    for d in imgs:
+        im = Image.open(pwd_img+d+'.jpg')# la foto del sistema
+        img = im.convert ("L")
+        #'aclarado' contiene la imagen aligerada
+        #aclarado = img.point(lambda x: pixel(x)*factor_de_aclaracion)
+        area=[]
+        for s in range(len(seccion)):
+            area += [[img.getpixel((x,s))for x in range(0,img.size[0]-1)]]
+        for y in range(cY,img.size[1]-cY):
+            for x in range(cX,img.size[0]-cX):
+                menor=255
+                p=0.0
+                for s in range(len(seccion)):
+                    #print(area[s][x-seccion[s]:x+seccion[s]+1])
+                    p += sum( area[s][x-seccion[s] : x+seccion[s]+1] )
+                    minimo=min( area[s][x-seccion[s]:x+seccion[s]+1] )
+                    if menor > minimo: menor=minimo
+                p = p/n
+                if area[cY][x]>=limiteSuperior:
+                    # El color de estos píxeles se cambia a blanco
+                    #im.getpixel((x,s))
+                    im.putpixel( (x,y),(255,255,255,255) )
+                elif area[cY][x]<limiteInferior:
+                    pass
+                elif area[cY][x]>limiteInferior and area[cY][x]==menor:
+                    (r,g,b)=im.getpixel((x,y))
+                    f=255/p
+                    #f=((p+255)/(2*p))
+                    (r,g,b)=(int(r*f),int(g*f),int(b*f))
+                    # El color de este píxel cambia a blanco
+                    im.putpixel((x,y),(r,g,b,255))
                 else:
-                    im.putpixel((i,j),(255,255,255,255))# El color de estos píxeles se cambia a blanco
-                
-        print(i/width,end='\r')
-        if i<height:
-            linea_0=linea_1
-            linea_1=linea_2
-            linea_2=linea_3
-            linea_3=linea_4
-            linea_4=[img.getpixel((i+2,j)) for j in range(0,height)]
+                    (r,g,b)=im.getpixel((x,y))
+                    f=((p+255)/2)
+                    (r,g,b)=(int(r*f),int(g*f),int(b*f))
+                    # El color de este píxel cambia a blanco
+                    im.putpixel((x,y),(r,g,b,255))
+                    
+            print(y/img.size[1],end='\r')
+            if y<img.size[1]:
+                area.pop(0)
+                area+=[[img.getpixel((x,y+cY)) for x in range(0,img.size[0])]]
+        # img = img.convert("RGB")# Forzar la imagen a RGB
+        archivo_salida=(pwd_img+d)+'_'+str(limiteInferior)+'_.png'
+        print("Guardando:",archivo_salida)
+        #Guarda la imagen después de modificar los píxeles
+        im.save(archivo_salida,'png')
+        print(next(tiempo))
 
-    # img = img.convert("RGB")# Forzar la imagen a RGB
-    archivo_salida=pwd_img.split('\\')[-1].replace(".jpg",'').replace(".png",'')+'_aclarado_avanzado_'+str(valor_permitido)+'_.png'
-    print("Guardando:",archivo_salida)
-    im.save(archivo_salida,'png')#Guarde la imagen después de modificar los píxeles
-
-    print(time.time()-inicio_t)
-    if muestreo:
-        print(muestra)
-        #Definimos una lista con paises como string
-        color = [k for k in muestra]
-        #Definimos una lista con ventas como entero
-        porciento = [(muestra[k]/total)*100.0 for k in muestra]
-        fig, ax = plt.subplots()
-        #Colocamos una etiqueta en el eje Y
-        ax.set_ylabel('Porciento')
-        #Colocamos una etiqueta en el eje X
-        ax.set_xlabel('Porcentaje de Pexiles por cada Color')
-        ax.set_title(pwd_img)
-        #Creamos la grafica de barras utilizando 'paises' como eje X y 'ventas' como eje y.
-        plt.bar(color, porciento)
-        plt.savefig(pwd_img.split('\\')[-1].replace(".jpg",'').replace(".png",'')+'muestreo_barras_simple.png')
-        #Finalmente mostramos la grafica con el metodo show()
-        plt.show()
-#aclarado_inteligente()
+aclarado_inteligente()
 def sin_fondo(pwd='media\\img_sin_fondos\\',file='cam.jpg',img_fondo='fondo.jpg'):
     from PIL import Image
     import time
@@ -184,7 +161,7 @@ def sin_fondo(pwd='media\\img_sin_fondos\\',file='cam.jpg',img_fondo='fondo.jpg'
         img.close()#cerramos la imagen
     img_f.close()
     print(time.time()-inicio_t)
-sin_fondo()
+#sin_fondo()
 def agregar_marco(pwd='media\\img_trabajo\\',file='aclar1.jpg',muestreo=0):
     if muestreo:
         global muestra

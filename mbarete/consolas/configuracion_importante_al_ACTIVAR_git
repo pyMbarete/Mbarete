@@ -21,7 +21,8 @@ git config --global user.name "MbaretePythonPY"
 git config --global user.email "mathiaslucasvidipy@gmail.com"
 git config --global credential.helper cache
 
-::fatal: unsafe repository ('/home/mbarete/Escritorio/0_PYTHON/Mbarete' is owned by someone else)
+::agregamos la ruta a safe.directory para poder ejecutar dentro super-user
+::fatal: unsafe repository ('/home/.../0_PYTHON/Mbarete' is owned by someone else)
 ::To add an exception for this directory, call:
 git config --global --add safe.directory /home/mbarete/Escritorio/0_PYTHON/Mbarete
 :fin

@@ -1,0 +1,5 @@
+tkinter en python
+X Error of failed request:  BadAlloc (insufficient resources for operation)
+  Major opcode of failed request:  53 (X_CreatePixmap)
+  Serial number of failed request:  7031579
+  Current serial number in output stream:  7031626

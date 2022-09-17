@@ -1,0 +1,101 @@
+1. Deshazte de los paquetes que ya no son necesarios [Recomendado]
+sudo apt-get autoremove
+
+2. Desinstalar aplicaciones innecesarias [Recomendado]
+sudo apt-get remove package-name1 package-name2
+flatpak uninstall AppID
+
+3. Limpiar la caché de APT en Ubuntu
+Puedes ver el tamaño de esta caché con:
+sudo du -sh /var/cache/apt 
+
+Eliminar sólo los paquetes obsoletos.
+sudo apt-get autoclean
+
+O eliminar la caché apt en su totalidad (libera más espacio en el disco):
+sudo apt-get clean
+
+
+4. Borrar los registros del diario systemd [Conocimiento intermedio]
+Puedes comprobar o ver el tamaño del registro con este comando:
+journalctl --disk-usage
+
+Lo más fácil es limpiar los registros que son más antiguos que 7 días.
+sudo journalctl --vacuum-time=7d
+
+5. Eliminar las versiones antiguas de las aplicaciones Snap [Conocimientos intermedios]
+Esto consume una gran cantidad de espacio. En mi caso, fueron más de 5 GB.
+
+du -h /var/lib/snapd/snaps
+4.0K    /var/lib/snapd/snaps/partial
+5.6G    /var/lib/snapd/snaps
+
+Alan Pope, parte del equipo de Snapcraft en Canonical, ha creado un pequeño script que puedes utilizar y ejecutar para limpiar todas las versiones antiguas de tus aplicaciones snap.
+
+Lo que tienes que hacer aquí es crear un nuevo script de shell y utilizar las siguientes líneas en tu script:
+
+#!/bin/bash
+# Removes old revisions of snaps
+# CLOSE ALL SNAPS BEFORE RUNNING THIS
+set -eu
+snap list --all | awk '/disabled/{print $1, $3}' |
+    while read snapname revision; do
+        snap remove "$snapname" --revision="$revision"
+    done
+
+Dale permiso de ejecución, ejecuta el script de shell con sudo y observa la magia. El script eliminó los paquetes de Snap más antiguos y liberó más de la mitad del espacio de 5 GB que utilizaba Snap.
+
+du -h /var/lib/snapd/snaps
+4.0K    /var/lib/snapd/snaps/partial
+2.5G    /var/lib/snapd/snaps
+
+6. Limpiar la caché de miniaturas [Conocimiento intermedio]
+Puedes ver el tamaño de la caché de miniaturas con comando:
+du -sh ~/.cache/thumbnails
+
+Así que es una buena práctica borrar la caché de miniaturas cada mes:
+rm -rf ~/.cache/thumbnails/*
+
+7. Encontrar y eliminar archivos duplicados
+
+A veces puede tener archivos duplicados en diferentes lugares de su sistema. Deshacerse de los duplicados sin duda liberará algo de espacio y limpiará su sistema Ubuntu.
+
+8. Programas y Carpetas del sistema que son grandes y pueden ser Reducidos
+    1.Timeshift, Copias de seguridad Automaticas del sistema, Instantaneas
+    carpeta: /timeshift  ahorro: 30GB programa: Timeshift
+    carpeta para el gestor de copias Automaticas de seguridad del sistema
+        primera opcion:
+            NO HACER COPIAS DE DEGURIDAD LOCAL, USAR LA NUBE CON DRIVE,GITHUB,MEGA,ETC,ETC.
+        segunda opcion:
+            Programamos y mantenemos una sola copia LOCAL backup del sistema.
+            borrar todas las copias de seguridad anteriores a esta
+            programar una copia semanal y mantener solo esta copia local
+    resultado final de este paso:
+        disco 82GB, peso del SO mas programas 20GB, mis Documentos 20GB
+        
+    2.Flatpack, gestor de programas empaquetados, Muuucho EN UNO
+    carpeta: /var/lib/flatpak, ahorro: 2.4GB, programa: $ flatpack --help
+    Si es necesario flatpack instala automaticamente programas/entornos para poder ejecutar 'un programa' instalado por nosotros, si nosostros instalamos varios programas flatpak instalara por su cuenta varios entornos, estos entornos pesan de 700MB a 1GB
+    org.kde.Platform//5.15-21.08 839,6MB
+    org.kde.Platform//5.15       1,0GB
+    org.gnome.Platform//41 767,7MB
+    org.gnome.Platform//40 983,9MB
+    y otros Platform propios de flatpak de 700MB a 1GB
+        primera opcion:
+            NO USAR FLATPAK
+        segunda opcion:
+            usar el script.py para borrar entornos que ya no son usados 
+            usar la menor cantidad de programas posibles, el resto usar desde AppImage desde una particion con derechos de ejecucion
+    resultado final de este paso:
+        disco 82GB, peso del SO mas programas 20GB, mis Documentos 20GB
+        
+
+9.Configurar Particiones para poder tener Programas Ejecutables en Estos:
+    fstab comando para obtener informacion o administrar particiones
+    hacer que la particion inicie con el sistema y con permisos de ejecucion
+
+10.Usar versiones ejecutables/portables de los programas.
+    Ejecutable sin instalacion, crear lanzador/AccesoDirecto para estos programas AppImage,CodigoFuente, todo lo disponible para ejecutar sin instalacion.
+    Si se instalan con gestor de paquetes como APK, Flatpak, etc,etc.
+    Van a necesitar permisos en la particion y no va a poder instalar dentro de estas particiones, o directamente no va a reconocer la particion
+    Ejecutar programas en una particion no es lo mismo que INSTALAR en esa particion

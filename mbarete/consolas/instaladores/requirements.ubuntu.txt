@@ -1,0 +1,8 @@
+#virtualenv
+
+sudo apt install python3-virtualenv
+
+sudo apt-get -y install postgresql
+sudo apt install pgadmin3
+sudo apt install python3-dev libpq-dev
+

@@ -3,6 +3,7 @@
 *__pycache__*
 *mbarete/consolas/info*
 *.auto.*
+venv
 setup.log
 setup.log.full
 uwsgibuild.lastprofile

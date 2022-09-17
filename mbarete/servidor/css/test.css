@@ -1,0 +1,69 @@
+/* ESTO ES UN COMENTARIO  */
+*{
+    margin:0px;
+    padding:0px;
+}
+
+header{
+    background:red;
+    height:100px;
+    width:100%;
+    margin:0px;
+    text-align:center;
+    line-height:100px;
+    color:white;
+    border-bottom: 3px dasher black;
+}
+nav{
+    background:lightblue;
+    height:50px;
+    borde-bottom: 1px solid black;
+}
+nav ul li{
+    float:left;
+    list-style:none;
+    margin:10px;     
+    line-height:30px;
+}
+
+.clearfix{
+     clear:both
+}
+
+#contenedor{
+    float:left;    
+    width:calc(80%-80px);
+    background:green;
+    min-height:500px;
+    padding:40px;
+}
+
+.article{
+    color:white;
+    margin-top:15px;
+    margin-bottom:15px;
+    padding-bottom:10px;
+    border-bottom: 1px solid #eee; 
+} 
+.article:first-child{
+    border-top: 1px solid #eee;
+} 
+
+aside{ 
+    float:left; 
+    width:calc(20%-20px); 
+    background:orange;
+    min-height:500px;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:20px;
+}
+
+footer{
+        background:black;
+        color:white;
+        text-align:center;
+        height:50px;
+        line-height:50px;
+        
+}
