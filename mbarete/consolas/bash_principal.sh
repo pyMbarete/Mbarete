@@ -9,7 +9,7 @@ done < "$fuenteinfo"
 chmod +x $t
 source $t
 rm $t
-t=$cross_temporal.sh
+t="$cross_tmp"codeMbarete.sh
 declare -A my_array
 source "$fuente"bash_modulo.sh
 cross()
