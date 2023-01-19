@@ -10,9 +10,9 @@ admin=mbarete(
     archivosInternos=['__pycache__','__init__.py','media','bibliografia','preload.py','mbarete','manager'],
     formato=[''],
     fullDir=1,
-    renombrarArchivos=1,
+    renombrarArchivos=True,
     ignorar=[],
-    reset=1,
+    reset=True,
     campoAutoincrement='id',
     gitBranch='master',
     gitignore=['bibliografia','__pycache__']
@@ -56,7 +56,11 @@ if mostrarInfo:
     print('Mostrar Info:')
     for subProyecto in proyectos:
         print(subProyecto,admin.info[subProyecto])
-    
+#este codigo solo esta para probar 'git merge'
+for v in os.listdir(admin.ubi.pwd):
+    if os.path.isfile(admin.ubi.pwd+v):
+        estado = os.stat(admin.ubi.pwd+v)
+        print(v, estado.st_size)
 #Le Pasamos a 'G' los comandos de los Sub-proyectos
 for subProyecto in proyectos:
     proyectos[subProyecto].command( 
