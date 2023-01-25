@@ -1,8 +1,8 @@
-mbarete
-*__pycache__*
-*__init__*
-mbarete.cmd
-.mb
 *bibliografia*
-*.ignore.*
 codigoLibre
+.mb
+mbarete
+mbarete.cmd
+*__pycache__*
+*.ignore.*
+*__init__*
